@@ -1,6 +1,6 @@
-from neuron import h, gui
-from matplotlib import pyplot
+from neuron import h
 
+print('Loading Model...')
 soma = h.Section(name='soma')
 dend = h.Section(name='dend')
 dend.connect(soma(1))
@@ -44,13 +44,21 @@ t_vec.record(h._ref_t)
 
 # run simulation
 h.tstop = 60 # ms
-h.run()  
+#h.run()  
 
-# plot voltage vs time
-pyplot.figure(figsize=(8,4)) # Default figsize is (8,6)
-pyplot.plot(t_vec, v_vec_soma, label='soma')
-pyplot.plot(t_vec, v_vec_dend, 'r', label='dend')
-pyplot.xlabel('time (ms)')
-pyplot.ylabel('mV')
-pyplot.legend()
-pyplot.show()
+def analysis():
+    from matplotlib import pyplot
+
+    # plot voltage vs time
+    pyplot.figure(figsize=(8,4)) # Default figsize is (8,6)
+    pyplot.plot(t_vec, v_vec_soma, label='soma')
+    pyplot.plot(t_vec, v_vec_dend, 'r', label='dend')
+    pyplot.xlabel('time (ms)')
+    pyplot.ylabel('mV')
+    pyplot.legend()
+    pyplot.show()       
+
+        
+
+
+

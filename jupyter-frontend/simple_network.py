@@ -1,6 +1,6 @@
-from neuron import h, gui
-from matplotlib import pyplot
+from neuron import h
 from pylab import sin,cos,pi
+from matplotlib import pyplot
 
 class HHCell: 
     """Two-section cell: A soma with active channels and
@@ -111,7 +111,7 @@ class Net:
             nc = h.NetCon(cell.soma(0.5)._ref_v, None, sec=cell.soma)  # create netcon to record spikes from cell
             nc.record(self.spkt, self.spkid, i) 
             self.cells.append(cell)  # add cell to list of cells in network            
-            print 'Created cell ' + str(i)
+            print('Created cell ' + str(i))
             
             
     def connect_cells_ring(self, syn_weight, syn_delay):
@@ -123,7 +123,7 @@ class Net:
             preCell = self.cells[ipre]  # get preCell object
             postCell.connect2pre(preCell, delay=syn_delay, weight=syn_weight) # connect to pre
             self.conns.append((ipre,ipost)) # keep track of connections created
-            print 'Created connection between cell ' + str(ipre) + ' and cell ' + str(ipost)
+            print('Created connection between cell ' + str(ipre) + ' and cell ' + str(ipost))
 
 
     def plot_net(self):
@@ -157,11 +157,14 @@ net.plot_net()  # plot network cells positions
 net.cells[0].add_current_stim(delay=1)  # add stimulation to a cell
 
 h.tstop = 60 # set simulation duration
-h.init()  # initialize sim
-h.run()  # run simulation
+#h.init()  # initialize sim
+#h.run()  # run simulation
 
-net.cells[0].plot_voltage()  # plot voltage
-net.cells[4].plot_voltage()  # plot voltage
+def analysis():
+    from matplotlib import pyplot
 
-# plot raster
-net.plot_raster()
+    net.cells[0].plot_voltage()  # plot voltage
+    net.cells[4].plot_voltage()  # plot voltage
+
+    # plot raster
+    net.plot_raster()

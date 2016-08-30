@@ -11,7 +11,7 @@ v_vec = h.Vector()             # Membrane potential vector
 t_vec = h.Vector()             # Time stamp vector
 v_vec.record(soma(0.5)._ref_v)
 t_vec.record(h._ref_t)
-h.tstop = 200.0
+h.tstop = 80.0
 
 def analysis():
     from matplotlib import pyplot

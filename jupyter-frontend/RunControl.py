@@ -16,7 +16,7 @@ def showRunControlPanel():
     #initPanel.setDirection('row')
     
     # Init Panel
-    initPanel = G.addTextFieldAndButton("Init (mV)", 'v_init', True, ['h.stdinit()'])
+    initPanel = G.addTextFieldAndButton("Init", 'v_init', True, ['h.stdinit()'])
     
     # Init Run Button
     initRunButton = G.addButton('Init & Run', ['h.run()'])    
@@ -26,31 +26,31 @@ def showRunControlPanel():
     stopButton.on_click(['h.stoprun = 1'])   
     
     # Continue til
-    continueTilPanel = G.addTextFieldAndButton("Continue til (ms)", 'runStopAt', True, ['h.continuerun(runStopAt)', 'h.stoprun=1'])
+    continueTilPanel = G.addTextFieldAndButton("Continue til", 'runStopAt', True, ['h.continuerun(runStopAt)', 'h.stoprun=1'])
 
     # Continue for
-    continueForPanel = G.addTextFieldAndButton("Continue for (ms)", 'runStopIn', True, ['h.continuerun(t + runStopIn)', 'h.stoprun=1'])
+    continueForPanel = G.addTextFieldAndButton("Continue for", 'runStopIn', True, ['h.continuerun(t + runStopIn)', 'h.stoprun=1'])
     
     # Single Step
     singleStepButton = G.addButton('Single Step', ['h.steprun()'])
     
     # t Panel
-    timePanel = G.addTextFieldAndButton("t (ms)", 't', False, [])
+    timePanel = G.addTextFieldAndButton("t", 't', False, [])
     
     # TStop Panel
-    stopPanel = G.addTextFieldAndButton("Tstop (ms)", 'tstop', True, ['h.tstop_changed()'])
+    stopPanel = G.addTextFieldAndButton("Tstop", 'tstop', True, ['h.tstop_changed()'])
    
     # dt Panel
-    dtPanel = G.addTextFieldAndButton("dt (ms)", 'dt', True, ['h.setdt()'])
+    dtPanel = G.addTextFieldAndButton("dt", 'dt', True, ['h.setdt()'])
     
     # Points plotted Panel
     pointsPlottedPanel = G.addTextFieldAndButton("Points plotted/ms", 'steps_per_ms', True, ['h.setdt()'])
 
     # Scrn update invl Panel
-    scrnUpdateInvlPanel = G.addTextFieldAndButton("Scrn update invl (s)", 'screen_update_invl', True, [])
+    scrnUpdateInvlPanel = G.addTextFieldAndButton("Scrn update invl", 'screen_update_invl', True, [])
     
     # Real Time Texfield
-    realTimePanel = G.addTextFieldAndButton("Real Time (s)", 'realtime', False, [])
+    realTimePanel = G.addTextFieldAndButton("Real Time", 'realtime', False, [])
 
     # Init main panel
     runControlPanel = G.addPanel('Run Control', items = [initPanel, initRunButton, stopButton, continueTilPanel, continueForPanel, singleStepButton, timePanel, stopPanel, dtPanel, pointsPlottedPanel, scrnUpdateInvlPanel, realTimePanel])

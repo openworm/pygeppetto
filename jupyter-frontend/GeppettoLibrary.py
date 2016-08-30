@@ -15,19 +15,34 @@ def newId():
     lastId+=1;
     return "id" + str(lastId)
     
-def addButton(name, actions = None):
+def addButton(name, actions = None, value = None):
+    if value is not None:
+        valueUnits = h.units(value)
+        if valueUnits != '':
+            name += " (" + h.units(value) + ")"
     button = ComponentWidget(component_name='RAISEDBUTTON', widget_id=newId(), widget_name=name)
     if actions is not None:
         button.on_click(actions)
+    
     return button
 
 def addTextField(name, value = None):
-    return ComponentWidget(component_name='TEXTFIELD', widget_id=newId(), widget_name=name, value = value)
+    parameters = {'component_name':'TEXTFIELD', 'widget_id':newId(), 'widget_name' : name}
+    
+    if 'value' is not None:
+        parameters['sync_value'] = str(eval("h."+ value))
+        extraData = {'originalValue': str(eval("h."+value))}
+        parameters['extraData'] = extraData
+        parameters['value'] = value
+    else:
+        parameters['value'] = ''
+    #return ComponentWidget(component_name='TEXTFIELD', widget_id=newId(), widget_name=name, value = value)
+    return ComponentWidget(**parameters)     
 
 #TODO what about boolean_canrun and boolean_usepointer
 def addTextFieldAndButton(name, value = None, create_checkbox = False, actions = None):
     items = []
-    items.append(addButton(name, actions = None))
+    items.append(addButton(name, actions = None, value = value))
     textField = addTextField(name, value)
     if create_checkbox == True:
         checkbox = addCheckbox("checkbox" + name)
@@ -63,6 +78,7 @@ class ComponentWidget(widgets.Widget):
     
     sync_value = Unicode().tag(sync=True)
     value = None
+    extraData = None
     
     clickCallbacks = []
     changeCallbacks = []
@@ -70,14 +86,23 @@ class ComponentWidget(widgets.Widget):
     
     def __init__(self, **kwargs):
         super(ComponentWidget, self).__init__(**kwargs)
+
         if 'value' in kwargs and kwargs["value"] is not None:
             sync_values[kwargs["value"]] = self
-            self.sync_value = str(eval("h."+kwargs["value"]))
-            self.extraData = dict()
-            self.extraData['originalValue'] = str(eval("h."+kwargs["value"]))
-        else:
-            self.value = ''
             
+        #if 'value' in kwargs and kwargs["value"] is not None:
+            #sync_values[kwargs["value"]] = self
+            #print(self.widget_name)
+            #print(h.units(kwargs["value"]))
+            #self.widget_name = " (" + h.units(kwargs["value"]) + ")"
+            #self.widget_name = 'kk'
+            #self.sync_value = str(eval("h."+kwargs["value"]))
+            #self.extraData = dict()
+            #self.extraData['originalValue'] = str(eval("h."+kwargs["value"]))
+            #print(self.widget_name)
+        #else:
+            #self.value = ''
+        
         self._click_handlers = widgets.CallbackDispatcher()
         self._change_handlers = widgets.CallbackDispatcher()
         self._blur_handlers = widgets.CallbackDispatcher()

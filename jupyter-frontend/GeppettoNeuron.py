@@ -11,8 +11,6 @@ def process_events() :
 
     for key,value in G.sync_values.items():
         value.sync_value = str(eval("h."+key))
-        
-    #print(G.sync_values)
 
 class LoopTimer(threading.Thread) :
     """

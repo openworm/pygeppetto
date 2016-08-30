@@ -15,12 +15,13 @@ def newId():
     lastId+=1;
     return "id" + str(lastId)
     
-def addButton(name, actions = None, value = None):
+def addButton(name, actions = None, value = None, extraData = None):
     if value is not None:
         valueUnits = h.units(value)
         if valueUnits != '':
             name += " (" + h.units(value) + ")"
-    button = ComponentWidget(component_name='RAISEDBUTTON', widget_id=newId(), widget_name=name)
+            
+    button = ComponentWidget(component_name='RAISEDBUTTON', widget_id=newId(), widget_name=name, extraData = extraData)
     if actions is not None:
         button.on_click(actions)
     

@@ -2,19 +2,21 @@ import ipywidgets as widgets
 from traitlets import (Unicode, Instance, List, Dict, Bool, Float)
 from collections import defaultdict
 
-#TODO This shouldn't be here
 from neuron import h
 h.load_file("stdrun.hoc")
 
+
+#UTILS
 sync_values = defaultdict(list)
 
 lastId = 0 
-
 def newId():
     global lastId
     lastId+=1;
     return "id" + str(lastId)
     
+    
+#API    
 def addButton(name, actions = None, value = None, extraData = None):
     if value is not None:
         valueUnits = h.units(value)
@@ -37,10 +39,8 @@ def addTextField(name, value = None):
         parameters['value'] = value
     else:
         parameters['value'] = ''
-    #return ComponentWidget(component_name='TEXTFIELD', widget_id=newId(), widget_name=name, value = value)
     return ComponentWidget(**parameters)     
 
-#TODO what about boolean_canrun and boolean_usepointer
 def addTextFieldAndButton(name, value = None, create_checkbox = False, actions = None):
     items = []
     items.append(addButton(name, actions = None, value = value))
@@ -65,6 +65,8 @@ def addPanel(name, items = None):
 def addCheckbox(name, sync_value = 'false'):
     return ComponentWidget(component_name='CHECKBOX', widget_id=newId(), widget_name=name, sync_value = sync_value)
 
+
+# COMPONENT AND PANEL
 class ComponentWidget(widgets.Widget):
     _view_name = Unicode('ComponentView').tag(sync=True)
     _view_module = Unicode('geppettoWidgets').tag(sync=True)
@@ -90,19 +92,6 @@ class ComponentWidget(widgets.Widget):
 
         if 'value' in kwargs and kwargs["value"] is not None:
             sync_values[kwargs["value"]] = self
-            
-        #if 'value' in kwargs and kwargs["value"] is not None:
-            #sync_values[kwargs["value"]] = self
-            #print(self.widget_name)
-            #print(h.units(kwargs["value"]))
-            #self.widget_name = " (" + h.units(kwargs["value"]) + ")"
-            #self.widget_name = 'kk'
-            #self.sync_value = str(eval("h."+kwargs["value"]))
-            #self.extraData = dict()
-            #self.extraData['originalValue'] = str(eval("h."+kwargs["value"]))
-            #print(self.widget_name)
-        #else:
-            #self.value = ''
         
         self._click_handlers = widgets.CallbackDispatcher()
         self._change_handlers = widgets.CallbackDispatcher()

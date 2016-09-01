@@ -6,15 +6,6 @@ from neuron import h
 h.load_file("stdrun.hoc")
 
 def showRunControlPanel():
-    # Init Panel (Init + Button)
-    #initButton = G.addButton('Init(mV)', ['h.stdinit()'])
-    #initTextfield = G.addTextField('v_init')
-    # TODO This can be another API
-    #initPanel = G.addPanel('Init Panel')
-    #initPanel.addChild(initButton)
-    #initPanel.addChild(initTextfield)
-    #initPanel.setDirection('row')
-    
     # Init Panel
     initPanel = G.addTextFieldAndButton("Init", 'v_init', True, ['h.stdinit()'])
     

@@ -28,7 +28,9 @@ class LoopTimer(threading.Thread) :
         self.setDaemon(True)
 
     def run(self) :
-        h.nrniv_bind_thread(threading.current_thread().ident);
+    	# Matteo: Commenting this out, with this line the cell doesn't execute for me
+    	# Without it everything works fine.
+        #h.nrniv_bind_thread(threading.current_thread().ident);
         self.started = True;
         while True:
             self.fun()

@@ -1,0 +1,519 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore"
+    nsPrefix="gep">
+  <eClassifiers xsi:type="ecore:EClass" name="GeppettoModel">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="The root of every Geppetto model"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
+        eType="#//variables/Variable" containment="true" resolveProxies="false">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The top level variables instantiated inside the Geppetto Model.  The type of the variables will be coming from inside Libraries available inside this GeppettoModel."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="libraries" upperBound="-1"
+        eType="#//GeppettoLibrary" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The libraries are container of types. A library can be associated to a modelInterpreter."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tags" upperBound="-1" eType="#//Tag"
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The tags available in the GeppettoModel."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+        defaultValueLiteral="">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The id of the GeppettoModel."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+        defaultValueLiteral="">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The name of the GeppettoModel."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="dataSources" upperBound="-1"
+        eType="#//datasources/DataSource" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="The data sources available for this model."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="queries" upperBound="-1"
+        eType="#//datasources/Query" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Node" abstract="true" eSuperTypes="#//ISynchable">
+    <eOperations name="getPath" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+        defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+        defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tags" upperBound="-1" eType="#//Tag"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GeppettoLibrary" eSuperTypes="#//Node">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="types" upperBound="-1"
+        eType="#//types/Type" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="sharedTypes" upperBound="-1"
+        eType="#//types/Type"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LibraryManager">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="libraries" upperBound="-1"
+        eType="#//GeppettoLibrary" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExperimentState">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="recordedVariables" upperBound="-1"
+        eType="#//VariableValue" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="setParameters" upperBound="-1"
+        eType="#//VariableValue" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="experimentId" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Long"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="projectId" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Long"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="VariableValue">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="pointer" lowerBound="1"
+        eType="#//values/Pointer" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//values/Value"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Tag" eSuperTypes="#//ISynchable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tags" upperBound="-1" eType="#//Tag"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+        defaultValueLiteral=""/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DomainModel">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="domainModel" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="format" eType="#//ModelFormat"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelFormat">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelFormat" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ExternalDomainModel" eSuperTypes="#//DomainModel">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fileFormat" lowerBound="1"
+        eType="#//FileFormat" defaultValueLiteral="ZIP"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="FileFormat">
+    <eLiterals name="ZIP"/>
+    <eLiterals name="HDF5" value="1"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToStringMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ISynchable" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="synched" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
+        transient="true"/>
+  </eClassifiers>
+  <eSubpackages name="types" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//types"
+      nsPrefix="gep">
+    <eClassifiers xsi:type="ecore:EClass" name="Type" abstract="true" eSuperTypes="#//Node">
+      <eOperations name="getDefaultValue" eType="#//values/Value"/>
+      <eOperations name="extendsType" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean">
+        <eParameters name="type" lowerBound="1" eType="#//types/Type"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="superType" upperBound="-1"
+          eType="#//types/Type"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="abstract" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="visualType" eType="#//types/VisualType"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="referencedVariables"
+          upperBound="-1" eType="#//variables/Variable" transient="true" resolveProxies="false"
+          eOpposite="#//variables/Variable/types"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="domainModel" eType="#//DomainModel"
+          transient="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="VisualType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/VisualValue"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ImportType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="url" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="referenceURL" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelInterpreterId" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CompositeType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
+          eType="#//variables/Variable" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Composite"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PointerType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Pointer"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="QuantityType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Quantity"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ParameterType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Quantity"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StateVariableType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Quantity"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DynamicsType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Dynamics"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ArgumentType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Argument"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ExpressionType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Expression"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="HTMLType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/HTML"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TextType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Text"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="URLType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/URL"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PointType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Point"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ArrayType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="arrayType" lowerBound="1"
+          eType="#//types/Type"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/ArrayValue"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CompositeVisualType" eSuperTypes="#//types/VisualType">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
+          eType="#//variables/Variable" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="visualGroups" upperBound="-1"
+          eType="#//values/VisualGroup" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ConnectionType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
+          eType="#//variables/Variable" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Composite"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SimpleType" eSuperTypes="#//types/Type"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ImageType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Image"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="values" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//values"
+      nsPrefix="gep">
+    <eClassifiers xsi:type="ecore:EClass" name="Value" abstract="true" eSuperTypes="#//ISynchable"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Composite" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" upperBound="-1"
+          eType="#//values/StringToValueMap" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StringToValueMap" instanceClassName="java.util.Map$Entry">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//values/Value"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Quantity" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="scalingFactor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PhysicalQuantity" eSuperTypes="#//values/Quantity">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="unit" eType="#//values/Unit"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Unit" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="unit" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TimeSeries" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="unit" eType="#//values/Unit"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="scalingFactor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" unique="false"
+          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="MetadataValue" abstract="true" eSuperTypes="#//values/Value"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Text" eSuperTypes="#//values/MetadataValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="URL" eSuperTypes="#//values/MetadataValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="url" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="HTML" eSuperTypes="#//values/MetadataValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="html" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Pointer" eSuperTypes="#//values/Value">
+      <eOperations name="getInstancePath" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+          eType="#//values/PointerElement" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="point" eType="#//values/Point"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PointerElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="variable" eType="#//variables/Variable"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="#//types/Type"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="index" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//IntObject"
+          defaultValueLiteral="-1"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Point" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="z" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Dynamics" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="initialCondition" eType="#//values/PhysicalQuantity"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="dynamics" eType="#//values/Function"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="FunctionPlot">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="title" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="xAxisLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="yAxisLabel" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="initialValue" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="finalValue" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="stepValue" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Function" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+          eType="#//values/Argument" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="expression" lowerBound="1"
+          eType="#//values/Expression" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="functionPlot" eType="#//values/FunctionPlot"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Argument" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="argument" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"
+          defaultValueLiteral=""/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Expression" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="VisualValue" abstract="true" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="groupElements" upperBound="-1"
+          eType="#//values/VisualGroupElement"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="position" eType="#//values/Point"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Collada" eSuperTypes="#//values/VisualValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="collada" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="OBJ" eSuperTypes="#//values/VisualValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="obj" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Sphere" eSuperTypes="#//values/VisualValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="radius" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Cylinder" eSuperTypes="#//values/VisualValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="bottomRadius" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="topRadius" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="distal" eType="#//values/Point"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Particle" eSuperTypes="#//values/VisualValue #//values/Point"/>
+    <eClassifiers xsi:type="ecore:EClass" name="SkeletonAnimation" eSuperTypes="#//values/VisualValue">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="skeletonTransformationSeries"
+          upperBound="-1" eType="#//values/SkeletonTransformation"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SkeletonTransformation">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="skeletonTransformation"
+          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="VisualGroupElement" eSuperTypes="#//Node">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultColor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parameter" eType="#//values/Quantity"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="VisualGroup" eSuperTypes="#//Node">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowSpectrumColor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="highSpectrumColor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="visualGroupElements"
+          lowerBound="1" upperBound="-1" eType="#//values/VisualGroupElement" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Connection" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="a" lowerBound="1" eType="#//values/Pointer"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="b" lowerBound="1" eType="#//values/Pointer"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="connectivity" eType="#//values/Connectivity"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="Connectivity">
+      <eLiterals name="DIRECTIONAL"/>
+      <eLiterals name="BIDIRECTIONAL" value="1"/>
+      <eLiterals name="NON_DIRECTIONAL" value="2"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ArrayElement" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="index" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="position" eType="#//values/Point"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="initialValue" eType="#//values/Value"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ArrayValue" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="elements" lowerBound="1"
+          upperBound="-1" eType="#//values/ArrayElement" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Image" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="data" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="reference" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="format" eType="#//values/ImageFormat"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="ImageFormat">
+      <eLiterals name="PNG" literal="PNG"/>
+      <eLiterals name="JPEG" value="1" literal="JPEG"/>
+      <eLiterals name="IIP" value="2" literal="IIP"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ImportValue" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelInterpreterId" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="variables" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//variables"
+      nsPrefix="gep">
+    <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//Node">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="anonymousTypes" upperBound="-1"
+          eType="#//types/Type" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="types" upperBound="-1"
+          eType="#//types/Type" resolveProxies="false" eOpposite="#//types/Type/referencedVariables"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="initialValues" upperBound="-1"
+          eType="#//variables/TypeToValueMap" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="static" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="position" eType="#//values/Point"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TypeToValueMap" instanceClassName="java.util.Map$Entry">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="key" lowerBound="1" eType="#//types/Type"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" lowerBound="1"
+          eType="#//values/Value" containment="true"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="datasources" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//datasources"
+      nsPrefix="gep">
+    <eClassifiers xsi:type="ecore:EClass" name="DataSource" eSuperTypes="#//Node">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="dataSourceService" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="libraryConfigurations"
+          upperBound="-1" eType="#//datasources/DataSourceLibraryConfiguration" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="url" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="queries" upperBound="-1"
+          eType="#//datasources/Query" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="dependenciesLibrary"
+          upperBound="-1" eType="#//GeppettoLibrary"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="targetLibrary" lowerBound="1"
+          eType="#//GeppettoLibrary"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="fetchVariableQuery" eType="#//datasources/Query"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DataSourceLibraryConfiguration">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="library" lowerBound="1"
+          eType="#//GeppettoLibrary"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelInterpreterId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="format" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Query" abstract="true" eSuperTypes="#//Node">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="matchingCriteria" upperBound="-1"
+          eType="#//datasources/QueryMatchingCriteria" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="runForCount" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
+          defaultValueLiteral="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="returnType" eType="#//types/Type"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ProcessQuery" eSuperTypes="#//datasources/Query">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+          eType="#//StringToStringMap" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="queryProcessorId" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SimpleQuery" eSuperTypes="#//datasources/Query">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="query" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="countQuery" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CompoundQuery" eSuperTypes="#//datasources/Query">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Compound queries allow creating composite queries which chain together multiple queries. The results of a query in the chain will be fed to the subsequent query."/>
+      </eAnnotations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="queryChain" lowerBound="1"
+          upperBound="-1" eType="#//datasources/Query" containment="true">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="The chain of queries for this Compound query."/>
+        </eAnnotations>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CompoundRefQuery" eSuperTypes="#//datasources/Query">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Compound ref queries make it possible to reference queries from any datasource"/>
+      </eAnnotations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="queryChain" lowerBound="1"
+          upperBound="-1" eType="#//datasources/Query">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="The chain of queries for this Compound query."/>
+        </eAnnotations>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="QueryResults">
+      <eOperations name="getValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject">
+        <eParameters name="field" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+        <eParameters name="row" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="header" upperBound="-1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="results" upperBound="-1"
+          eType="#//datasources/AQueryResult" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RunnableQuery">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetVariablePath" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="queryPath" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="booleanOperator" eType="#//datasources/BooleanOperator"
+          defaultValueLiteral="AND"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="AQueryResult" abstract="true"/>
+    <eClassifiers xsi:type="ecore:EClass" name="QueryResult" eSuperTypes="#//datasources/AQueryResult">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" unique="false"
+          lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SerializableQueryResult" eSuperTypes="#//datasources/AQueryResult">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="values" unique="false"
+          lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="QueryMatchingCriteria">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" upperBound="-1"
+          eType="#//types/Type"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="BooleanOperator">
+      <eLiterals name="AND" literal="AND"/>
+      <eLiterals name="NAND" value="1" literal="NAND"/>
+      <eLiterals name="OR" value="2" literal="OR"/>
+    </eClassifiers>
+  </eSubpackages>
+</ecore:EPackage>

@@ -5,9 +5,13 @@ The API allows to create a Geppetto Model from Python.
 
 ## Installation
 
-// TODO (setup.py install? manuall install?)
-// Recommendations about virtualenvs
+Until pygeppetto is still in development, it is highly recommended to use a
+virtualenv in order to deploy it. Once you have a dedicated virtualenv, you
+can simply install pygeppetto:
 
+```bash
+$ python setup.py install
+```
 
 ## Pygeppetto API Basic Usage
 
@@ -68,6 +72,7 @@ resource.save(output=URI('my_new_file.xmi'))
 
 ## Dependencies
 
+* Python >= 3.3
 * `pyecore` >= 0.1.2
 
 ## Contributions
@@ -103,4 +108,11 @@ additions), this version must be manually merged with the new generated one
 
 ### Run the Tests
 
-// TODO choose a test framework (pytest + tox?)
+Tests are written using `pytest` and are run using `tox`. To launch all the
+tests the following command is enough:
+
+```bash
+$ tox
+```
+
+Currently, the tests are only related to the ability to read/write tests models.

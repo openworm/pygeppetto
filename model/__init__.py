@@ -1,4 +1,5 @@
 import pyecore.ecore as Ecore
+from pyecore.resources import global_registry
 from .model import getEClassifier, eClassifiers
 from .model import name, nsURI, nsPrefix, eClass
 from .model import GeppettoModel, Node, GeppettoLibrary, LibraryManager, ExperimentState, VariableValue, Tag, DomainModel, ModelFormat, ExternalDomainModel, FileFormat, StringToStringMap, ISynchable
@@ -118,3 +119,15 @@ for classif in eClassifiers.values():
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
 
+# Manually register all the URI and master URI in the global registry
+# This registering is performed outside the previous 'for' to ease future
+# code merging (in case of new metamodel versions)
+geppetto_master_uri = ('https://raw.githubusercontent.com/openworm/'
+                       'org.geppetto.model/master/src/main/resources/'
+                       'geppettoModel.ecore')
+
+global_registry[nsURI] = model
+global_registry[geppetto_master_uri] = model
+for subpack in eSubpackages:
+    global_registry[subpack.nsURI] = subpack
+    global_registry[geppetto_master_uri + '#//' + subpack.name] = subpack

@@ -3,13 +3,9 @@ from pyecore.resources import ResourceSet, URI
 import model as pygeppetto
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def rset():
-    rset = ResourceSet()
-    rset.metamodel_registry[pygeppetto.nsURI] = pygeppetto
-    for subpack in pygeppetto.eSubpackages:
-        rset.metamodel_registry[subpack.nsURI] = subpack
-    return rset
+    return ResourceSet()
 
 
 def test_read_mediumXMI(rset):

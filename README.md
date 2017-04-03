@@ -3,7 +3,7 @@
 Home of the Geeppetto Python API.
 The API allows to create a Geppetto Model from Python.
 
-## Installation
+## Installation
 
 Until pygeppetto is still in development, it is highly recommended to use a
 virtualenv in order to deploy it. Once you have a dedicated virtualenv, you
@@ -83,7 +83,7 @@ there is manual modifications in the current version).
 1. Run the tests
 
 
-### How to Generate a New Version
+### How to Generate a New Version
 
 The pygeppetto API is generated from the
 [`geppettoModel.ecore`](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)

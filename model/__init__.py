@@ -1,4 +1,3 @@
-import pyecore.ecore as Ecore
 from pyecore.resources import global_registry
 from .model import getEClassifier, eClassifiers
 from .model import name, nsURI, nsPrefix, eClass

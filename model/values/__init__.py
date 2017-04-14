@@ -1,4 +1,3 @@
-import pyecore.ecore as Ecore
 from .values import getEClassifier, eClassifiers
 from .values import name, nsURI, nsPrefix, eClass
 from .values import Value, Composite, StringToValueMap, Quantity, PhysicalQuantity, Unit, TimeSeries, MetadataValue, Text, URL, HTML, Pointer, PointerElement, Point, Dynamics, FunctionPlot, Function, Argument, Expression, VisualValue, Collada, OBJ, Sphere, Cylinder, Particle, SkeletonAnimation, SkeletonTransformation, VisualGroupElement, VisualGroup, Connection, Connectivity, ArrayElement, ArrayValue, Image, ImageFormat, ImportValue
@@ -22,4 +21,3 @@ for classif in eClassifiers.values():
 
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
-

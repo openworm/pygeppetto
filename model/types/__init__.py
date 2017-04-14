@@ -1,4 +1,3 @@
-import pyecore.ecore as Ecore
 from .types import getEClassifier, eClassifiers
 from .types import name, nsURI, nsPrefix, eClass
 from .types import Type, VisualType, ImportType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, TextType, URLType, PointType, ArrayType, CompositeVisualType, ConnectionType, SimpleType, ImageType
@@ -22,4 +21,3 @@ for classif in eClassifiers.values():
 
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
-

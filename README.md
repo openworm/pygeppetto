@@ -25,6 +25,15 @@ This will load the pygeppetto API and name it `pygeppetto`. Then, you can create
 instances and handle them:
 
 ```Python
+# We create a new lib
+flib = pygeppetto.GeppettoLibrary(name='mylib')
+# We create a GeppettoModel instance and we set a name a assign a lib
+root = pygeppetto.GeppettoModel(name='MyGeppettoModel', libraries=[flib])
+```
+
+The pygeppetto API also allows you to set all attributes in a "classical" fashion: 
+
+```Python
 root = pygeppetto.GeppettoModel()  # We create a GeppettoModel instance
 root.name = 'MyGeppettoModel'  # We set a name
 flib = pygeppetto.GeppettoLibrary()  # We create a new lib

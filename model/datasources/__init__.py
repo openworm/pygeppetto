@@ -1,4 +1,3 @@
-import pyecore.ecore as Ecore
 from .datasources import getEClassifier, eClassifiers
 from .datasources import name, nsURI, nsPrefix, eClass
 from .datasources import DataSource, DataSourceLibraryConfiguration, Query, ProcessQuery, SimpleQuery, CompoundQuery, CompoundRefQuery, QueryResults, RunnableQuery, AQueryResult, QueryResult, SerializableQueryResult, QueryMatchingCriteria, BooleanOperator
@@ -22,4 +21,3 @@ for classif in eClassifiers.values():
 
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
-

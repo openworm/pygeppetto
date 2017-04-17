@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 
 setup(
     name="pygeppetto",
@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     package_data={'': ['README.md']},
     include_package_data=True,
-    install_requires=['pyecore>=0.1.2'],
+    install_requires=['pyecore>=0.2.0'],
     extras_require={'testing': ['pytest']},
     classifiers=[
         "Programming Language :: Python",

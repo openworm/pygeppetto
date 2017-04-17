@@ -1,4 +1,3 @@
-import pyecore.ecore as Ecore
 from .variables import getEClassifier, eClassifiers
 from .variables import name, nsURI, nsPrefix, eClass
 from .variables import Variable, TypeToValueMap
@@ -22,4 +21,3 @@ for classif in eClassifiers.values():
 
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
-

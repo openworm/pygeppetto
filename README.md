@@ -3,7 +3,7 @@
 Home of the Geeppetto Python API.
 The API allows to create a Geppetto Model from Python.
 
-## Installation
+## Installation
 
 Until pygeppetto is still in development, it is highly recommended to use a
 virtualenv in order to deploy it. Once you have a dedicated virtualenv, you
@@ -25,6 +25,15 @@ This will load the pygeppetto API and name it `pygeppetto`. Then, you can create
 instances and handle them:
 
 ```Python
+# We create a new lib
+flib = pygeppetto.GeppettoLibrary(name='mylib')
+# We create a GeppettoModel instance and we set a name a assign a lib
+root = pygeppetto.GeppettoModel(name='MyGeppettoModel', libraries=[flib])
+```
+
+The pygeppetto API also allows you to set all attributes in a "classical" fashion: 
+
+```Python
 root = pygeppetto.GeppettoModel()  # We create a GeppettoModel instance
 root.name = 'MyGeppettoModel'  # We set a name
 flib = pygeppetto.GeppettoLibrary()  # We create a new lib
@@ -32,8 +41,8 @@ flib.name = 'mylib'
 root.libraries.append(flib)  # We add the new lib to the created root
 ```
 
-If you wan to open an existing XMI, you need to register first all the
-`EPackages` from the pygeppetto API:
+If you wan to open an existing XMI, you need to use a ``ResourceSet`` (not
+required, but prefered).
 
 ```Python
 # We import the class that will be used to read the XMI from PyEcore
@@ -41,14 +50,9 @@ from pyecore.resources import ResourceSet, URI
 
 # We create a new resource set (not required, but better)
 rset = ResourceSet()
-
-# Register all the EPackages of pygeppetto inside the ResourceSet
-rset.metamodel_registry[pygeppetto.nsURI] = pygeppetto
-for subpack in pygeppetto.eSubpackages:
-    rset.metamodel_registry[subpack.nsURI] = subpack
 ```
 
-Then, we are able to read Geppetto XMI:
+Using this ``ResourceSet``, we are able to read the Geppetto XMI:
 
 ```Python
 model_url = URI('tests/xmi-data/MediumNet.net.nml.xmi')  # The model URI
@@ -73,7 +77,7 @@ resource.save(output=URI('my_new_file.xmi'))
 ## Dependencies
 
 * Python >= 3.3
-* `pyecore` >= 0.1.2
+* `pyecore` >= 0.2.0
 
 ## Contributions
 
@@ -88,7 +92,7 @@ there is manual modifications in the current version).
 1. Run the tests
 
 
-### How to Generate a New Version
+### How to Generate a New Version
 
 The pygeppetto API is generated from the
 [`geppettoModel.ecore`](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)

@@ -4,11 +4,6 @@ import model as pygeppetto
 # We create a new resource set (not required, but better)
 rset = ResourceSet()
 
-# Register all the EPackages of pygeppetto inside the ResourceSet
-rset.metamodel_registry[pygeppetto.nsURI] = pygeppetto
-for subpack in pygeppetto.eSubpackages:
-    rset.metamodel_registry[subpack.nsURI] = subpack
-
 model_url = URI('tests/xmi-data/MediumNet.net.nml.xmi')  # > 3100 objects
 resource = rset.get_resource(model_url)  # We load the model
 geppettomodel = resource.contents[0]  # We get the root

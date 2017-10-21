@@ -6,8 +6,8 @@ The API allows to create a Geppetto Model from Python.
 ## Installation
 
 Until pygeppetto is still in development, it is highly recommended to use a
-virtualenv in order to deploy it. Once you have a dedicated virtualenv, you
-can simply install pygeppetto:
+virtualenv in order to deploy it. Once you have a dedicated virtualenv, you can
+simply install pygeppetto:
 
 ```bash
 $ python setup.py install
@@ -31,7 +31,8 @@ flib = pygeppetto.GeppettoLibrary(name='mylib')
 root = pygeppetto.GeppettoModel(name='MyGeppettoModel', libraries=[flib])
 ```
 
-The pygeppetto API also allows you to set all attributes in a "classical" fashion: 
+The pygeppetto API also allows you to set all attributes in a "classical"
+fashion:
 
 ```Python
 root = pygeppetto.GeppettoModel()  # We create a GeppettoModel instance
@@ -76,8 +77,8 @@ resource.save(output=URI('my_new_file.xmi'))
 
 ## Dependencies
 
-* Python >= 3.3
-* `pyecore` >= 0.2.0
+* Python 2.7
+* `pyecore-py2`
 
 ## Contributions
 
@@ -119,4 +120,5 @@ tests the following command is enough:
 $ tox
 ```
 
-Currently, the tests are only related to the ability to read/write tests models.
+Currently, the tests are only related to the ability to read/write more or less
+huge tests models.

@@ -17,7 +17,8 @@ getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 BooleanOperator = EEnum('BooleanOperator', literals=['AND', 'NAND', 'OR'])  # noqa
 
 
-class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
+class DataSourceLibraryConfiguration(EObject):
+    __metaclass__ = MetaEClass
     modelInterpreterId = EAttribute(eType=EString)
     format = EAttribute(eType=EString)
     library = EReference()
@@ -26,7 +27,7 @@ class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super().__init__()
+        super(DataSourceLibraryConfiguration, self).__init__()
         if modelInterpreterId is not None:
             self.modelInterpreterId = modelInterpreterId
         if format is not None:
@@ -35,7 +36,8 @@ class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
             self.library = library
 
 
-class QueryResults(EObject, metaclass=MetaEClass):
+class QueryResults(EObject):
+    __metaclass__ = MetaEClass
     id = EAttribute(eType=EString)
     header = EAttribute(eType=EString, upper=-1)
     results = EReference(upper=-1, containment=True)
@@ -44,7 +46,7 @@ class QueryResults(EObject, metaclass=MetaEClass):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super().__init__()
+        super(QueryResults, self).__init__()
         if id is not None:
             self.id = id
         if header:
@@ -55,7 +57,8 @@ class QueryResults(EObject, metaclass=MetaEClass):
         raise NotImplementedError('Operation getValue(...) is not yet implemented')
 
 
-class RunnableQuery(EObject, metaclass=MetaEClass):
+class RunnableQuery(EObject):
+    __metaclass__ = MetaEClass
     targetVariablePath = EAttribute(eType=EString)
     queryPath = EAttribute(eType=EString)
     booleanOperator = EAttribute(eType=BooleanOperator)
@@ -64,7 +67,7 @@ class RunnableQuery(EObject, metaclass=MetaEClass):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super().__init__()
+        super(RunnableQuery, self).__init__()
         if targetVariablePath is not None:
             self.targetVariablePath = targetVariablePath
         if queryPath is not None:
@@ -74,23 +77,25 @@ class RunnableQuery(EObject, metaclass=MetaEClass):
 
 
 @abstract
-class AQueryResult(EObject, metaclass=MetaEClass):
+class AQueryResult(EObject):
+    __metaclass__ = MetaEClass
 
     def __init__(self, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super().__init__()
+        super(AQueryResult, self).__init__()
 
 
-class QueryMatchingCriteria(EObject, metaclass=MetaEClass):
+class QueryMatchingCriteria(EObject):
+    __metaclass__ = MetaEClass
     type = EReference(upper=-1)
 
     def __init__(self, type=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super().__init__()
+        super(QueryMatchingCriteria, self).__init__()
         if type:
             self.type.extend(type)
 
@@ -99,7 +104,7 @@ class QueryResult(AQueryResult):
     values = EAttribute(eType=EJavaObject, upper=-1)
 
     def __init__(self, values=None, **kwargs):
-        super().__init__(**kwargs)
+        super(QueryResult, self).__init__(**kwargs)
         if values:
             self.values.extend(values)
 
@@ -108,7 +113,7 @@ class SerializableQueryResult(AQueryResult):
     values = EAttribute(eType=EString, upper=-1)
 
     def __init__(self, values=None, **kwargs):
-        super().__init__(**kwargs)
+        super(SerializableQueryResult, self).__init__(**kwargs)
         if values:
             self.values.extend(values)
 
@@ -123,7 +128,7 @@ class DataSource(Node):
     fetchVariableQuery = EReference(containment=True)
 
     def __init__(self, dataSourceService=None, libraryConfigurations=None, url=None, queries=None, dependenciesLibrary=None, targetLibrary=None, fetchVariableQuery=None, **kwargs):
-        super().__init__(**kwargs)
+        super(DataSource, self).__init__(**kwargs)
         if dataSourceService is not None:
             self.dataSourceService = dataSourceService
         if url is not None:
@@ -148,7 +153,7 @@ class Query(Node):
     returnType = EReference()
 
     def __init__(self, description=None, matchingCriteria=None, runForCount=None, returnType=None, **kwargs):
-        super().__init__(**kwargs)
+        super(Query, self).__init__(**kwargs)
         if description is not None:
             self.description = description
         if runForCount is not None:
@@ -164,7 +169,7 @@ class ProcessQuery(Query):
     parameters = EReference(upper=-1, containment=True)
 
     def __init__(self, parameters=None, queryProcessorId=None, **kwargs):
-        super().__init__(**kwargs)
+        super(ProcessQuery, self).__init__(**kwargs)
         if queryProcessorId is not None:
             self.queryProcessorId = queryProcessorId
         if parameters:
@@ -176,7 +181,7 @@ class SimpleQuery(Query):
     countQuery = EAttribute(eType=EString)
 
     def __init__(self, query=None, countQuery=None, **kwargs):
-        super().__init__(**kwargs)
+        super(SimpleQuery, self).__init__(**kwargs)
         if query is not None:
             self.query = query
         if countQuery is not None:
@@ -188,7 +193,7 @@ class CompoundQuery(Query):
     queryChain = EReference(upper=-1, containment=True)
 
     def __init__(self, queryChain=None, **kwargs):
-        super().__init__(**kwargs)
+        super(CompoundQuery, self).__init__(**kwargs)
         if queryChain:
             self.queryChain.extend(queryChain)
 
@@ -198,6 +203,6 @@ class CompoundRefQuery(Query):
     queryChain = EReference(upper=-1)
 
     def __init__(self, queryChain=None, **kwargs):
-        super().__init__(**kwargs)
+        super(CompoundRefQuery, self).__init__(**kwargs)
         if queryChain:
             self.queryChain.extend(queryChain)

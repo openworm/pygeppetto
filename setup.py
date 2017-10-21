@@ -15,7 +15,7 @@ setup(
     packages=find_packages(),
     package_data={'': ['README.md']},
     include_package_data=True,
-    install_requires=['pyecore>=0.2.0'],
+    install_requires=['pyecore-py2'],
     extras_require={'testing': ['pytest']},
     classifiers=[
         "Programming Language :: Python",

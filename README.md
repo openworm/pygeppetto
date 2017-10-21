@@ -98,7 +98,7 @@ there is manual modifications in the current version).
 The pygeppetto API is generated from the
 [`geppettoModel.ecore`](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)
 using the PyEcore Acceleo generator
-([`ecore2pyecore.mtl`](https://github.com/aranega/pyecore/blob/develop/generator/ecore2pyecore.mtl)).
+([`ecore2pyecore.mtl`](https://github.com/pyecore/pyecore-py2/blob/master/generator/ecore2pyecore.mtl)).
 The `.ecore` is a copy of the `geppettoModel.ecore` from
 [org.geppetto.model](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)
 (`development` branch). The script can be directly used in Eclipse as a simple

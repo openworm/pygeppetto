@@ -8,6 +8,7 @@ __all__ = ['DataSource', 'DataSourceLibraryConfiguration', 'Query', 'ProcessQuer
 
 eSubpackages = []
 eSuperPackage = model
+datasources.eSubpackages = eSubpackages
 
 
 # Manage all other EClassifiers (EEnum, EDatatypes...)

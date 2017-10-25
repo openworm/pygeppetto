@@ -16,6 +16,7 @@ __all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'Experi
 
 eSubpackages = [types, values, variables, datasources]
 eSuperPackage = None
+model.eSubpackages = eSubpackages
 
 # Non opposite EReferences
 GeppettoModel.variables.eType = Variable

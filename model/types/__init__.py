@@ -8,6 +8,7 @@ __all__ = ['Type', 'VisualType', 'ImportType', 'CompositeType', 'PointerType', '
 
 eSubpackages = []
 eSuperPackage = model
+types.eSubpackages = eSubpackages
 
 
 # Manage all other EClassifiers (EEnum, EDatatypes...)

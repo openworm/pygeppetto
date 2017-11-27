@@ -1,6 +1,7 @@
 from .utils.stringuri import StringURI
 from .geppetto_resource import GeppettoResource
 from pyecore.resources import ResourceSet
+from pyecore.resources.json import JsonOptions
 
 class GeppettoModelSerializer():
 
@@ -13,5 +14,5 @@ class GeppettoModelSerializer():
         resource.append(geppetto_model)
 
         #TODO: We need to apply a visitor and set all the serialised objects to synched
-        resource.save()
+        resource.save(options={JsonOptions.SERIALIZE_DEFAULT_VALUES: True})
         return uri.getvalue()

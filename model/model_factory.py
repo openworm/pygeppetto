@@ -1,6 +1,6 @@
 from model import GeppettoModel
 from .variables import Variable, TypeToValueMap
-from .values import Cylinder, Point, PhysicalQuantity
+from .values import Cylinder, Sphere, Point, PhysicalQuantity
 from pyecore.resources import ResourceSet, URI
 import os.path
 
@@ -24,6 +24,13 @@ class GeppettoModelFactory():
         cylinder.distal=distal
         cylinder.position=position
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[8],cylinder))
+        return variable
+
+    def createSphere(self, id, radius=1.0,position=Point()):
+        variable = Variable(id=id)
+        variable.types.append(self.geppetto_common_library.types[8])
+        sphere = Sphere(radius=radius, position=position)
+        variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[8],sphere))
         return variable
 
     def createStateVariable(self, id, initialValue=PhysicalQuantity()):

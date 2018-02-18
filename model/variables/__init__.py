@@ -8,6 +8,7 @@ __all__ = ['Variable', 'TypeToValueMap']
 
 eSubpackages = []
 eSuperPackage = model
+variables.eSubpackages = eSubpackages
 
 
 # Manage all other EClassifiers (EEnum, EDatatypes...)

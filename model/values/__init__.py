@@ -8,6 +8,7 @@ __all__ = ['Value', 'Composite', 'StringToValueMap', 'Quantity', 'PhysicalQuanti
 
 eSubpackages = []
 eSuperPackage = model
+values.eSubpackages = eSubpackages
 
 
 # Manage all other EClassifiers (EEnum, EDatatypes...)

@@ -2,14 +2,16 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "0.1.0"
+__version__ = "0.3.9"
 
 setup(
     name="pygeppetto",
     version=__version__,
-    description=("Geeppetto Python API."
-                 "The API allows to create a Geppetto Model from Python."),
-    long_description=open('README.md').read(),
+    description=("Geppetto Python API for creating a Geppetto Model from Python"),
+    author="The Geppetto Development Team",
+    author_email="info@geppetto.org",
+    license="MIT",
+    long_description=open('README.rst').read(),
     keywords="geppetto openworm Python",
     url="https://github.com/openworm/pygeppetto",
     packages=find_packages(),
@@ -19,7 +21,9 @@ setup(
     extras_require={'testing': ['pytest']},
     classifiers=[
         "Programming Language :: Python",
-        "Programming Language :: Python :: 3 :: Only",
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Topic :: Software Development",

@@ -1,6 +1,6 @@
 from model import GeppettoModel
 from .variables import Variable, TypeToValueMap
-from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries
+from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit
 from pyecore.resources import ResourceSet, URI
 import os.path
 
@@ -33,8 +33,10 @@ class GeppettoModelFactory():
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[8],sphere))
         return variable
 
-    def createTimeSeries(self, id, values):
-        ts = TimeSeries(value=values)
+    def createTimeSeries(self, id, values, unit):
+        if unit:
+            unit = Unit(unit)
+        ts = TimeSeries(value=values, unit=unit)
         return ts
 
     def createStateVariable(self, id, initialValue=None):

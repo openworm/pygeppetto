@@ -33,7 +33,7 @@ class GeppettoModelFactory():
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[8],sphere))
         return variable
 
-    def createTimeSeries(self, id, values, unit):
+    def createTimeSeries(self, id, values, unit=None):
         if unit:
             unit = Unit(unit)
         ts = TimeSeries(value=values, unit=unit)

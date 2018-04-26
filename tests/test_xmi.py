@@ -8,11 +8,12 @@ from model.model_factory import GeppettoModelFactory
 def rset():
     return ResourceSet()
 
+
 def test_model_factory():
     factory = GeppettoModelFactory()
     geppetto_model = factory.createGeppettoModel('testModel');
-    print geppetto_model
     assert geppetto_model
+
 
 def test_read_mediumXMI(rset):
     resource = rset.get_resource(URI('tests/xmi-data/MediumNet.net.nml.xmi'))
@@ -105,6 +106,7 @@ def test_roundtrip_LargeXMI(tmpdir, rset):
     root = resource.contents[0]
     assert root
     assert root.name == 'largeTestModel'
+
 
 if __name__ == '__main__':
     test_model_factory()

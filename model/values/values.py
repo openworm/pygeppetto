@@ -18,8 +18,8 @@ Connectivity = EEnum('Connectivity', literals=['DIRECTIONAL', 'BIDIRECTIONAL', '
 ImageFormat = EEnum('ImageFormat', literals=['PNG', 'JPEG', 'IIP'])  # noqa
 
 
+@EMetaclass
 class StringToValueMap(EObject):
-    __metaclass__ = MetaEClass
     key = EAttribute(eType=EString)
     value = EReference()
 
@@ -34,8 +34,8 @@ class StringToValueMap(EObject):
             self.value = value
 
 
+@EMetaclass
 class PointerElement(EObject):
-    __metaclass__ = MetaEClass
     index = EAttribute(eType=EInteger)
     variable = EReference()
     type = EReference()
@@ -53,8 +53,8 @@ class PointerElement(EObject):
             self.type = type
 
 
+@EMetaclass
 class FunctionPlot(EObject):
-    __metaclass__ = MetaEClass
     title = EAttribute(eType=EString)
     xAxisLabel = EAttribute(eType=EString)
     yAxisLabel = EAttribute(eType=EString)
@@ -81,8 +81,8 @@ class FunctionPlot(EObject):
             self.stepValue = stepValue
 
 
+@EMetaclass
 class SkeletonTransformation(EObject):
-    __metaclass__ = MetaEClass
     skeletonTransformation = EAttribute(eType=EDouble, upper=-1)
 
     def __init__(self, skeletonTransformation=None, **kwargs):

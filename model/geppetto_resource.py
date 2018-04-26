@@ -1,7 +1,14 @@
-from backports.functools_lru_cache import lru_cache
-from chainmap import ChainMap
+try:
+    from functools import lru_cache
+except ImportError:
+    from backports.functools_lru_cache import lru_cache
+try:
+    from collections import ChainMap
+except ImportError:
+    from chainmap import ChainMap
 from pyecore.resources.json import JsonResource
 from . import eClassifiers, datasources, types, values, variables
+
 
 class GeppettoResource(JsonResource):
     packages = [eClassifiers,

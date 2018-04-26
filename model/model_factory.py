@@ -4,6 +4,7 @@ from .values import Cylinder, Sphere, Point, PhysicalQuantity
 from pyecore.resources import ResourceSet, URI
 import os.path
 
+
 class GeppettoModelFactory():
 
     def __init__(self):
@@ -40,4 +41,3 @@ class GeppettoModelFactory():
             pass
             #Create value and add it
         return variable
-

@@ -15,9 +15,8 @@ getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
 
 
-
+@EMetaclass
 class TypeToValueMap(EObject):
-    __metaclass__ = MetaEClass
     key = EReference()
     value = EReference(containment=True)
 

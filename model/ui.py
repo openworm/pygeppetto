@@ -1,4 +1,8 @@
-import StringIO
+try:
+    from io import StringIO
+except ImportError:
+    import StringIO
+
 
 def getSVG(fig):
     if isinstance(fig, list):
@@ -8,8 +12,9 @@ def getSVG(fig):
         return svgs
     return getSingleSVG(fig)
 
+
 def getSingleSVG(fig):
-    imgdata = StringIO.StringIO()
+    imgdata = StringIO()
     fig.savefig(imgdata, format='svg', transparent=True)
     imgdata.seek(0)  # rewind the data
     svg_dta = imgdata.buf  # this is svg data

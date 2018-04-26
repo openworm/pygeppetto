@@ -1,4 +1,4 @@
-from model import GeppettoModel
+from .model import GeppettoModel
 from .variables import Variable, TypeToValueMap
 from .values import Cylinder, Sphere, Point, PhysicalQuantity
 from pyecore.resources import ResourceSet, URI
@@ -9,7 +9,9 @@ class GeppettoModelFactory():
 
     def __init__(self):
         rset = ResourceSet()
-        model_url = URI(os.path.join(os.path.dirname(__file__), '../ecore/GeppettoCommonLibrary.xmi'))  # The model URI
+        model_url = URI(os.path.join(os.path.dirname(__file__),
+                                     '..', '..',
+                                     'ecore', 'GeppettoCommonLibrary.xmi'))  # The model URI
         resource = rset.get_resource(model_url)  # We load the model
         self.geppetto_common_library = resource.contents[0]  # We get the root
 

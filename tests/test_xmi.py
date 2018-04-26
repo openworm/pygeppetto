@@ -1,7 +1,6 @@
 import pytest
 from pyecore.resources import ResourceSet, URI
-import model as pygeppetto
-from model.model_factory import GeppettoModelFactory
+from pygeppetto.model.model_factory import GeppettoModelFactory
 
 
 @pytest.fixture
@@ -11,7 +10,7 @@ def rset():
 
 def test_model_factory():
     factory = GeppettoModelFactory()
-    geppetto_model = factory.createGeppettoModel('testModel');
+    geppetto_model = factory.createGeppettoModel('testModel')
     assert geppetto_model
 
 

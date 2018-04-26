@@ -1,8 +1,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from model import ISynchable
-from model import Node
+from ..model import ISynchable
+from ..model import Node
 
 name = 'types'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//types'

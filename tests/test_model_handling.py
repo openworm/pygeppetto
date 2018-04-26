@@ -24,3 +24,4 @@ def test_create_pygeppetto_model_tag():
     tag = Tag()
     model = GeppettoModel()
     model.tags.append(tag)
+    assert tag in model.tags

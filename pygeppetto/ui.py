@@ -10,6 +10,8 @@ def getSVG(fig):
         for f in fig:
             svgs.append(getSingleSVG(f))
         return svgs
+        # Could be written:
+        # return [getSingleSVG(f) for f in fig]
     return getSingleSVG(fig)
 
 

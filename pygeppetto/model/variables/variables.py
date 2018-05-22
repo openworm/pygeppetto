@@ -1,8 +1,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from model import ISynchable
-from model import Node
+from ..model import ISynchable
+from ..model import Node
 
 name = 'variables'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//variables'
@@ -15,9 +15,8 @@ getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
 
 
-
+@EMetaclass
 class TypeToValueMap(EObject):
-    __metaclass__ = MetaEClass
     key = EReference()
     value = EReference(containment=True)
 

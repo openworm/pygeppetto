@@ -15,9 +15,9 @@ getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 FileFormat = EEnum('FileFormat', literals=['ZIP', 'HDF5'])  # noqa
 
 
+@EMetaclass
 class GeppettoModel(EObject):
     """The root of every Geppetto model"""
-    __metaclass__ = MetaEClass
     id = EAttribute(eType=EString)
     name = EAttribute(eType=EString)
     variables = EReference(upper=-1, containment=True)
@@ -47,8 +47,8 @@ class GeppettoModel(EObject):
             self.queries.extend(queries)
 
 
+@EMetaclass
 class LibraryManager(EObject):
-    __metaclass__ = MetaEClass
     libraries = EReference(upper=-1, containment=True)
 
     def __init__(self, libraries=None, **kwargs):
@@ -60,8 +60,8 @@ class LibraryManager(EObject):
             self.libraries.extend(libraries)
 
 
+@EMetaclass
 class ExperimentState(EObject):
-    __metaclass__ = MetaEClass
     experimentId = EAttribute(eType=ELong)
     projectId = EAttribute(eType=ELong)
     recordedVariables = EReference(upper=-1, containment=True)
@@ -82,8 +82,8 @@ class ExperimentState(EObject):
             self.setParameters.extend(setParameters)
 
 
+@EMetaclass
 class VariableValue(EObject):
-    __metaclass__ = MetaEClass
     pointer = EReference(containment=True)
     value = EReference(containment=True)
 
@@ -98,8 +98,8 @@ class VariableValue(EObject):
             self.value = value
 
 
+@EMetaclass
 class DomainModel(EObject):
-    __metaclass__ = MetaEClass
     domainModel = EAttribute(eType=EJavaObject)
     format = EReference(containment=True)
 
@@ -114,8 +114,8 @@ class DomainModel(EObject):
             self.format = format
 
 
+@EMetaclass
 class ModelFormat(EObject):
-    __metaclass__ = MetaEClass
     modelFormat = EAttribute(eType=EString)
 
     def __init__(self, modelFormat=None, **kwargs):
@@ -127,8 +127,8 @@ class ModelFormat(EObject):
             self.modelFormat = modelFormat
 
 
+@EMetaclass
 class StringToStringMap(EObject):
-    __metaclass__ = MetaEClass
     key = EAttribute(eType=EString)
     value = EAttribute(eType=EString)
 
@@ -144,8 +144,8 @@ class StringToStringMap(EObject):
 
 
 @abstract
+@EMetaclass
 class ISynchable(EObject):
-    __metaclass__ = MetaEClass
     synched = EAttribute(eType=EBoolean)
 
     def __init__(self, synched=None, **kwargs):

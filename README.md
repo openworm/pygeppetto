@@ -77,8 +77,8 @@ resource.save(output=URI('my_new_file.xmi'))
 
 ## Dependencies
 
-* Python 2.7
-* `pyecore-py2`
+* Python 2.7 or Python >= 3.4
+* `pyecore-py2` for Python 2.7, `pyecore` for Python 3
 
 ## Contributions
 
@@ -120,5 +120,11 @@ tests the following command is enough:
 $ tox
 ```
 
+Or, if you want to avoid using `tox`, you can just:
+
+```bash
+$ python -m pytest tests/
+```
+
 Currently, the tests are only related to the ability to read/write more or less
-huge tests models.
+huge tests models. The test matrix used by tox considers Python 2 and Python 3.

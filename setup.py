@@ -1,8 +1,15 @@
 #!/usr/bin/env python
 
 from setuptools import setup, find_packages
+import sys
 
 __version__ = "0.3.9"
+
+if sys.version_info < (3, 3):
+    required_packages = ['pyecore-py2']
+else:
+    required_packages = ['pyecore']
+
 
 setup(
     name="pygeppetto",
@@ -17,12 +24,16 @@ setup(
     packages=find_packages(),
     package_data={'': ['README.md']},
     include_package_data=True,
-    install_requires=['pyecore-py2'],
+    install_requires=required_packages,
     extras_require={'testing': ['pytest']},
     classifiers=[
         "Programming Language :: Python",
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3.5',
+        'Programming Language :: Python :: 3.6',
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Topic :: Software Development",

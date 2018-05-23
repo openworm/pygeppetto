@@ -1,15 +1,17 @@
+
 try:
     from StringIO import StringIO
 except ImportError:
     from io import StringIO
 from pyecore.resources import URI
 
+
 class StringURI(URI):
 
     def __init__(self, uri, text=None):
         super(StringURI, self).__init__(uri)
         if text is not None:
-            self.__stream = io.StringIO(text)
+            self.__stream = StringIO(text)
 
     def getvalue(self):
         return self.__stream.getvalue()

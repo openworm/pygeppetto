@@ -10,7 +10,7 @@ class GeppettoModelFactory():
     def __init__(self):
         rset = ResourceSet()
         # Build the model URI
-        model_uri = URI(os.path.join(os.path.dirname(__file__), '..', '..',
+        model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
                                      'ecore', 'GeppettoCommonLibrary.xmi'))
         resource = rset.get_resource(model_uri)  # We load the model
         self.geppetto_common_library = resource.contents[0]  # We get the root

@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "0.3.9"
+__version__ = "0.1.0"
 
 setup(
     name="pygeppetto",
@@ -15,9 +15,12 @@ setup(
     keywords="geppetto openworm Python",
     url="https://github.com/openworm/pygeppetto",
     packages=find_packages(),
-    package_data={'': ['README.md']},
+    package_data={
+        '': ['README.md'],
+        '': ['ecore/*']
+    },
     include_package_data=True,
-    install_requires=['pyecore-py2'],
+    install_requires=['pyecore-py2==0.7.6'],
     extras_require={'testing': ['pytest']},
     classifiers=[
         "Programming Language :: Python",

@@ -2,7 +2,7 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "0.4.0.2"
+__version__ = "0.4.0.3"
 
 setup(
     name="pygeppetto",
@@ -16,7 +16,8 @@ setup(
     url="https://github.com/openworm/pygeppetto",
     packages=find_packages(),
     package_data={
-        '': ['README.md', 'ecore/GeppettoCommonLibrary.xmi', 'ecore/geppettoModel.ecore']
+        '': ['README.md'],
+        'model': ['ecore/*']
     },
     include_package_data=True,
     install_requires=['pyecore-py2==0.7.6'],

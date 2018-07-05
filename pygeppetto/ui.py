@@ -1,3 +1,9 @@
+import holoviews as hv
+
+hv.extension('bokeh')
+
+import uuid
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -21,3 +27,15 @@ def getSingleSVG(fig):
     imgdata.seek(0)  # rewind the data
     svg_dta = imgdata.buf  # this is svg data
     return svg_dta
+
+
+def get_url(obj, path):
+    """Saves obj in path and returns an object with the url."""
+    uuid_plot = path + str(uuid.uuid4())
+    try:
+        hv.renderer('bokeh').save(obj, uuid_plot)
+        data = {'url': '/' + uuid_plot + ".html"}
+    except:
+        data = {'url': ''}
+    return data
+

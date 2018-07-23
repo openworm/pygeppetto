@@ -46,6 +46,9 @@ class RuntimeProject(object):
         self.manager = manager
         self.project = project
 
+    def release(self):
+        pass
+
 
 class GeppettoManager(object):
     def __init__(self, manager=None):
@@ -58,7 +61,10 @@ class GeppettoManager(object):
     def is_project_open(self, project):
         return project in self.opened_projects
 
-    def is_user_project(self, project_id):
+    def is_user_project(self, project):
+        project_id = project
+        if hasattr(project, 'id'):
+            project_id = project.id
         if self.user:
             return any(p.id == project_id for p in self.user.projects)
         return False
@@ -69,9 +75,9 @@ class GeppettoManager(object):
                UserPrivileges.READ_PROJECT not in self.user.group.privileges:
                 raise GeppettoAccessException("Insufficient access rights to"
                                               "load project")
-            project_not_found = (not project.volatile and not project.public
-                                 and not self.is_user_project(project.id))
-            if project_not_found:
+            is_user_project = (project.volatile or project.public
+                               or self.is_user_project(project.id))
+            if not is_user_project:
                 raise GeppettoAccessException('Project not found for the '
                                               'current user')
 
@@ -83,9 +89,7 @@ class GeppettoManager(object):
         return runtime
 
     def close_project(self, project):
-        if not self.opened_projects:
-            return
-        if project not in self.opened_projects:
+        if not self.is_project_open(project):
             raise GeppettoExecutionException('A project without a runtime '
                                              'project cannot be closed')
         # try:
@@ -96,7 +100,7 @@ class GeppettoManager(object):
         del self.opened_projects[project]
 
     def get_runtime_project(self, project):
-        if project not in self.opened_projects:
+        if not self.is_project_open(project):
             try:
                 return self.load_project(project)
             except Exception:

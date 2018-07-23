@@ -52,3 +52,41 @@ def test__geppettomanager_load_access_no_rights():
     del manager.user.projects[0]
     with pytest.raises(GeppettoAccessException):
         manager.load_project(project)
+
+
+def test__geppettomanager_get_runtime_project():
+    manager = GeppettoManager()
+    manager.scope = Scope.RUN
+
+    project = LocalGeppettoProject(name='TestProject')
+    manager.load_project(project)
+    runtime = manager.get_runtime_project(project)
+    assert runtime.project is project
+    assert project in manager.opened_projects
+
+    project = LocalGeppettoProject(name='TestProject2')
+    runtime = manager.get_runtime_project(project)
+    assert runtime.project is project
+    assert project in manager.opened_projects
+
+    with pytest.raises(GeppettoExecutionException):
+        project = LocalGeppettoProject(name='TestProject3')
+        manager.scope = Scope.CONNECTION
+        manager.get_runtime_project(project)
+
+
+def test__geppettomanager_is_user_project():
+    manager = GeppettoManager()
+
+    project = LocalGeppettoProject(name='TestProject')
+    project.id = 123456789
+    manager.user = LocalUser(id=1, name='TestUser', projects=(project,),
+                             group=LocalUserGroup('TestGroup'))
+
+    assert manager.is_user_project(project) is True
+    assert manager.is_user_project(project.id) is True
+
+    project = LocalGeppettoProject(name='TestProject2')
+    project.id = 456789123
+    assert manager.is_user_project(project) is False
+    assert manager.is_user_project(project.id) is False

@@ -25,9 +25,9 @@ class LocalUser(object):
 
 
 class LocalGeppettoProject(object):
-    def __init__(self, name, experiments=None, geppetto_model=None):
-        self.id = None
-        self.active_experiment_id = -1
+    def __init__(self, name, experiments=None, geppetto_model=None, id_=None):
+        self.id = id_
+        self.active_experiment_id = None
         self.volatile = False
         self.public = False
         self.view = None

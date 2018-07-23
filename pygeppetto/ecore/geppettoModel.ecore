@@ -54,6 +54,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="tags" upperBound="-1" eType="#//Tag"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="GeppettoLibrary" eSuperTypes="#//Node">
+    <eOperations name="getTypeById" eType="#//types/Type"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="types" upperBound="-1"
         eType="#//types/Type" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="sharedTypes" upperBound="-1"
@@ -136,6 +137,8 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="url" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="referenceURL" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelInterpreterId" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="autoresolve" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
+          defaultValueLiteral="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="CompositeType" eSuperTypes="#//types/Type">
       <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
@@ -220,7 +223,8 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="StringToValueMap" instanceClassName="java.util.Map$Entry">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//values/Value"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//values/Value"
+          containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Quantity" eSuperTypes="#//values/Value">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="scalingFactor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
@@ -239,6 +243,10 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="scalingFactor" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" unique="false"
           upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="MDTimeSeries" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" upperBound="-1"
+          eType="#//values/Value" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="MetadataValue" abstract="true" eSuperTypes="#//values/Value"/>
     <eClassifiers xsi:type="ecore:EClass" name="Text" eSuperTypes="#//values/MetadataValue">
@@ -330,7 +338,10 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="distal" eType="#//values/Point"
           containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Particle" eSuperTypes="#//values/VisualValue #//values/Point"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Particles" eSuperTypes="#//values/Value">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="particles" upperBound="-1"
+          eType="#//values/Point" containment="true"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="SkeletonAnimation" eSuperTypes="#//values/VisualValue">
       <eStructuralFeatures xsi:type="ecore:EReference" name="skeletonTransformationSeries"
           upperBound="-1" eType="#//values/SkeletonTransformation"/>
@@ -386,6 +397,11 @@
       <eLiterals name="PNG" literal="PNG"/>
       <eLiterals name="JPEG" value="1" literal="JPEG"/>
       <eLiterals name="IIP" value="2" literal="IIP"/>
+      <eLiterals name="DCM" value="3" literal="DCM"/>
+      <eLiterals name="NIFTI" value="4" literal="NIFTI"/>
+      <eLiterals name="TIFF" value="5" literal="TIFF"/>
+      <eLiterals name="DZI" value="6" literal="DZI"/>
+      <eLiterals name="GOOGLE_MAP" value="7" literal="GOOGLE_MAP"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ImportValue" eSuperTypes="#//values/Value">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelInterpreterId" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>

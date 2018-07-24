@@ -1,3 +1,4 @@
+"""Definition of meta model 'model'."""
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
@@ -10,8 +11,6 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-
-
 FileFormat = EEnum('FileFormat', literals=['ZIP', 'HDF5'])  # noqa
 
 
@@ -206,3 +205,6 @@ class GeppettoLibrary(Node):
             self.types.extend(types)
         if sharedTypes:
             self.sharedTypes.extend(sharedTypes)
+
+    def getTypeById(self):
+        raise NotImplementedError('operation getTypeById(...) not yet implemented')

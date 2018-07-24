@@ -1,8 +1,9 @@
+"""Definition of meta model 'datasources'."""
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import ISynchable
-from ..model import Node
+from ..model import ISynchable, Node
+
 
 name = 'datasources'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//datasources'
@@ -12,9 +13,9 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-
-
 BooleanOperator = EEnum('BooleanOperator', literals=['AND', 'NAND', 'OR'])  # noqa
+
+
 
 
 @EMetaclass
@@ -53,6 +54,7 @@ class QueryResults(EObject):
             self.header.extend(header)
         if results:
             self.results.extend(results)
+
     def getValue(self, field, row):
         raise NotImplementedError('Operation getValue(...) is not yet implemented')
 

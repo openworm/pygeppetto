@@ -1,3 +1,4 @@
+"""Definition of meta model 'values'."""
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
@@ -12,16 +13,17 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-
-
 Connectivity = EEnum('Connectivity', literals=['DIRECTIONAL', 'BIDIRECTIONAL', 'NON_DIRECTIONAL'])  # noqa
-ImageFormat = EEnum('ImageFormat', literals=['PNG', 'JPEG', 'IIP'])  # noqa
+
+ImageFormat = EEnum('ImageFormat', literals=[
+                    'PNG', 'JPEG', 'IIP', 'DCM', 'NIFTI', 'TIFF', 'DZI', 'GOOGLE_MAP'])
+
 
 
 @EMetaclass
 class StringToValueMap(EObject):
     key = EAttribute(eType=EString)
-    value = EReference()
+    value = EReference(containment=True)
 
     def __init__(self, key=None, value=None, **kwargs):
         if kwargs:
@@ -146,6 +148,15 @@ class TimeSeries(Value):
             self.unit = unit
 
 
+class MDTimeSeries(Value):
+    value = EReference(containment=True, upper=-1)
+
+    def __init__(self, value=None, **kwargs):
+        super(MDTimeSeries, self).__init__(**kwargs)
+        if value:
+            self.value.extend(value)
+
+
 @abstract
 class MetadataValue(Value):
 
@@ -241,6 +252,15 @@ class VisualValue(Value):
             self.groupElements.extend(groupElements)
         if position is not None:
             self.position = position
+
+
+class Particles(Value):
+    particles = EReference(containment=True, upper=-1)
+
+    def __init__(self, particles=None, **kwargs):
+        super(Particles, self).__init__(**kwargs)
+        if particles:
+            self.particles.extend(particles)
 
 
 class VisualGroupElement(Node):
@@ -428,8 +448,3 @@ class SkeletonAnimation(VisualValue):
         if skeletonTransformationSeries:
             self.skeletonTransformationSeries.extend(skeletonTransformationSeries)
 
-
-class Particle(VisualValue, Point):
-
-    def __init__(self, **kwargs):
-        super(Particle, self).__init__(**kwargs)

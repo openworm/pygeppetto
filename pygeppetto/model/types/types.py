@@ -1,8 +1,8 @@
+"""Definition of meta model 'types'."""
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import ISynchable
-from ..model import Node
+from ..model import ISynchable, Node
 
 name = 'types'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//types'
@@ -12,8 +12,6 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-
-
 
 
 @abstract
@@ -36,8 +34,10 @@ class Type(Node):
             self.referencedVariables.extend(referencedVariables)
         if domainModel is not None:
             self.domainModel = domainModel
+
     def getDefaultValue(self):
         raise NotImplementedError('Operation getDefaultValue(...) is not yet implemented')
+
     def extendsType(self, type):
         raise NotImplementedError('Operation extendsType(...) is not yet implemented')
 
@@ -55,8 +55,9 @@ class ImportType(Type):
     url = EAttribute(eType=EString)
     referenceURL = EAttribute(eType=EString)
     modelInterpreterId = EAttribute(eType=EString)
+    autoresolve = EAttribute(eType=EBoolean, default_value=True)
 
-    def __init__(self, url=None, referenceURL=None, modelInterpreterId=None, **kwargs):
+    def __init__(self, url=None, referenceURL=None, modelInterpreterId=None, autoresolve=None, **kwargs):
         super(ImportType, self).__init__(**kwargs)
         if url is not None:
             self.url = url
@@ -64,6 +65,8 @@ class ImportType(Type):
             self.referenceURL = referenceURL
         if modelInterpreterId is not None:
             self.modelInterpreterId = modelInterpreterId
+        if autoresolve is not None:
+            self.autoresolve = autoresolve
 
 
 class CompositeType(Type):

@@ -3,7 +3,7 @@
 from setuptools import setup, find_packages
 import sys
 
-__version__ = "0.3.9"
+__version__ = "0.4.1"
 
 if sys.version_info < (3, 3):
     required_packages = ['pyecore-py2']

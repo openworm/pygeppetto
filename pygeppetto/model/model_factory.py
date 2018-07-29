@@ -1,3 +1,4 @@
+from pygeppetto.model import MDTimeSeries
 from .model import GeppettoModel
 from .variables import Variable, TypeToValueMap
 from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit
@@ -45,6 +46,10 @@ class GeppettoModelFactory():
             unit = Unit(unit)
         ts = TimeSeries(value=values, unit=unit)
         return ts
+
+    def createMDTimeSeries(self, id, values):
+        MD_ts = MDTimeSeries(value=values)
+        return MD_ts
 
     def createStateVariable(self, id, initialValue=None):
         initialValue = initialValue or PhysicalQuantity()

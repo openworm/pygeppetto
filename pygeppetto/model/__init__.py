@@ -3,7 +3,7 @@ from .model import getEClassifier, eClassifiers
 from .model import name, nsURI, nsPrefix, eClass
 from .model import GeppettoModel, Node, GeppettoLibrary, LibraryManager, ExperimentState, VariableValue, Tag, DomainModel, ModelFormat, ExternalDomainModel, FileFormat, StringToStringMap, ISynchable
 from .types import Type, VisualType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, TextType, URLType, PointType, ArrayType, CompositeVisualType, ConnectionType, ImageType
-from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, Argument, Expression, HTML, Text, URL, Point, ArrayValue, VisualGroup, Image, StringToValueMap, Unit, PointerElement, PhysicalQuantity, Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, Cylinder, SkeletonAnimation, Connection
+from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, Argument, Expression, HTML, Text, URL, Point, ArrayValue, VisualGroup, Image, StringToValueMap, Unit, Particles, PointerElement, PhysicalQuantity, Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, Cylinder, SkeletonAnimation, Connection, MDTimeSeries
 from .variables import Variable, TypeToValueMap
 from .datasources import DataSource, Query, DataSourceLibraryConfiguration, QueryMatchingCriteria, AQueryResult, ProcessQuery, CompoundQuery, CompoundRefQuery, QueryResults
 from . import model
@@ -12,11 +12,14 @@ from . import values
 from . import variables
 from . import datasources
 
-__all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'ExperimentState', 'VariableValue', 'Tag', 'DomainModel', 'ModelFormat', 'ExternalDomainModel', 'FileFormat', 'StringToStringMap', 'ISynchable']
+
+__all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'ExperimentState', 'VariableValue',
+           'Tag', 'DomainModel', 'ModelFormat', 'ExternalDomainModel', 'FileFormat', 'StringToStringMap', 'ISynchable']
 
 eSubpackages = [types, values, variables, datasources]
 eSuperPackage = None
 model.eSubpackages = eSubpackages
+model.eSuperPackage = eSuperPackage
 
 # Non opposite EReferences
 GeppettoModel.variables.eType = Variable
@@ -62,6 +65,7 @@ Composite.value.eType = StringToValueMap
 StringToValueMap.value.eType = Value
 PhysicalQuantity.unit.eType = Unit
 TimeSeries.unit.eType = Unit
+MDTimeSeries.value.eType = Value
 Pointer.elements.eType = PointerElement
 Pointer.point.eType = Point
 PointerElement.variable.eType = Variable
@@ -74,6 +78,7 @@ Function.functionPlot.eType = FunctionPlot
 VisualValue.groupElements.eType = VisualGroupElement
 VisualValue.position.eType = Point
 Cylinder.distal.eType = Point
+Particles.particles.eType = Point
 SkeletonAnimation.skeletonTransformationSeries.eType = SkeletonTransformation
 VisualGroupElement.parameter.eType = Quantity
 VisualGroup.visualGroupElements.eType = VisualGroupElement
@@ -111,7 +116,7 @@ Variable.types.eOpposite = Type.referencedVariables
 otherClassifiers = [FileFormat]
 for classif in otherClassifiers:
     eClassifiers[classif.name] = classif
-    classif._container = model
+    classif.ePackage = eClass
 
 for classif in eClassifiers.values():
     eClass.eClassifiers.append(classif.eClass)

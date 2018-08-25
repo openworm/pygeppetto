@@ -17,7 +17,6 @@ class BytesURI(URI):
         return self.__stream.getvalue()
 
     def create_instream(self):
-        self.__stream = open(self.plain, 'rb')
         return self.__stream
 
     def create_outstream(self):

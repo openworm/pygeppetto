@@ -153,7 +153,7 @@ class MDTimeSeries(Value):
 
     def __init__(self, value=None, **kwargs):
         super(MDTimeSeries, self).__init__(**kwargs)
-        if value:
+        if value is not None:
             self.value.extend(value)
 
 

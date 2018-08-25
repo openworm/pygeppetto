@@ -1,3 +1,4 @@
+
 try:
     from StringIO import StringIO
 except ImportError:
@@ -21,3 +22,4 @@ def getSingleSVG(fig):
     imgdata.seek(0)  # rewind the data
     svg_dta = imgdata.buf  # this is svg data
     return svg_dta
+

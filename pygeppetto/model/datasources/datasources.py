@@ -1,8 +1,9 @@
+"""Definition of meta model 'datasources'."""
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from model import ISynchable
-from model import Node
+from ..model import ISynchable, Node
+
 
 name = 'datasources'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//datasources'
@@ -12,13 +13,13 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-
-
 BooleanOperator = EEnum('BooleanOperator', literals=['AND', 'NAND', 'OR'])  # noqa
 
 
+
+
+@EMetaclass
 class DataSourceLibraryConfiguration(EObject):
-    __metaclass__ = MetaEClass
     modelInterpreterId = EAttribute(eType=EString)
     format = EAttribute(eType=EString)
     library = EReference()
@@ -36,8 +37,8 @@ class DataSourceLibraryConfiguration(EObject):
             self.library = library
 
 
+@EMetaclass
 class QueryResults(EObject):
-    __metaclass__ = MetaEClass
     id = EAttribute(eType=EString)
     header = EAttribute(eType=EString, upper=-1)
     results = EReference(upper=-1, containment=True)
@@ -53,12 +54,13 @@ class QueryResults(EObject):
             self.header.extend(header)
         if results:
             self.results.extend(results)
+
     def getValue(self, field, row):
         raise NotImplementedError('Operation getValue(...) is not yet implemented')
 
 
+@EMetaclass
 class RunnableQuery(EObject):
-    __metaclass__ = MetaEClass
     targetVariablePath = EAttribute(eType=EString)
     queryPath = EAttribute(eType=EString)
     booleanOperator = EAttribute(eType=BooleanOperator)
@@ -77,8 +79,8 @@ class RunnableQuery(EObject):
 
 
 @abstract
+@EMetaclass
 class AQueryResult(EObject):
-    __metaclass__ = MetaEClass
 
     def __init__(self, **kwargs):
         if kwargs:
@@ -87,8 +89,8 @@ class AQueryResult(EObject):
         super(AQueryResult, self).__init__()
 
 
+@EMetaclass
 class QueryMatchingCriteria(EObject):
-    __metaclass__ = MetaEClass
     type = EReference(upper=-1)
 
     def __init__(self, type=None, **kwargs):

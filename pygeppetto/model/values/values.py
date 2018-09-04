@@ -1,8 +1,9 @@
+"""Definition of meta model 'values'."""
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from model import ISynchable
-from model import Node
+from ..model import ISynchable
+from ..model import Node
 
 name = 'values'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//values'
@@ -12,16 +13,17 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-
-
 Connectivity = EEnum('Connectivity', literals=['DIRECTIONAL', 'BIDIRECTIONAL', 'NON_DIRECTIONAL'])  # noqa
-ImageFormat = EEnum('ImageFormat', literals=['PNG', 'JPEG', 'IIP'])  # noqa
+
+ImageFormat = EEnum('ImageFormat', literals=[
+                    'PNG', 'JPEG', 'IIP', 'DCM', 'NIFTI', 'TIFF', 'DZI', 'GOOGLE_MAP'])
 
 
+
+@EMetaclass
 class StringToValueMap(EObject):
-    __metaclass__ = MetaEClass
     key = EAttribute(eType=EString)
-    value = EReference()
+    value = EReference(containment=True)
 
     def __init__(self, key=None, value=None, **kwargs):
         if kwargs:
@@ -34,8 +36,8 @@ class StringToValueMap(EObject):
             self.value = value
 
 
+@EMetaclass
 class PointerElement(EObject):
-    __metaclass__ = MetaEClass
     index = EAttribute(eType=EInteger)
     variable = EReference()
     type = EReference()
@@ -53,8 +55,8 @@ class PointerElement(EObject):
             self.type = type
 
 
+@EMetaclass
 class FunctionPlot(EObject):
-    __metaclass__ = MetaEClass
     title = EAttribute(eType=EString)
     xAxisLabel = EAttribute(eType=EString)
     yAxisLabel = EAttribute(eType=EString)
@@ -81,8 +83,8 @@ class FunctionPlot(EObject):
             self.stepValue = stepValue
 
 
+@EMetaclass
 class SkeletonTransformation(EObject):
-    __metaclass__ = MetaEClass
     skeletonTransformation = EAttribute(eType=EDouble, upper=-1)
 
     def __init__(self, skeletonTransformation=None, **kwargs):
@@ -144,6 +146,15 @@ class TimeSeries(Value):
             self.value.extend(value)
         if unit is not None:
             self.unit = unit
+
+
+class MDTimeSeries(Value):
+    value = EReference(containment=True, upper=-1)
+
+    def __init__(self, value=None, **kwargs):
+        super(MDTimeSeries, self).__init__(**kwargs)
+        if value is not None:
+            self.value.extend(value)
 
 
 @abstract
@@ -241,6 +252,15 @@ class VisualValue(Value):
             self.groupElements.extend(groupElements)
         if position is not None:
             self.position = position
+
+
+class Particles(Value):
+    particles = EReference(containment=True, upper=-1)
+
+    def __init__(self, particles=None, **kwargs):
+        super(Particles, self).__init__(**kwargs)
+        if particles:
+            self.particles.extend(particles)
 
 
 class VisualGroupElement(Node):
@@ -428,8 +448,3 @@ class SkeletonAnimation(VisualValue):
         if skeletonTransformationSeries:
             self.skeletonTransformationSeries.extend(skeletonTransformationSeries)
 
-
-class Particle(VisualValue, Point):
-
-    def __init__(self, **kwargs):
-        super(Particle, self).__init__(**kwargs)

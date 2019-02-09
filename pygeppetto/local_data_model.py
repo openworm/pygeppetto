@@ -37,7 +37,8 @@ class LocalUser(object):
 
 
 class LocalGeppettoProject(object):
-    def __init__(self, name, experiments=None, geppetto_model=None, id_=None):
+    def __init__(self, name, experiments=None, geppetto_model=None, id_=None,
+                 url_base=None):
         self.id = id_
         self.active_experiment_id = None
         self.volatile = False
@@ -49,6 +50,7 @@ class LocalGeppettoProject(object):
         if experiments:
             self.experiments.extend(experiments)
         self.geppetto_model = geppetto_model
+        self.url_base = url_base
 
 
 class LocalUserGroup(object):

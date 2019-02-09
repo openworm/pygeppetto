@@ -1,5 +1,5 @@
 from .model import ExperimentState
-from .local_data_model import UserPrivileges
+from .local_data_model import UserPrivileges, ExperimentStatus
 from enum import Enum, unique
 import abc
 
@@ -28,6 +28,12 @@ class ProjectManager(object):
 
 class ExperimentManager(object):
     pass
+
+
+class ExperimentRunManager(object):
+    @classmethod
+    def queueExperiment(cls, user, experiment):
+        pass
 
 
 class RuntimeTreeManager(object):
@@ -69,6 +75,9 @@ class RuntimeExperiment(object):
         self.projet = project
         self.experiment = experiment
         self.state = ExperimentState()
+
+    def get_experiment_state(self, variables, url_base):
+        pass
 
 
 class GeppettoManager(object):
@@ -144,3 +153,26 @@ class GeppettoManager(object):
             raise GeppettoExecutionException(e)
 
         return runtime_project[experiment].state
+
+    def run_experiment(self, experiment):
+        if self.scope is not Scope.RUN and UserPrivileges.RUN_EXPERIMENT not in self.user.group.privileges:
+            raise GeppettoAccessException('Insufficient access right to load experiment')
+
+        if experiment.status is ExperimentStatus.DESIGN:
+            ExperimentRunManager.queueExperiment(self.user, experiment)
+        else:
+            raise GeppettoExecutionException('Cannot run an experiment whose '
+                                             'status is not design')
+
+
+    def get_experiment_state(self, experiment, variables):
+        if UserPrivileges.READ_PROJECT not in self.user.group.privileges:
+            raise GeppettoAccessException('Insufficient access rights to play '
+                                          'experiment');
+
+        if experiment.status is ExperimentStatus.COMPLETED:
+            project = experiment.parent_project
+            url_base = project.url_base
+            return self.get_runtime_project(project)[experiment].get_experiment_state(variables, url_base)
+        else:
+            raise GeppettoExecutionException('Cannot play an experiment whose status is not completed')

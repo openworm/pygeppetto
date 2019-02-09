@@ -11,6 +11,18 @@ class UserPrivileges(Enum):
     ADMIN = 'ADMIN'
 
 
+@unique
+class ExperimentStatus(Enum):
+    DESIGN = 'DESIGN'
+    QUEUED = 'QUEUED'
+    RUNNING = 'RUNNING'
+    ERROR = 'ERROR'
+    COMPLETED = 'COMPLETED'
+    DELETED = 'DELETED'
+    CANCELED = 'CANCELED'
+
+
+
 class LocalUser(object):
     def __init__(self, id, group, login=None, password=None, name=None,
                  projects=None):
@@ -49,3 +61,39 @@ class LocalUserGroup(object):
             self.privileges.extend(privileges)
         self.space_allowance = space_allowance
         self.simulation_time_allowance = time_allowance
+
+
+class LocalExperiment(object):
+    def __init__(self, name, project, description=None,
+                 status=ExperimentStatus.DESIGN, simulation_results=None,
+                 script=None, view=None):
+        self.id = None
+        self.name = name
+        self.parent_project = project
+        self.description = description
+        self.status = status
+        self.simulation_results = []
+        if simulation_results:
+            self.simulation_results.extend(simulation_results)
+        self.script = script
+        self.view = view
+        self.creation_date = None
+        self.last_modified = None
+        self.start_date = None
+        self.last_ran = None
+    #
+    #
+    # private List<LocalAspectConfiguration> aspectConfigurations;
+    #
+    #
+    #
+	# private Date creationDate;
+    #
+	# private Date lastModified;
+    #
+    #
+	# private Date startDate;
+    #
+	# private Date endDate;
+    #
+	# private Date lastRan;

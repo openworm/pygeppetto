@@ -1,3 +1,4 @@
+from .model import ExperimentState
 from .local_data_model import UserPrivileges
 from enum import Enum, unique
 import abc
@@ -45,9 +46,29 @@ class RuntimeProject(object):
     def __init__(self, project, manager):
         self.manager = manager
         self.project = project
+        self.experiments = {}
+        self.active_experiment = None
 
     def release(self):
         pass
+
+    def open_experiment(self, experiment):
+        self.experiments[experiment] = RuntimeExperiment(self, experiment)
+        self.active_experiment = experiment
+
+    def get_runtime_experiment(self, experiment):
+        return self.experiments[experiment]
+
+
+    def __getitem__(self, item):
+        return self.get_runtime_experiment(item)
+
+
+class RuntimeExperiment(object):
+    def __init__(self, project, experiment):
+        self.projet = project
+        self.experiment = experiment
+        self.state = ExperimentState()
 
 
 class GeppettoManager(object):
@@ -106,3 +127,20 @@ class GeppettoManager(object):
             except Exception:
                 raise GeppettoExecutionException()
         return self.opened_projects[project]
+
+    def load_experiment(self, experiment):
+        if self.scope is not Scope.RUN and UserPrivileges.READ_PROJECT not in self.user.group.privileges:
+            raise GeppettoAccessException('Insufficient access right to load experiment')
+
+        project = experiment.parent_project
+        if not self.is_project_open(project) or self.opened_projects[project] is None:
+            raise GeppettoExecutionException('Cannot load an experiment for '
+                                             'a project that was not loaded')
+
+        runtime_project = self.get_runtime_project(project)
+        try:
+            runtime_project.open_experiment(experiment)
+        except Exception as e:
+            raise GeppettoExecutionException(e)
+
+        return runtime_project[experiment].state

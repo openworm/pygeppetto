@@ -2,7 +2,8 @@ import pytest
 from pygeppetto.managers import GeppettoManager, GeppettoExecutionException, \
                                 GeppettoAccessException, Scope
 from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, \
-                                        LocalUserGroup, UserPrivileges
+                                        LocalUserGroup, UserPrivileges, \
+                                        LocalExperiment
 
 
 def test__geppettomanager_load_project():
@@ -90,3 +91,45 @@ def test__geppettomanager_is_user_project():
     project.id = 456789123
     assert manager.is_user_project(project) is False
     assert manager.is_user_project(project.id) is False
+
+
+def test__geppettomanager_close_project():
+    manager = GeppettoManager()
+
+    project = LocalGeppettoProject(name='TestProject')
+    project.volatile = True
+
+    manager.load_project(project)
+    assert manager.is_project_open(project) is True
+
+    manager.close_project(project)
+    assert manager.is_project_open(project) is False
+
+    project = LocalGeppettoProject(name='TestProject2')
+    with pytest.raises(GeppettoExecutionException):
+        manager.close_project(project)
+
+
+def test__geppettomanager_load_experiment():
+    manager = GeppettoManager()
+
+    project = LocalGeppettoProject(name='TestProject')
+    experiment = LocalExperiment(name='TestExperiment', project=project)
+
+    group = LocalUserGroup(name='TestGroup')
+    manager.user = LocalUser(id=1, name='TestUser', projects=(project,),
+                             group=group)
+
+    with pytest.raises(GeppettoAccessException):
+        manager.load_experiment(experiment)
+
+    group.privileges.append(UserPrivileges.READ_PROJECT)
+
+    with pytest.raises(GeppettoExecutionException):
+        manager.load_experiment(experiment)
+
+    manager.load_project(project)
+    state = manager.load_experiment(experiment)
+
+
+    assert state is not None

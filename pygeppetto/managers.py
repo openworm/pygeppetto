@@ -66,7 +66,6 @@ class RuntimeProject(object):
     def get_runtime_experiment(self, experiment):
         return self.experiments[experiment]
 
-
     def __getitem__(self, item):
         return self.get_runtime_experiment(item)
 
@@ -181,7 +180,7 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         return runtime_project[experiment].state
 
     @ensure(not_scope=Scope.RUN, rights=[UserPrivileges.RUN_EXPERIMENT],
-            message='load experiment')
+            message='run experiment')
     def run_experiment(self, experiment):
         if experiment.status is ExperimentStatus.DESIGN:
             ExperimentRunManager.queueExperiment(self.user, experiment)

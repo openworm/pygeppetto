@@ -6,6 +6,18 @@ from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, \
                                         LocalExperiment
 
 
+def test__geppettomanager_user_reaffectation():
+    user1 = LocalUser(id=1, name='user1', group=None)
+    user2 = LocalUser(id=2, name='user2', group=None)
+
+    manager = GeppettoManager()
+
+    manager.user = user1
+
+    with pytest.raises(GeppettoExecutionException):
+        manager.user = user2
+
+
 def test__geppettomanager_load_project():
     project = LocalGeppettoProject(name='TestProject')
     project.volatile = True

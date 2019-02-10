@@ -101,7 +101,7 @@ class GeppettoManager(object):
         if manager:
             self.opened_projects.update(manager.opened_projects)
         self.scope = Scope.CONNECTION
-        self.user = None
+        self._user = None
 
     def is_project_open(self, project):
         return project in self.opened_projects
@@ -113,6 +113,18 @@ class GeppettoManager(object):
         if self.user:
             return any(p.id == project_id for p in self.user.projects)
         return False
+
+    @property
+    def user(self):
+        return self._user
+
+    @user.setter
+    def user(self, value):
+        if self._user is not None:
+            message = """A GeppettoManager is being reused, an user was already set and the user attribute is beeing set again.
+Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
+            raise GeppettoExecutionException(message)
+        self._user = value
 
     def load_project(self, project):
         if self.scope is not Scope.RUN:

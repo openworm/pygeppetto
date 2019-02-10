@@ -1,6 +1,7 @@
 from .model import ExperimentState
 from .local_data_model import UserPrivileges, ExperimentStatus
 from enum import Enum, unique
+import functools
 import abc
 
 
@@ -80,6 +81,20 @@ class RuntimeExperiment(object):
         pass
 
 
+def ensure(rights=None, not_scope=None, message="perform the required action"):
+    def inner_user_needs_rights(func):
+        @functools.wraps(func)
+        def manager_function(self, *args, **kwargs):
+            has_wrong_scope = not_scope is None or not_scope is not self.scope
+            for right in rights:
+                if has_wrong_scope and right not in self.user.group.privileges:
+                    raise GeppettoAccessException("Insufficient access rights to "
+                                                  + message)
+            return func(self, *args, **kwargs)
+        return manager_function
+    return inner_user_needs_rights
+
+
 class GeppettoManager(object):
     def __init__(self, manager=None):
         self.opened_projects = {}
@@ -137,10 +152,9 @@ class GeppettoManager(object):
                 raise GeppettoExecutionException()
         return self.opened_projects[project]
 
+    @ensure(not_scope=Scope.RUN, rights=[UserPrivileges.READ_PROJECT],
+            message='load experiment')
     def load_experiment(self, experiment):
-        if self.scope is not Scope.RUN and UserPrivileges.READ_PROJECT not in self.user.group.privileges:
-            raise GeppettoAccessException('Insufficient access right to load experiment')
-
         project = experiment.parent_project
         if not self.is_project_open(project) or self.opened_projects[project] is None:
             raise GeppettoExecutionException('Cannot load an experiment for '
@@ -154,25 +168,30 @@ class GeppettoManager(object):
 
         return runtime_project[experiment].state
 
+    @ensure(not_scope=Scope.RUN, rights=[UserPrivileges.RUN_EXPERIMENT],
+            message='load experiment')
     def run_experiment(self, experiment):
-        if self.scope is not Scope.RUN and UserPrivileges.RUN_EXPERIMENT not in self.user.group.privileges:
-            raise GeppettoAccessException('Insufficient access right to load experiment')
-
         if experiment.status is ExperimentStatus.DESIGN:
             ExperimentRunManager.queueExperiment(self.user, experiment)
         else:
             raise GeppettoExecutionException('Cannot run an experiment whose '
                                              'status is not design')
 
-
+    @ensure(rights=[UserPrivileges.READ_PROJECT], message='play experiment')
     def get_experiment_state(self, experiment, variables):
-        if UserPrivileges.READ_PROJECT not in self.user.group.privileges:
-            raise GeppettoAccessException('Insufficient access rights to play '
-                                          'experiment');
-
         if experiment.status is ExperimentStatus.COMPLETED:
             project = experiment.parent_project
             url_base = project.url_base
             return self.get_runtime_project(project)[experiment].get_experiment_state(variables, url_base)
         else:
             raise GeppettoExecutionException('Cannot play an experiment whose status is not completed')
+
+    # Not yet tested
+    @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='create new experiment')
+    def new_experiment(self, project):
+        experiment = None  # must implement DataManagerHelper
+        try:
+            self.get_runtime_project(project).populate_new_experiment(experiment)
+        except Exception as e:
+            raise GeppettoExecutionException(e)
+        return experiment

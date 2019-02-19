@@ -1,5 +1,5 @@
-from .model import ExperimentState
-from .local_data_model import UserPrivileges, ExperimentStatus
+from ..model import ExperimentState
+from ..local_data_model import UserPrivileges, ExperimentStatus
 from enum import Enum, unique
 import functools
 import abc
@@ -21,33 +21,7 @@ class GeppettoAccessException(Exception):
 class Scope(Enum):
     RUN = 0
     CONNECTION = 1
-
-
-class ProjectManager(object):
-    pass
-
-
-class ExperimentManager(object):
-    pass
-
-
-class ExperimentRunManager(object):
-    @classmethod
-    def queueExperiment(cls, user, experiment):
-        pass
-
-
-class RuntimeTreeManager(object):
-    pass
-
-
-class DataSourceManager(object):
-    pass
-
-
-class DownloadManager(object):
-    pass
-
+    
 
 class RuntimeProject(object):
     def __init__(self, project, manager):

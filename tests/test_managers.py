@@ -1,6 +1,7 @@
 import pytest
-from pygeppetto.managers import GeppettoManager, GeppettoExecutionException, \
-                                GeppettoAccessException, Scope
+from pygeppetto.managers.geppetto_manager import GeppettoExecutionException, \
+                                                 GeppettoAccessException, Scope
+from pygeppetto.managers import GeppettoManager
 from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, \
                                         LocalUserGroup, UserPrivileges, \
                                         LocalExperiment

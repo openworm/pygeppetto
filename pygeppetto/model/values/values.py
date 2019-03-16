@@ -131,9 +131,23 @@ class Unit(Value):
             self.unit = unit
 
 
+from pyecore.valuecontainer import EList
+
+
+def no_check_eattribute_extend(self, sublist):
+    super(EList, self).extend(sublist)
+    self.owner.notify(Notification(new=sublist,
+                                   feature=self.feature,
+                                   kind=Kind.ADD_MANY))
+    self.owner._isset.add(self.feature)
+
+
+EList.no_check_eattribute_extend = no_check_eattribute_extend
+
+
 class TimeSeries(Value):
     scalingFactor = EAttribute(eType=EInt)
-    value = EAttribute(eType=EDouble, upper=-1)
+    value = EAttribute(eType=EDouble, upper=-1, unique=False)
     unit = EReference(containment=True)
 
     def __init__(self, unit=None, scalingFactor=None, value=None, **kwargs):
@@ -141,7 +155,7 @@ class TimeSeries(Value):
         if scalingFactor is not None:
             self.scalingFactor = scalingFactor
         if value:
-            self.value.extend(value)
+            self.value.no_check_eattribute_extend(value)
         if unit is not None:
             self.unit = unit
 

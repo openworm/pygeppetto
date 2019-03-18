@@ -132,6 +132,7 @@ class Unit(Value):
 
 
 from pyecore.valuecontainer import EList
+from pyecore.notification import Notification, Kind
 
 
 def no_check_eattribute_extend(self, sublist):

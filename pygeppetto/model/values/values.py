@@ -135,7 +135,7 @@ class Unit(Value):
 
 class TimeSeries(Value):
     scalingFactor = EAttribute(eType=EInt)
-    value = EAttribute(eType=EDouble, upper=-1)
+    value = EAttribute(eType=EDouble, upper=-1, unique=False)
     unit = EReference(containment=True)
 
     def __init__(self, unit=None, scalingFactor=None, value=None, **kwargs):
@@ -447,4 +447,3 @@ class SkeletonAnimation(VisualValue):
         super(SkeletonAnimation, self).__init__(**kwargs)
         if skeletonTransformationSeries:
             self.skeletonTransformationSeries.extend(skeletonTransformationSeries)
-

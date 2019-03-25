@@ -1,6 +1,6 @@
 from .model import GeppettoModel
 from .variables import Variable, TypeToValueMap
-from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit
+from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue
 from pyecore.resources import ResourceSet, URI
 import os.path
 
@@ -45,6 +45,10 @@ class GeppettoModelFactory():
             unit = Unit(unit)
         ts = TimeSeries(value=values, unit=unit)
         return ts
+
+    def createImportValue(self):
+        iv = ImportValue()
+        return iv
 
     def createStateVariable(self, id, initialValue=None):
         initialValue = initialValue or PhysicalQuantity()

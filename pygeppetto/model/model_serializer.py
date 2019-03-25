@@ -17,3 +17,14 @@ class GeppettoModelSerializer():
         #TODO: We need to apply a visitor and set all the serialised objects to synched
         resource.save(options={JsonOptions.SERIALIZE_DEFAULT_VALUES: True})
         return uri.getvalue()
+
+    def serialize_value(self, geppetto_value, path):
+        rset = ResourceSet()
+        uri = BytesURI(path)
+        rset.resource_factory['*'] = lambda uri: GeppettoResource(uri, indent=2)
+        resource = rset.create_resource(uri)
+        resource.append(geppetto_value)
+
+        #TODO: We need to apply a visitor and set all the serialised objects to synched
+        resource.save(options={JsonOptions.SERIALIZE_DEFAULT_VALUES: True})
+        return uri.getvalue()

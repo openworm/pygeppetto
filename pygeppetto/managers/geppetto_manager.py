@@ -1,9 +1,11 @@
 from ..model import ExperimentState
 from ..local_data_model import UserPrivileges, ExperimentStatus
+from .experiment_run_manager import ExperimentRunManager
 from enum import Enum, unique
 import functools
 import abc
 
+from ..model.services import model_interpreter
 
 # Creates a Python 2 and 3 compatible base class
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
@@ -21,14 +23,20 @@ class GeppettoAccessException(Exception):
 class Scope(Enum):
     RUN = 0
     CONNECTION = 1
-    
+
 
 class RuntimeProject(object):
     def __init__(self, project, manager):
+        '''
+
+        :param project: pygeppetto.data_model.GeppettoProject
+        :param manager: GeppettoManager
+        '''
         self.manager = manager
         self.project = project
         self.experiments = {}
         self.active_experiment = None
+        self.model = model_interpreter.get_model_interpreter_from_library(project.getModel())
 
     def release(self):
         pass
@@ -39,6 +47,9 @@ class RuntimeProject(object):
 
     def get_runtime_experiment(self, experiment):
         return self.experiments[experiment]
+
+    def get_model(self):
+        return self.model
 
     def __getitem__(self, item):
         return self.get_runtime_experiment(item)
@@ -180,3 +191,8 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         except Exception as e:
             raise GeppettoExecutionException(e)
         return experiment
+
+    @ensure(rights=[UserPrivileges.READ_PROJECT], message='import value')
+    def resolveImportValue(self, path, experiment, geppettoProject):
+        # TODO implement resolveImportValue
+        pass

@@ -2,9 +2,10 @@ from ..model import ExperimentState
 from ..local_data_model import UserPrivileges, ExperimentStatus
 from .experiment_run_manager import ExperimentRunManager
 from enum import Enum, unique
+from ..model.utils.pointer_utility import PointerUtility
 import functools
 import abc
-
+from ..model.types import StateVariableType
 from ..model.services import model_interpreter
 
 # Creates a Python 2 and 3 compatible base class
@@ -53,6 +54,9 @@ class RuntimeProject(object):
 
     def __getitem__(self, item):
         return self.get_runtime_experiment(item)
+
+    def resolve_import_value(self, path):
+        return PointerUtility.get_value(self.model, path, StateVariableType)
 
 
 class RuntimeExperiment(object):
@@ -193,6 +197,5 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         return experiment
 
     @ensure(rights=[UserPrivileges.READ_PROJECT], message='import value')
-    def resolveImportValue(self, path, experiment, geppettoProject):
-        # TODO implement resolveImportValue
-        pass
+    def resolve_import_value(self, path, geppetto_project):
+        return self.get_runtime_project(geppetto_project).resolve_import_value(path)

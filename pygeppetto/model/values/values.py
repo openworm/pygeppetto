@@ -40,17 +40,27 @@ class PointerElement(EObject):
     variable = EReference()
     type = EReference()
 
-    def __init__(self, variable=None, type=None, index=None, **kwargs):
+    def __init__(self, variable=None, type=None, index=-1, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
         super(PointerElement, self).__init__()
-        if index is not None:
-            self.index = index
+
+        self.index = index
         if variable is not None:
             self.variable = variable
         if type is not None:
             self.type = type
+
+
+    def setVariable(self, variable):
+        self.variable = variable
+
+    def setType(self, tp):
+        self.type = tp
+
+    def setIndex(self,index):
+        self.index = index
 
 
 @EMetaclass
@@ -161,6 +171,7 @@ class TimeSeries(Value):
             self.unit = unit
 
 
+
 @abstract
 class MetadataValue(Value):
 
@@ -181,8 +192,27 @@ class Pointer(Value):
             self.elements.extend(elements)
         if point is not None:
             self.point = point
+
+
     def getInstancePath(self):
-        raise NotImplementedError('Operation getInstancePath(...) is not yet implemented')
+        """ generated source for method getInstancePath """
+        instancePath = []
+        for element in self.elements:
+            instancePath.append(element.variable.id)
+            instancePath.append("(" + element.type.id + ")")
+            if element.index is not None and element.index > -1:
+                instancePath.append("[{}]".format(element.index))
+            if self.elements[-1] != element:
+                instancePath.append(".")
+        return ''.join(instancePath)
+
+
+    def getElements(self):
+        return self.elements
+
+    def setPath(self, path):
+        self.path = path
+
 
 
 class Point(Value):

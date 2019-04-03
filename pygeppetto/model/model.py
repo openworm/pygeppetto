@@ -11,7 +11,6 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
-
 FileFormat = EEnum('FileFormat', literals=['ZIP', 'HDF5'])  # noqa
 
 
@@ -26,7 +25,8 @@ class GeppettoModel(EObject):
     dataSources = EReference(upper=-1, containment=True)
     queries = EReference(upper=-1, containment=True)
 
-    def __init__(self, variables=None, libraries=None, tags=None, id=None, name=None, dataSources=None, queries=None, **kwargs):
+    def __init__(self, variables=None, libraries=None, tags=None, id=None, name=None, dataSources=None, queries=None,
+                 **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
@@ -45,6 +45,12 @@ class GeppettoModel(EObject):
             self.dataSources.extend(dataSources)
         if queries:
             self.queries.extend(queries)
+
+    def getVariables(self):
+        return self.variables
+
+    def getLibraries(self):
+        return self.libraries
 
 
 @EMetaclass
@@ -171,8 +177,16 @@ class Node(ISynchable):
             self.name = name
         if tags:
             self.tags.extend(tags)
+
     def getPath(self):
-        raise NotImplementedError('Operation getPath(...) is not yet implemented')
+        """ generated source for method getPath """
+        if not (isinstance(self.eContainer(), GeppettoModel)) and isinstance(self.eContainer(), Node):
+            container = self.eContainer()
+            if container.eContainer().__class__.__name__ == "Variable": # cannot use isinstance here due to circular reference
+                container = container.eContainer()
+            return container.getPath() + "." + self.id
+        else:
+            return self.id
 
 
 class Tag(ISynchable):

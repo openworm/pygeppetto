@@ -1,8 +1,7 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import ISynchable
-from ..model import Node
+from pygeppetto.model.model import Node
 
 name = 'variables'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//variables'

@@ -1,39 +1,44 @@
 import unittest
-from pygeppetto import geppetto_manager
-from pygeppetto.local_data_model import LocalGeppettoProject
+from pygeppetto.managers import geppetto_manager
+from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, LocalUserGroup, UserPrivileges
 from pygeppetto.model.types import ImportType
-from .mocks import TestModelInterpreter
-
-def get_variable(geppetto_type, variablename):
-    for var in geppetto_type.variables:
-        if var.id == variablename:
-            return var
-    assert False, 'Variable not found: {}'.format(variablename)
+from pygeppetto.model.values import ImportValue
+from .mocks import MockModelInterpreter
+import pygeppetto.model.utils.pointer_utility as PointerUtility
+from pygeppetto.model.services.model_interpreter import add_model_interpreter
 
 class ImportValueTest(unittest.TestCase):
 
 
     def setUp(self):
-        self.model_interpreter = TestModelInterpreter()
-        self.model = self.model_interpreter.importType()
-        self.geppettoProject = LocalGeppettoProject(name='TestProject', experiments=None, geppetto_model=self.model, id_=None,
+        group = LocalUserGroup(name='TestGroup',
+                               privileges=(UserPrivileges.READ_PROJECT,))
+
+        self.model_interpreter = MockModelInterpreter()
+        self.geppetto_model = self.model_interpreter.importType(library='mocklibrary')
+        self.geppettoProject = LocalGeppettoProject(name='TestProject', experiments=None, geppetto_model=self.geppetto_model, id_=None,
                                                     url_base=None)
+        self.geppettoProject.volatile = True
         self.geppettomanager = geppetto_manager.GeppettoManager()
-        self.geppettomanager.loadProject(self.geppettoProject)
+        self.geppettomanager.user = LocalUser(id=1, name='TestUser', projects=(self.geppettoProject,),
+                                 group=group)
+        self.geppettomanager.load_project(self.geppettoProject)
 
         self.experiment = object()
+        add_model_interpreter('mocklibrary', self.model_interpreter)
 
 
 
     def test_importvalue(self):
 
 
-        self.assertEqual(ImportType, type(get_variable(self.model, 'v1').initialValues[0].value))
-        self.assertEqual(1, get_variable(self.model, 'v2').initialValues[0].value.value[0])
+        self.assertEqual(ImportValue, type(PointerUtility.findVariable(type_=self.geppetto_model, variablename='v1').initialValues[0].value))
+        self.assertEqual(1, PointerUtility.findVariable(type_=self.geppetto_model, variablename='v2').initialValues[0].value.value[0])
 
 
-        model = self.geppettomanager.resolveImportValue(path='v1', experiment=self.experiment, geppettoProject=self.geppettoProject)
-        self.assertFalse(get_variable(model, 'v1').synched)
-        self.assertTrue(get_variable(model, 'v2').synched)
-        self.assertTrue(get_variable(model, 'v3').synched)
-        self.assertEqual(4, get_variable(model, 'v1').initialValues[0].value.value[0])
+        model = self.geppettomanager.resolve_import_value(path='v1', geppetto_project=self.geppettoProject, experiment=None)
+        self.assertIsNotNone(model)
+        self.assertFalse(PointerUtility.findVariable(type_=model, variablename= 'v1').synched)
+        self.assertTrue(PointerUtility.findVariable(type_=model, variablename= 'v2').synched)
+        self.assertTrue(PointerUtility.findVariable(type_=model, variablename= 'v3').synched)
+        self.assertEqual(4, PointerUtility.findVariable(type_=model, variablename= 'v1').initialValues[0].value.value[0])

@@ -3,7 +3,7 @@ from pygeppetto.model.model_factory import GeppettoModelFactory
 from pygeppetto.model.services.model_interpreter import ModelInterpreter
 
 
-class TestModelInterpreter(ModelInterpreter):
+class MockModelInterpreter(ModelInterpreter):
     def __init__(self):
         self.factory = GeppettoModelFactory()
 
@@ -23,7 +23,7 @@ class TestModelInterpreter(ModelInterpreter):
         :param commonLibraryAccess:
         :return:
         '''
-        flib = GeppettoLibrary(name=library)
+        flib = GeppettoLibrary(id=library)
         model = GeppettoModel(name=typeName, libraries=[flib])
 
 

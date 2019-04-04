@@ -8,7 +8,7 @@ __version__ = "0.4.1"
 if sys.version_info < (3, 3):
     required_packages = ['pyecore-py2']
 else:
-    required_packages = ['pyecore']
+    required_packages = ['pyecore', 'multimethod']
 
 
 setup(

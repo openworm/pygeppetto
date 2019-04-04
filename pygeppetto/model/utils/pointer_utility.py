@@ -6,8 +6,8 @@ from ..types import CompositeType, ArrayType, Type
 from ..values.values import Pointer, PointerElement
 from ..variables import Variable
 from ..model import GeppettoLibrary, GeppettoModel
-from .j2py import overloaded
 
+from multimethod import multidispatch
 import sys
 
 # Fake a static class
@@ -20,7 +20,7 @@ PointerUtility = sys.modules[__name__]
 # 	 * @param index
 # 	 * @return
 #
-@overloaded
+@multidispatch
 def getPointer(variable: Variable, type_, index):
     """ generated source for method getPointer """
     pointer = ValuesFactory.eINSTANCE.createPointer()
@@ -99,7 +99,7 @@ def getPointer_model(model: GeppettoModel, instancePath):
 # 	 * @return
 # 	 * @throws GeppettoModelException
 #
-@overloaded
+@multidispatch
 def getType(model, path):
     """ generated source for method getType """
     st = iter(path.split('.'))
@@ -113,10 +113,10 @@ def getType(model, path):
             if isinstance(lastType, CompositeType):
                 lastVar = findVariable(getVariable(token), lastType)
             elif isinstance(lastType, ArrayType) and isinstance(lastType.arrayType, CompositeType):
-                    lastVar = findVariable(getVariable(token), (lastType).arrayType)
+                lastVar = findVariable(getVariable(token), (lastType).arrayType)
             else:
                 raise GeppettoModelException(
-                    lastType.id + " is not of type CompositeType there can't be nested variables")
+                     "{} is not of type CompositeType there can't be nested variables".format(lastType.id))
         elif lastVar is not None:
             lastType = findType(getType_str(token), lastVar)
         elif library is not None:
@@ -165,7 +165,7 @@ def getValue(model, path, stateVariablType):
                     lastVar = findVariable(getVariable(token), (lastType).arrayType)
                 else:
                     raise GeppettoModelException(
-                         "{} is not of type CompositeType there can't be nested variables".format(lastType.id))
+                        "{} is not of type CompositeType there can't be nested variables".format(lastType.id))
         elif lastVar is not None:
             lastType = findType(getType_str(token), lastVar)
         elif library is not None:
@@ -209,7 +209,7 @@ def findLibrary(model, libraryId):
 # 	 * @param pointer2
 # 	 * @return true if the two pointers point to the same variables and types
 #
-@overloaded
+@multidispatch
 def equals(pointer: Pointer, pointer2: Pointer):
     """ generated source for method equals """
     if not pointer == pointer2:
@@ -244,7 +244,7 @@ def equals_pointer(pointer: PointerElement, pointer2: PointerElement):
 # 	 * @param pointer
 # 	 * @return
 #
-@overloaded
+@multidispatch
 def getVariable(pointer: Pointer):
     """ generated source for method getVariable """
     return pointer.elements[-1].variable
@@ -279,7 +279,7 @@ def getInstancePath(variable, type_):
     return variable.id + "(" + type_.id + ")"
 
 
-@overloaded
+@multidispatch
 def findType(type_: str, variable: Variable) -> Type:
     """ generated source for method findType_0 """
     if type_ is None:
@@ -292,7 +292,8 @@ def findType(type_: str, variable: Variable) -> Type:
             raise GeppettoModelException("The variable {} has not types".format(variable.id))
         else:
             raise GeppettoModelException(
-                "The instance path does not specify a type but more than one type are present for the variable {}".format(variable.id))
+                "The instance path does not specify a type but more than one type are present for the variable {}".format(
+                    variable.id))
     else:
         for t in variable.types:
             if t.id == type_:

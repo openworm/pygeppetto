@@ -1,6 +1,7 @@
 
 class GeppettoModelException(Exception): pass
 
+
 class IllegalArgumentException(Exception): pass
 
 
@@ -10,5 +11,6 @@ class GeppettoExecutionException(Exception):
 
 class GeppettoAccessException(Exception):
     pass
+
 
 class GeppettoVisitingException(Exception): pass

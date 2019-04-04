@@ -152,12 +152,12 @@ def getType_pointer(pointer: Pointer):
 
 def getValue(model, path, stateVariablType):
     """ generated source for method getValue """
-    st = path.split('.')
+    # FIXME there's something wrong here and also on Java implementation: the value should be retrieved from the instance path, not type path.
+    st = iter(path.split('.'))
     lastType = None
     lastVar = None
     library = None
-    while st:
-        token = st.nextToken()
+    for token in st:
         #  token can be a library, a type or a variable
         if lastType != None:
             if isinstance(lastType, CompositeType):
@@ -168,7 +168,7 @@ def getValue(model, path, stateVariablType):
                     lastVar = findVariable(getVariable(token), (lastType).arrayType)
                 else:
                     raise GeppettoModelException(
-                        lastType.id + " is not of type CompositeType there can't be nested variables")
+                         "{} is not of type CompositeType there can't be nested variables".format(lastType.id))
         elif lastVar != None:
             lastType = findType(getType_str(token), lastVar)
         elif library != None:
@@ -195,10 +195,7 @@ def getValue(model, path, stateVariablType):
 
 def findType(typeId, library: GeppettoLibrary):
     """ generated source for method findType """
-    for type_ in library.types:
-        if type_.id == typeId:
-            return type_
-    return None
+    return next((type_ for type_ in library.types if type_.id == typeId), None)
 
 
 #
@@ -210,10 +207,8 @@ def findType(typeId, library: GeppettoLibrary):
 
 def findLibrary(model, libraryId):
     """ generated source for method findLibrary """
-    for library in model.getLibraries():
-        if library.id == libraryId:
-            return library
-    return None
+    return next((library for library in model.getLibraries() if library.id == libraryId), None)
+
 
 #
 # 	 * @param pointer
@@ -257,7 +252,7 @@ def equals_pointer(pointer: PointerElement, pointer2: PointerElement):
 # 	 * @return
 #
 @overloaded
-def getVariable(pointer: Pointer) -> Variable:
+def getVariable(pointer: Pointer):
     """ generated source for method getVariable """
     return pointer.elements[-1].variable
 
@@ -318,15 +313,15 @@ def findType(type_: str, variable: Variable) -> Type:
         raise GeppettoModelException("The type {} was not found in the variable {}".format(type_, variable.id))
 
 
-def findInstanceVariable(variable, model):
+def findInstanceVariable(variablename: str, model: GeppettoModel):
     """ generated source for method findInstanceVariable """
     for v in model.getVariables():
-        if v.id == variable:
+        if v.id == variablename:
             return v
     return None
 
 
-def findVariable(variablename: str, type_: Type):
+def findVariable(variablename: str, type_: Type) -> Variable:
     """ generated source for method findVariable """
     for v in type_.getVariables():
         if v.id == variablename:

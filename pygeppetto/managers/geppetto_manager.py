@@ -2,22 +2,17 @@ from ..model import ExperimentState
 from ..local_data_model import UserPrivileges, ExperimentStatus
 from .experiment_run_manager import ExperimentRunManager
 from enum import Enum, unique
-from ..model.utils.pointer_utility import PointerUtility
+from ..model.utils import pointer_utility as PointerUtility
 import functools
 import abc
 from ..model.types import StateVariableType
 from ..model.services import model_interpreter
+from ..model.variables import Variable
 
 # Creates a Python 2 and 3 compatible base class
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
-
-class GeppettoExecutionException(Exception):
-    pass
-
-
-class GeppettoAccessException(Exception):
-    pass
+from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException
 
 
 @unique
@@ -37,7 +32,7 @@ class RuntimeProject(object):
         self.project = project
         self.experiments = {}
         self.active_experiment = None
-        self.model = model_interpreter.get_model_interpreter_from_library(project.getModel())
+        self.model = project.getGeppettoModel()
 
     def release(self):
         pass
@@ -49,14 +44,25 @@ class RuntimeProject(object):
     def get_runtime_experiment(self, experiment):
         return self.experiments[experiment]
 
-    def get_model(self):
-        return self.model
-
     def __getitem__(self, item):
         return self.get_runtime_experiment(item)
 
     def resolve_import_value(self, path):
-        return PointerUtility.get_value(self.model, path, StateVariableType)
+        # value =  PointerUtility.getValue(self.model, path, StateVariableType) TODO verify the following 2 lines are correct in replacement of this line
+        pointer = PointerUtility.getPointer(self.model, path)
+        variable = pointer.elements[0].variable  # TODO handle variable not found. Is it possible?
+
+        value = variable.initialValues[0].value
+        variable.synched = False  # This will say to the serializer to send the value
+        variable_library = variable.eContainer().libraries[0]
+
+        # TODO here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
+        actual_model_interpreter = model_interpreter.get_model_interpreter(variable_library)
+        new_value = actual_model_interpreter.importValue(value)
+
+        # Set the new value in replacement of ImportValue
+        variable.initialValues[0].value = new_value
+        return self.model
 
 
 class RuntimeExperiment(object):
@@ -79,7 +85,9 @@ def ensure(rights=None, not_scope=None, message="perform the required action"):
                     raise GeppettoAccessException("Insufficient access rights to "
                                                   + message)
             return func(self, *args, **kwargs)
+
         return manager_function
+
     return inner_user_needs_rights
 
 
@@ -117,7 +125,7 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
     def load_project(self, project):
         if self.scope is not Scope.RUN:
             if self.user and \
-               UserPrivileges.READ_PROJECT not in self.user.group.privileges:
+                    UserPrivileges.READ_PROJECT not in self.user.group.privileges:
                 raise GeppettoAccessException("Insufficient access rights to"
                                               "load project")
             is_user_project = (project.volatile or project.public
@@ -197,5 +205,5 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         return experiment
 
     @ensure(rights=[UserPrivileges.READ_PROJECT], message='import value')
-    def resolve_import_value(self, path, geppetto_project):
+    def resolve_import_value(self, path, geppetto_project, experiment=None):
         return self.get_runtime_project(geppetto_project).resolve_import_value(path)

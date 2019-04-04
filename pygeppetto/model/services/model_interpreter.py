@@ -30,18 +30,23 @@ _model_interpreters = {}
 def add_model_interpreter(library, model_interpreter):
     _model_interpreters[library] = model_interpreter
 
-def get_model_interpreter_from_library(library_id):
+def get_model_interpreter(library_id) -> ModelInterpreter:
+    return get_model_interpreter_from_library(library_id)
+
+def get_model_interpreter_from_library(library) -> ModelInterpreter:
+    library_id = library.id
     if library_id not in _model_interpreters:
         raise ModelInterpreterNotFound("No interpreter found for library {}".format(library_id))
     return _model_interpreters[library_id]
 
 class ModelInterpreterNotFound(Exception): pass
 
-def get_model_interpreter_from_type(geppetto_model_type):
+def get_model_interpreter_from_type(geppetto_model_type) -> ModelInterpreter:
     '''
 
     :param geppetto_model_type: EObject
     :return:
     '''
-    library = geppetto_model_type.eContainer().getId()
+    library = geppetto_model_type.eContainer().id
     return get_model_interpreter_from_library(library)
+

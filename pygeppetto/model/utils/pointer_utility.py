@@ -1,21 +1,17 @@
+""" Derived from generated source for class PointerUtility
+https://github.com/openworm/org.geppetto.model/blob/master/src/main/java/org/geppetto/model/util/java"""
 from ..exceptions import GeppettoModelException
 from ..values.values_factory import ValuesFactory
-
-PATH_SEPARATOR = '.'
-from ..types import *
-from ..values.values import *
+from ..types import CompositeType, ArrayType, Type
+from ..values.values import Pointer, PointerElement
 from ..variables import Variable
 from ..model import GeppettoLibrary, GeppettoModel
 from .j2py import overloaded
 
 import sys
 
-
+# Fake a static class
 PointerUtility = sys.modules[__name__]
-
-
-
-""" generated source for class PointerUtility https://github.com/openworm/org.geppetto.model/blob/master/src/main/java/org/geppetto/model/util/java"""
 
 
 #
@@ -59,12 +55,12 @@ def getPointer_model(model: GeppettoModel, instancePath):
     for token in st:
         element = ValuesFactory.eINSTANCE.createPointerElement()
         v = None
-        if lastType == None:
+        if lastType is None:
             v = findInstanceVariable(getVariable(token), model)
-            if v == None:
+            if v is None:
                 #  it's not an instance but it might a library
                 library = findLibrary(model, token)
-                if library != None and st:
+                if library is not None and st:
                     type_ = next(st)
                     lastType = getType(model, token + "." + type_)
                     element.setType(lastType)
@@ -86,7 +82,7 @@ def getPointer_model(model: GeppettoModel, instancePath):
         element.setType(lastType)
         if isinstance(element.type, ArrayType):
             index = getIndex(token)
-            if index != None:
+            if index is not None:
                 element.setIndex(getIndex(token))
         pointer.elements.add(element)
     return pointer
@@ -113,28 +109,28 @@ def getType(model, path):
     for token in st:
 
         #  token can be a library, a type or a variable
-        if lastType != None:
+        if lastType is not None:
             if isinstance(lastType, CompositeType):
                 lastVar = findVariable(getVariable(token), lastType)
-            else:
-                if isinstance(lastType, ArrayType) and isinstance(lastType.arrayType, CompositeType):
+            elif isinstance(lastType, ArrayType) and isinstance(lastType.arrayType, CompositeType):
                     lastVar = findVariable(getVariable(token), (lastType).arrayType)
-                else:
-                    raise GeppettoModelException(
-                        lastType.id + " is not of type CompositeType there can't be nested variables")
-        elif lastVar != None:
+            else:
+                raise GeppettoModelException(
+                    lastType.id + " is not of type CompositeType there can't be nested variables")
+        elif lastVar is not None:
             lastType = findType(getType_str(token), lastVar)
-        elif library != None:
+        elif library is not None:
             lastType = findType(token, library)
         else:
             #  they are all null
             library = findLibrary(model, token)
-            if library == None:
+            if library is None:
                 raise GeppettoModelException("Can't find a type for the path " + path)
-    if lastType != None and lastType.getPath() == path:
+    if lastType is not None and lastType.getPath() == path:
         return lastType
     else:
         raise GeppettoModelException("Couldn't find a type for the path " + path)
+
 
 @getType.register(str)
 def getType_str(token: str):
@@ -150,6 +146,7 @@ def getType_pointer(pointer: Pointer):
     """ generated source for method getType_0 """
     return pointer.elements[-1].type
 
+
 def getValue(model, path, stateVariablType):
     """ generated source for method getValue """
     # FIXME there's something wrong here and also on Java implementation: the value should be retrieved from the instance path, not type path.
@@ -159,7 +156,7 @@ def getValue(model, path, stateVariablType):
     library = None
     for token in st:
         #  token can be a library, a type or a variable
-        if lastType != None:
+        if lastType is not None:
             if isinstance(lastType, CompositeType):
                 lastVar = findVariable(getVariable(token), lastType)
                 lastType = None
@@ -169,22 +166,21 @@ def getValue(model, path, stateVariablType):
                 else:
                     raise GeppettoModelException(
                          "{} is not of type CompositeType there can't be nested variables".format(lastType.id))
-        elif lastVar != None:
+        elif lastVar is not None:
             lastType = findType(getType_str(token), lastVar)
-        elif library != None:
+        elif library is not None:
             lastType = findType(token, library)
         else:
             #  they are all null
             library = findLibrary(model, token)
-            if library == None:
+            if library is None:
                 raise GeppettoModelException("Can't find a value for the path " + path)
-    if lastType != None and lastType.path == path:
+    if lastType is not None and lastType.path == path:
         return lastType.defaultValue
-    elif lastVar != None:
+    elif lastVar is not None:
         return lastVar.initialValues[stateVariablType]
     else:
         raise GeppettoModelException("Couldn't find a value for the path " + path)
-
 
 
 #
@@ -192,7 +188,6 @@ def getValue(model, path, stateVariablType):
 # 	 * @param library
 # 	 * @return
 #
-
 def findType(typeId, library: GeppettoLibrary):
     """ generated source for method findType """
     return next((type_ for type_ in library.types if type_.id == typeId), None)
@@ -204,7 +199,6 @@ def findType(typeId, library: GeppettoLibrary):
 # 	 * @return
 # 	 * @throws GeppettoModelException
 #
-
 def findLibrary(model, libraryId):
     """ generated source for method findLibrary """
     return next((library for library in model.getLibraries() if library.id == libraryId), None)
@@ -246,7 +240,6 @@ def equals_pointer(pointer: PointerElement, pointer2: PointerElement):
     return sameType and sameVar and sameIndex
 
 
-
 #
 # 	 * @param pointer
 # 	 * @return
@@ -255,7 +248,6 @@ def equals_pointer(pointer: PointerElement, pointer2: PointerElement):
 def getVariable(pointer: Pointer):
     """ generated source for method getVariable """
     return pointer.elements[-1].variable
-
 
 
 @getVariable.register(str)
@@ -267,8 +259,6 @@ def getVariable_str(token: str) -> str:
         return token[0: token.find("[")]
     else:
         return token
-
-
 
 
 def getGeppettoLibrary(pointer):
@@ -292,7 +282,7 @@ def getInstancePath(variable, type_):
 @overloaded
 def findType(type_: str, variable: Variable) -> Type:
     """ generated source for method findType_0 """
-    if type_ == None:
+    if type_ is None:
         types = []
         types += variable.anonymousTypes
         types += variable.types

@@ -1,16 +1,15 @@
-import unittest
+import pytest
 from pygeppetto.managers import geppetto_manager
 from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, LocalUserGroup, UserPrivileges
-from pygeppetto.model.types import ImportType
 from pygeppetto.model.values import ImportValue
 from .mocks import MockModelInterpreter
 import pygeppetto.model.utils.pointer_utility as PointerUtility
 from pygeppetto.model.services.model_interpreter import add_model_interpreter
 
-class ImportValueTest(unittest.TestCase):
+class ImportValueTest(object):
 
 
-    def setUp(self):
+    def setup_class(self):
         group = LocalUserGroup(name='TestGroup',
                                privileges=(UserPrivileges.READ_PROJECT,))
 
@@ -32,13 +31,13 @@ class ImportValueTest(unittest.TestCase):
     def test_importvalue(self):
 
 
-        self.assertEqual(ImportValue, type(PointerUtility.findVariable(type_=self.geppetto_model, variablename='v1').initialValues[0].value))
-        self.assertEqual(1, PointerUtility.findVariable(type_=self.geppetto_model, variablename='v2').initialValues[0].value.value[0])
+        assert ImportValue == type(PointerUtility.findVariable(type_=self.geppetto_model, variablename='v1').initialValues[0].value)
+        assert 1 == PointerUtility.findVariable(type_=self.geppetto_model, variablename='v2').initialValues[0].value.value[0]
 
 
         model = self.geppettomanager.resolve_import_value(path='v1', geppetto_project=self.geppettoProject, experiment=None)
-        self.assertIsNotNone(model)
-        self.assertFalse(PointerUtility.findVariable(type_=model, variablename= 'v1').synched)
-        self.assertTrue(PointerUtility.findVariable(type_=model, variablename= 'v2').synched)
-        self.assertTrue(PointerUtility.findVariable(type_=model, variablename= 'v3').synched)
-        self.assertEqual(4, PointerUtility.findVariable(type_=model, variablename= 'v1').initialValues[0].value.value[0])
+        assert model is not None
+        assert not PointerUtility.findVariable(type_=model, variablename= 'v1').synched
+        assert PointerUtility.findVariable(type_=model, variablename= 'v2').synched
+        assert PointerUtility.findVariable(type_=model, variablename= 'v3').synched
+        assert 4 == PointerUtility.findVariable(type_=model, variablename= 'v1').initialValues[0].value.value[0]

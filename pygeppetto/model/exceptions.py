@@ -14,3 +14,9 @@ class GeppettoAccessException(Exception):
 
 
 class GeppettoVisitingException(Exception): pass
+
+
+class GeppettoInitializationException(Exception): pass
+
+
+class ModelInterpreterException(Exception): pass

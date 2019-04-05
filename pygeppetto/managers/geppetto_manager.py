@@ -1,18 +1,22 @@
-from ..model import ExperimentState
-from ..local_data_model import UserPrivileges, ExperimentStatus
-from .experiment_run_manager import ExperimentRunManager
-from enum import Enum, unique
-from ..model.utils import pointer_utility as PointerUtility
-import functools
 import abc
-from ..model.types import StateVariableType
+import functools
+from enum import Enum, unique
+
+from pygeppetto.constants import GeppettoPackage
+from pygeppetto.model.model_access import GeppettoModelAccess
+from pygeppetto.model.utils import url_reader
+
+from .experiment_run_manager import ExperimentRunManager
+from ..local_data_model import UserPrivileges, ExperimentStatus
+from ..model import ExperimentState
 from ..model.services import model_interpreter
-from ..model.variables import Variable
+from ..model.utils import pointer_utility as PointerUtility
 
 # Creates a Python 2 and 3 compatible base class
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
-from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException
+from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException, GeppettoVisitingException, \
+    ModelInterpreterException
 
 
 @unique
@@ -33,6 +37,7 @@ class RuntimeProject(object):
         self.experiments = {}
         self.active_experiment = None
         self.model = project.getGeppettoModel()
+        self.geppettoModelAccess = GeppettoModelAccess(self.model)
 
     def release(self):
         pass
@@ -63,6 +68,47 @@ class RuntimeProject(object):
         # Set the new value in replacement of ImportValue
         variable.initialValues[0].value = new_value
         return self.model
+
+    def resolveImportType(self, typePaths):
+        """ generated source for method resolveImportType """
+        # TODO complete resolveImportType
+
+        #  let's find the importType
+
+        for typePath in typePaths:
+            type_ = PointerUtility.getType(self.model, typePath)
+
+            try:
+                importedType = None
+                if type_.eContainingFeature().getFeatureID() == GeppettoPackage.GEPPETTO_LIBRARY__TYPES:
+                    #  this import type is inside a library
+                    library = type_.eContainer()
+                    actual_model_interpreter = model_interpreter.get_model_interpreter(library)
+                    url = None
+                    if type_.url != None:
+                        url = url_reader.getURL(type_.url, self.project.baseURL)
+                    importedType = actual_model_interpreter.importType(url, type_.id, library,
+                                                                       self.geppettoModelAccess)
+                    # TODO if we want to support default view customization, uncomment below and implement
+                    # if self.gatherDefaultView and actual_model_interpreter.isSupported(
+                    #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE):
+                    #     viewCustomisations.add((actual_model_interpreter.getFeature(
+                    #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE)).getDefaultViewCustomisation(
+                    #         importedType))
+                    self.geppettoModelAccess.swapType(type_, importedType, library)
+                # elif type_.eContainingFeature().getFeatureID() == VariablesPackage.VARIABLE__ANONYMOUS_TYPES:
+                else:
+                    #  this import is inside a variable as anonymous type
+                    #  importedType = modelInterpreter.importType(URLReader.getURL(type.getUrl()), type.__name__, library);
+                    #  ((Variable) type.eContainer()).getAnonymousTypes().remove(type);
+                    #  ((Variable) type.eContainer()).getAnonymousTypes().add(importedType);
+                    return GeppettoVisitingException("Anonymous types at the root level initially not supported")
+            except IOError as e:
+                raise GeppettoExecutionException(e)
+            except ModelInterpreterException as e:
+                raise GeppettoExecutionException(e)
+
+        return self.geppettoModel
 
 
 class RuntimeExperiment(object):
@@ -152,7 +198,7 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         self.opened_projects[project].release()
         del self.opened_projects[project]
 
-    def get_runtime_project(self, project):
+    def get_runtime_project(self, project) -> RuntimeProject:
         if not self.is_project_open(project):
             try:
                 return self.load_project(project)
@@ -204,6 +250,10 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
             raise GeppettoExecutionException(e)
         return experiment
 
-    @ensure(rights=[UserPrivileges.READ_PROJECT], message='import value')
+    @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import value')
     def resolve_import_value(self, path, geppetto_project, experiment=None):
         return self.get_runtime_project(geppetto_project).resolve_import_value(path)
+
+    @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import type')
+    def resolve_import_type(self, typePaths, geppetto_project):
+        return self.get_runtime_project(geppetto_project).resolve_import_type(typePaths)

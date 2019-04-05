@@ -1,8 +1,9 @@
-import pytest
-import os
-from pygeppetto.model.model_serializer import GeppettoModelSerializer as GeppettoSerializer
-from pyecore.resources import ResourceSet, URI
 import json
+import os
+
+from pyecore.resources import ResourceSet, URI
+from pygeppetto.model.model_serializer import GeppettoModelSerializer as GeppettoSerializer
+
 
 def testSerializer():
     #  Initialize the factory and the resource set
@@ -19,5 +20,8 @@ def testSerializer():
     assert json.loads(GeppettoSerializer.serialize(geppettoModel, True)) == expected_json
     assert json.loads(GeppettoSerializer.serialize(geppettoModel)) == expected_json
     assert geppettoModel.getVariables().get(0).isSynched()
-    assert  GeppettoSerializer.serialize(
-        geppettoModel, True) == "{\"eClass\":\"GeppettoModel\",\"id\":\"\",\"name\":\"\",\"variables\":[{\"synched\":true}],\"libraries\":[{\"synched\":true}]}"
+
+    expected_json_synched = json.loads(
+        "{'eClass':'GeppettoModel','id':'','name':'','variables':[{'synched':true}],'libraries':[{'synched':true}]}")
+    assert json.loads(GeppettoSerializer.serialize(
+        geppettoModel, True)) == expected_json_synched

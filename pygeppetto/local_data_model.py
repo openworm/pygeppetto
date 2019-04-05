@@ -1,26 +1,5 @@
-from enum import Enum, unique
 from .data_model import GeppettoProject
-
-
-@unique
-class UserPrivileges(Enum):
-    READ_PROJECT = 'READ_PROJECT'
-    WRITE_PROJECT = 'WRITE_PROJECT'
-    RUN_EXPERIMENT = 'RUN_EXPERIMENT'
-    DROPBOX_INTEGRATION = 'DROPBOX_INTEGRATION'
-    DOWNLOAD = 'DOWNLOAD'
-    ADMIN = 'ADMIN'
-
-
-@unique
-class ExperimentStatus(Enum):
-    DESIGN = 'DESIGN'
-    QUEUED = 'QUEUED'
-    RUNNING = 'RUNNING'
-    ERROR = 'ERROR'
-    COMPLETED = 'COMPLETED'
-    DELETED = 'DELETED'
-    CANCELED = 'CANCELED'
+from .data_model import GeppettoProject
 
 
 class LocalUser(object):

@@ -1,10 +1,10 @@
-import pytest
-from pygeppetto.managers import geppetto_manager
-from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, LocalUserGroup, UserPrivileges
-from pygeppetto.model.values import ImportValue
-from .mocks import MockModelInterpreter
 import pygeppetto.model.utils.pointer_utility as pointer_utility
-from pygeppetto.model.services.model_interpreter import add_model_interpreter
+from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, LocalUserGroup, UserPrivileges
+from pygeppetto.managers import geppetto_manager
+from pygeppetto.model.values import ImportValue
+from pygeppetto.services import add_model_interpreter
+
+from .mocks import MockModelInterpreter
 
 
 class ImportValueTest(object):

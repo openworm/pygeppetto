@@ -2,21 +2,19 @@ import abc
 import functools
 from enum import Enum, unique
 
-from pygeppetto.constants import GeppettoPackage
-from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils import url_reader
+from pygeppetto.services import model_interpreter
+from pygeppetto.utils import Singleton
 
 from .experiment_run_manager import ExperimentRunManager
-from ..local_data_model import UserPrivileges, ExperimentStatus
+from ..constants import UserPrivileges, ExperimentStatus
 from ..model import ExperimentState
-from ..model.services import model_interpreter
 from ..model.utils import pointer_utility as PointerUtility
 
 # Creates a Python 2 and 3 compatible base class
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
-from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException, GeppettoVisitingException, \
-    ModelInterpreterException
+from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException, ModelInterpreterException
 
 
 @unique
@@ -37,7 +35,6 @@ class RuntimeProject(object):
         self.experiments = {}
         self.active_experiment = None
         self.model = project.getGeppettoModel()
-        self.geppettoModelAccess = GeppettoModelAccess(self.model)
 
     def release(self):
         pass
@@ -53,6 +50,11 @@ class RuntimeProject(object):
         return self.get_runtime_experiment(item)
 
     def resolve_import_value(self, path):
+        '''
+        Retrieves the value from the path and updated the Geppetto Model with the new value
+        :param path: the instance path to replace
+        :return:
+        '''
         # value =  PointerUtility.getValue(self.model, path, StateVariableType) TODO verify the following 2 lines are correct in replacement of this line
         pointer = PointerUtility.getPointer(self.model, path)
         variable = pointer.elements[0].variable  # TODO handle variable not found. Is it possible?
@@ -70,8 +72,7 @@ class RuntimeProject(object):
         return self.model
 
     def resolveImportType(self, typePaths):
-        """ generated source for method resolveImportType """
-        # TODO complete resolveImportType
+        """Loads a new Geppetto Model"""
 
         #  let's find the importType
 
@@ -80,31 +81,29 @@ class RuntimeProject(object):
 
             try:
                 importedType = None
-                if type_.eContainingFeature().getFeatureID() == GeppettoPackage.GEPPETTO_LIBRARY__TYPES:
-                    #  this import type is inside a library
-                    library = type_.eContainer()
-                    actual_model_interpreter = model_interpreter.get_model_interpreter(library)
-                    url = None
-                    if type_.url != None:
-                        url = url_reader.getURL(type_.url, self.project.baseURL)
-                    importedType = actual_model_interpreter.importType(url, type_.id, library,
-                                                                       self.geppettoModelAccess)
-                    # TODO if we want to support default view customization, uncomment below and implement
-                    # if self.gatherDefaultView and actual_model_interpreter.isSupported(
-                    #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE):
-                    #     viewCustomisations.add((actual_model_interpreter.getFeature(
-                    #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE)).getDefaultViewCustomisation(
-                    #         importedType))
-                    self.geppettoModelAccess.swapType(type_, importedType, library)
-                # elif type_.eContainingFeature().getFeatureID() == VariablesPackage.VARIABLE__ANONYMOUS_TYPES:
-                else:
-                    #  this import is inside a variable as anonymous type
-                    #  importedType = modelInterpreter.importType(URLReader.getURL(type.getUrl()), type.__name__, library);
-                    #  ((Variable) type.eContainer()).getAnonymousTypes().remove(type);
-                    #  ((Variable) type.eContainer()).getAnonymousTypes().add(importedType);
-                    return GeppettoVisitingException("Anonymous types at the root level initially not supported")
+
+                # this import type is inside a library
+                library = type_.eContainer()
+                actual_model_interpreter = model_interpreter.get_model_interpreter(library)
+                url = None
+                if type_.url != None:
+                    url = url_reader.getURL(type_.url, self.project.baseURL)
+
+                geppettoModelAccess = None  # TODO geppettoModelAccess is not supported
+                self.geppettoModel = actual_model_interpreter.importType(url, type_.id, library,
+                                                                         geppettoModelAccess)
+
+                # TODO if we want to support default view customization, uncomment below and implement
+                # if self.gatherDefaultView and actual_model_interpreter.isSupported(
+                #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE):
+                #     viewCustomisations.add((actual_model_interpreter.getFeature(
+                #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE)).getDefaultViewCustomisation(
+                #         importedType))
+
+
             except IOError as e:
                 raise GeppettoExecutionException(e)
+
             except ModelInterpreterException as e:
                 raise GeppettoExecutionException(e)
 
@@ -137,7 +136,7 @@ def ensure(rights=None, not_scope=None, message="perform the required action"):
     return inner_user_needs_rights
 
 
-class GeppettoManager(object):
+class GeppettoManager(object, metaclass=Singleton):
     def __init__(self, manager=None):
         self.opened_projects = {}
         if manager:

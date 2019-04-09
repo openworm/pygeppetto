@@ -1,5 +1,13 @@
-class GeppettoDataManager(object):
+import json
+
+from pygeppetto.utils import Singleton
+
+
+class GeppettoDataManager(object, metaclass=Singleton):
     """ generated source for interface IGeppettoDataManager """
+
+    def __init__(self):
+        self.projects = []
 
     def getName(self):
         raise NotImplemented('No DataManager was defined')
@@ -25,8 +33,11 @@ class GeppettoDataManager(object):
     def getGeppettoProjectsForUser(self, login):
         raise NotImplemented('No DataManager was defined')
 
-    def getProjectFromJson(self, gson, json):
-        raise NotImplemented('No DataManager was defined')
+    def getProjectFromJson(self, json_str):
+        project = json.loads(json_str)
+        project.volatile = True
+        project.id = hash(json_str)
+
 
     def getProjectFromJson_0(self, gson, json, baseURL):
         raise NotImplemented('No DataManager was defined')

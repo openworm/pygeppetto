@@ -2,6 +2,7 @@ import abc
 import functools
 from enum import Enum, unique
 
+from pygeppetto.data_model import GeppettoProject
 from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 from pygeppetto.utils import Singleton
@@ -24,17 +25,20 @@ class Scope(Enum):
 
 
 class RuntimeProject(object):
-    def __init__(self, project, manager):
-        '''
-
+    def __init__(self, project: GeppettoProject, manager):
+        """
         :param project: pygeppetto.data_model.GeppettoProject
         :param manager: GeppettoManager
-        '''
+        """
         self.manager = manager
         self.project = project
         self.experiments = {}
         self.active_experiment = None
-        self.model = project.getGeppettoModel()
+        self.model = project.geppettoModel
+        # FIXME a lot of initialization logic is missing here.
+        # TODO resolve importTypes. Now we can start only with a RuntimeProject with a fully initialized model. With that is coming the recursive traversal logic -> see GeppettoModelAccess
+        # TODO handle views
+        # TODO handle experiments
 
     def release(self):
         pass
@@ -50,11 +54,11 @@ class RuntimeProject(object):
         return self.get_runtime_experiment(item)
 
     def resolve_import_value(self, path):
-        '''
+        """
         Retrieves the value from the path and updated the Geppetto Model with the new value
         :param path: the instance path to replace
         :return:
-        '''
+        """
         # value =  PointerUtility.getValue(self.model, path, StateVariableType) TODO verify the following 2 lines are correct in replacement of this line
         pointer = PointerUtility.getPointer(self.model, path)
         variable = pointer.elements[0].variable  # TODO handle variable not found. Is it possible?
@@ -71,7 +75,7 @@ class RuntimeProject(object):
         variable.initialValues[0].value = new_value
         return self.model
 
-    def resolveImportType(self, typePaths):
+    def resolve_import_type(self, typePaths):
         """Loads a new Geppetto Model"""
 
         #  let's find the importType
@@ -112,7 +116,7 @@ class RuntimeProject(object):
 
 class RuntimeExperiment(object):
     def __init__(self, project, experiment):
-        self.projet = project
+        self.project = project
         self.experiment = experiment
         self.state = ExperimentState()
 

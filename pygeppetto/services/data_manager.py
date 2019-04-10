@@ -2,6 +2,11 @@ import json
 
 from pygeppetto.utils import Singleton
 
+try:
+    from types import SimpleNamespace as Namespace
+except ImportError:
+    # Python 2.x fallback
+    from argparse import Namespace
 
 class GeppettoDataManager(object, metaclass=Singleton):
     """ generated source for interface IGeppettoDataManager """
@@ -10,120 +15,120 @@ class GeppettoDataManager(object, metaclass=Singleton):
         self.projects = []
 
     def getName(self):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def isDefault(self):
         return True
 
     def getUserByLogin(self, login):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def getUserGroupById(self, id):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def getGeppettoProjectById(self, id):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def getAllUsers(self):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def getAllGeppettoProjects(self):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def getGeppettoProjectsForUser(self, login):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def getProjectFromJson(self, json_str):
-        project = json.loads(json_str)
+        project = json.loads(json_str, object_hook=lambda d: Namespace(**d))
         project.volatile = True
         project.id = hash(json_str)
 
 
-    def getProjectFromJson_0(self, gson, json, baseURL):
-        raise NotImplemented('No DataManager was defined')
-
     def getExperimentsForProject(self, projectId):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newSimulationResult(self, parameterPath, results, format):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def addWatchedVariable(self, found, instancePath):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newPersistedData(self, url, type_):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newParameter(self, parameterPath, value):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newExperiment(self, name, description, project):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newView(self, view, project):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newView_0(self, view, experiment):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newUser(self, name, password, persistent, group):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newUserGroup(self, name, privileges, spaceAllowance, timeAllowance):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def updateUser(self, user, password):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newAspectConfiguration(self, experiment, instancePath, simulatorConfiguration):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def newSimulatorConfiguration(self, simulator, conversionService, timestep, length, parameters):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def addGeppettoProject(self, project, user):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def makeGeppettoProjectPublic(self, projectId, isPublic):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def deleteGeppettoProject(self, id, user):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def deleteExperiment(self, experiment):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def clearWatchedVariables(self, aspectConfig):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def saveEntity(self, entity):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def saveEntity_0(self, entity):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def saveEntity_1(self, entity):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
     def cloneExperiment(self, name, description, project, originalExperiment):
-        raise NotImplemented('No DataManager was defined')
+        raise NotImplemented('Operation not defined yet in default data manager')
 
-
-# Here we resemble the CreateModelInterpreterServicesVisitor
-
-_data_manager = GeppettoDataManager()
-
-
-def set_data_manager(data_manager):
-    _data_manager = data_manager
-
-
-def get_data_manager() -> GeppettoDataManager:
-    return _data_manager
+    def get_project_from_url(self, urlString):
+        with open(urlString) as json_file:
+            return self.getProjectFromJson(json_file.read())
 
 
 class DataManagerHelper:
+    __data_manager = GeppettoDataManager()
 
-    @staticmethod
-    def getDataManager():
-        return get_data_manager()
+    def __init__(self):
+        raise NotImplementedError("DataManagerHelper cannot be instantiated. Call class methods directly instead")
+
+    @classmethod
+    def getDataManager(cls) -> GeppettoDataManager:
+        return cls.__data_manager
+
+    @classmethod
+    def setDataManager(cls, data_manager: GeppettoDataManager):
+        cls.__data_manager = data_manager
+
+
+set_data_manager = DataManagerHelper.setDataManager
+get_data_manager = DataManagerHelper.getDataManager

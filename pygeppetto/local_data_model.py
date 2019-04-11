@@ -1,4 +1,5 @@
-from .data_model import GeppettoProject
+from pygeppetto.constants import ExperimentStatus
+
 from .data_model import GeppettoProject
 
 
@@ -16,20 +17,7 @@ class LocalUser(object):
 
 
 class LocalGeppettoProject(GeppettoProject):
-    def __init__(self, name, experiments=None, geppetto_model=None, id_=None,
-                 url_base=None):
-        self.id = id_
-        self.active_experiment_id = None
-        self.volatile = False
-        self.public = False
-        self.view = None
-        self.model_references = []
-        self.name = name
-        self.experiments = []
-        if experiments:
-            self.experiments.extend(experiments)
-        self.geppetto_model = geppetto_model
-        self.url_base = url_base
+    pass
 
 
 class LocalUserGroup(object):

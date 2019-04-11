@@ -1,6 +1,6 @@
 from enum import Enum, unique
 
-from src.pyecore.pyecore.ecore import EPackage
+from pyecore.ecore import EPackage
 
 
 @unique

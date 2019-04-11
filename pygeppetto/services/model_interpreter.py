@@ -4,22 +4,30 @@ class ModelInterpreter():
         pass
 
     def importType(self, url, typeName, library, commonLibraryAccess):
-        pass
+        raise NotImplemented(
+            "{} not implemented in class {}".format(ModelInterpreter.importType.__name__, self.__class__.__name__))
 
     def importValue(self, importValue):
-        pass
+        raise NotImplemented(
+            "{} not implemented in class {}".format(ModelInterpreter.importValue.__name__, self.__class__.__name__))
 
     def downloadModel(self, pointer, format, aspectConfiguration):
-        pass
+        raise NotImplemented(
+            "{} not implemented in class {}".format(ModelInterpreter.downloadModel.__name__, self.__class__.__name__))
 
     def getSupportedOutputs(self, pointer):
-        pass
+        raise NotImplemented(
+            "{} not implemented in class {}".format(ModelInterpreter.getSupportedOutputs.__name__,
+                                                    self.__class__.__name__))
 
     def getName(self):
-        pass
+        raise NotImplemented(
+            "{} not implemented in class {}".format(ModelInterpreter.getName.__name__, self.__class__.__name__))
 
     def getDependentModels(self):
-        pass
+        raise NotImplemented(
+            "{} not implemented in class {}".format(ModelInterpreter.getDependentModels.__name__,
+                                                    self.__class__.__name__))
 
 
 

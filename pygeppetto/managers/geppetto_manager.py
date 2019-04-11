@@ -16,7 +16,7 @@ from ..model.utils import pointer_utility as PointerUtility
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
 from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException, ModelInterpreterException
-
+import logging
 
 @unique
 class Scope(Enum):
@@ -30,7 +30,7 @@ class RuntimeProject(object):
         :param project: pygeppetto.data_model.GeppettoProject
         :param manager: GeppettoManager
         """
-        self.manager = manager
+        self.geppetto_manager = manager
         self.project = project
         self.experiments = {}
         self.active_experiment = None
@@ -61,15 +61,15 @@ class RuntimeProject(object):
         """
         # value =  PointerUtility.getValue(self.model, path, StateVariableType) TODO verify the following 2 lines are correct in replacement of this line
         pointer = PointerUtility.getPointer(self.model, path)
-        variable = pointer.elements[0].variable  # TODO handle variable not found. Is it possible?
+        variable = pointer.elements[-1].variable  # TODO handle variable not found. Is it possible?
 
         value = variable.initialValues[0].value
         variable.synched = False  # This will say to the serializer to send the value
-        variable_library = variable.eContainer().libraries[0]
+        variable_library = variable.eContainer().eContainer()
 
         # TODO here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
-        actual_model_interpreter = model_interpreter.get_model_interpreter(variable_library)
-        new_value = actual_model_interpreter.importValue(value)
+        actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(variable_library)
+        new_value = actual_model_interpreter.importValue(path)
 
         # Set the new value in replacement of ImportValue
         variable.initialValues[0].value = new_value
@@ -94,8 +94,8 @@ class RuntimeProject(object):
                     url = url_reader.getURL(type_.url, self.project.baseURL)
 
                 geppettoModelAccess = None  # TODO geppettoModelAccess is not supported
-                self.geppettoModel = actual_model_interpreter.importType(url, type_.id, library,
-                                                                         geppettoModelAccess)
+                self.model = actual_model_interpreter.importType(url, type_.id, library,
+                                                                 geppettoModelAccess)
 
                 # TODO if we want to support default view customization, uncomment below and implement
                 # if self.gatherDefaultView and actual_model_interpreter.isSupported(
@@ -111,7 +111,7 @@ class RuntimeProject(object):
             except ModelInterpreterException as e:
                 raise GeppettoExecutionException(e)
 
-        return self.geppettoModel
+        return self.model
 
 
 class RuntimeExperiment(object):
@@ -184,8 +184,9 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
                                               'current user')
 
         if self.is_project_open(project):
-            raise GeppettoExecutionException('Cannot load two instances of '
-                                             'the same project')
+            logging.warning('Project was already opened: {}'.format(project))
+            return self.get_runtime_project(project)
+            # raise GeppettoExecutionException('Cannot load two instances of the same project')
         runtime = RuntimeProject(project, self)
         self.opened_projects[project] = runtime
         return runtime
@@ -205,7 +206,7 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         if not self.is_project_open(project):
             try:
                 return self.load_project(project)
-            except Exception:
+            except Exception as e:
                 raise GeppettoExecutionException()
         return self.opened_projects[project]
 
@@ -253,10 +254,10 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
             raise GeppettoExecutionException(e)
         return experiment
 
-    @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import value')
+    # @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import value')
     def resolve_import_value(self, path, geppetto_project, experiment=None):
         return self.get_runtime_project(geppetto_project).resolve_import_value(path)
 
-    @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import type')
+    # @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import type')
     def resolve_import_type(self, typePaths, geppetto_project):
         return self.get_runtime_project(geppetto_project).resolve_import_type(typePaths)

@@ -12,6 +12,14 @@ class GeppettoProject(object):
         self.view = view
         self.isPublic = public
 
+    def __eq__(self, o: object) -> bool:
+        return self.id == o.id if hasattr(o, 'id') else False
+
+    def __hash__(self) -> int:
+        return self.id
+
+    def __str__(self) -> str:
+        return "GeppettoProject[id={}, name={}]".format(self.id, self.name)
 
     #TODO remove getters and setters. We still need them here while porting code from Java
     def getName(self): return self.name

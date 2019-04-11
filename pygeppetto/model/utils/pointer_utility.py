@@ -1,14 +1,15 @@
 """ Derived from generated source for class PointerUtility
 https://github.com/openworm/org.geppetto.model/blob/master/src/main/java/org/geppetto/model/util/java"""
-from ..exceptions import GeppettoModelException
-from ..values.values_factory import ValuesFactory
-from ..types import CompositeType, ArrayType, Type
-from ..values.values import Pointer, PointerElement
-from ..variables import Variable
-from ..model import GeppettoLibrary, GeppettoModel
+import sys
 
 from multimethod import multidispatch
-import sys
+
+from ..exceptions import GeppettoModelException
+from ..model import GeppettoLibrary, GeppettoModel
+from ..types import CompositeType, ArrayType, Type
+from ..values.values import Pointer, PointerElement
+from ..values.values_factory import ValuesFactory
+from ..variables import Variable
 
 # Fake a static class
 PointerUtility = sys.modules[__name__]
@@ -183,14 +184,7 @@ def getValue(model, path, stateVariablType):
         raise GeppettoModelException("Couldn't find a value for the path " + path)
 
 
-#
-# 	 * @param typeId
-# 	 * @param library
-# 	 * @return
-#
-def findType(typeId, library: GeppettoLibrary):
-    """ generated source for method findType """
-    return next((type_ for type_ in library.types if type_.id == typeId), None)
+
 
 
 #
@@ -280,7 +274,7 @@ def getInstancePath(variable, type_):
 
 
 @multidispatch
-def findType(type_: str, variable: Variable) -> Type:
+def findType(type_, variable: Variable) -> Type:
     """ generated source for method findType_0 """
     if type_ is None:
         types = []
@@ -303,6 +297,16 @@ def findType(type_: str, variable: Variable) -> Type:
                 return t
         raise GeppettoModelException("The type {} was not found in the variable {}".format(type_, variable.id))
 
+
+#
+# 	 * @param typeId
+# 	 * @param library
+# 	 * @return
+#
+@findType.register(str, GeppettoLibrary)
+def findType_library(typeId, library: GeppettoLibrary):
+    """ generated source for method findType """
+    return next((type_ for type_ in library.types if type_.id == typeId), None)
 
 def findInstanceVariable(variablename: str, model: GeppettoModel):
     """ generated source for method findInstanceVariable """

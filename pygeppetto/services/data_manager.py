@@ -12,7 +12,7 @@ class GeppettoDataManager(object, metaclass=Singleton):
     """ generated source for interface IGeppettoDataManager """
 
     def __init__(self):
-        self.projects = []
+        self.projects = {}
 
     def getName(self):
         raise NotImplemented('Operation not defined yet in default data manager')
@@ -26,8 +26,8 @@ class GeppettoDataManager(object, metaclass=Singleton):
     def getUserGroupById(self, id):
         raise NotImplemented('Operation not defined yet in default data manager')
 
-    def getGeppettoProjectById(self, id):
-        raise NotImplemented('Operation not defined yet in default data manager')
+    def getGeppettoProjectById(self, project_id):
+        return self.projects.get(project_id, None)
 
     def getAllUsers(self):
         raise NotImplemented('Operation not defined yet in default data manager')
@@ -42,6 +42,8 @@ class GeppettoDataManager(object, metaclass=Singleton):
         project = json.loads(json_str, object_hook=lambda d: Namespace(**d))
         project.volatile = True
         project.id = hash(json_str)
+        self.projects[project.id] = project
+        return project
 
 
     def getExperimentsForProject(self, projectId):

@@ -1,6 +1,6 @@
 from pygeppetto.model import GeppettoModel, GeppettoLibrary, CompositeType, Variable
 from pygeppetto.model.model_factory import GeppettoModelFactory
-from pygeppetto.services import ModelInterpreter
+from pygeppetto.services.model_interpreter import ModelInterpreter
 
 
 class MockModelInterpreter(ModelInterpreter):

@@ -1,5 +1,4 @@
 import pygeppetto.model.utils.pointer_utility as pointer_utility
-import pytest
 from pygeppetto.constants import UserPrivileges
 from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, LocalUserGroup
 from pygeppetto.managers import geppetto_manager
@@ -9,7 +8,6 @@ from pygeppetto.services.model_interpreter import add_model_interpreter
 from .mocks import MockModelInterpreter
 
 
-@pytest.Class
 class ImportValueTest(object):
 
     def __init__(self):

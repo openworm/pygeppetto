@@ -65,7 +65,10 @@ class RuntimeProject(object):
 
         value = variable.initialValues[0].value
         variable.synched = False  # This will say to the serializer to send the value
-        variable_library = variable.eContainer().eContainer()
+        variable_type = variable.eContainer()
+        variable_type.synched = False
+        variable_library = variable_type.eContainer()
+        variable_library.synched = False
 
         # TODO here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(variable_library)
@@ -185,7 +188,8 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
 
         if self.is_project_open(project):
             logging.warning('Project was already opened: {}'.format(project))
-            return self.get_runtime_project(project)
+            del self.opened_projects[project]
+            # return self.get_runtime_project(project)
             # raise GeppettoExecutionException('Cannot load two instances of the same project')
         runtime = RuntimeProject(project, self)
         self.opened_projects[project] = runtime

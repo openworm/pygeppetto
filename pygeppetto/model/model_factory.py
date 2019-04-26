@@ -1,22 +1,29 @@
-from .model import GeppettoModel
-from .variables import Variable, TypeToValueMap
-from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue
-from pyecore.resources import ResourceSet, URI
 import os.path
+
+from pyecore.resources import ResourceSet, URI
+
+from .model import GeppettoModel
+from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue
+from .variables import Variable, TypeToValueMap
 
 
 class GeppettoModelFactory():
 
     def __init__(self):
-        rset = ResourceSet()
+        self.rset = ResourceSet()
         # Build the model URI
-        model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
+        self.model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
                                      'ecore', 'GeppettoCommonLibrary.xmi'))
-        resource = rset.get_resource(model_uri)  # We load the model
-        self.geppetto_common_library = resource.contents[0]  # We get the root
+        resource = self.rset.get_resource(self.model_uri)  # We load the model
+        self.geppetto_common_library = resource.contents[0]
 
     def createGeppettoModel(self, name):
         # We create a GeppettoModel instance and we add the common library to it
+
+        # FIXME we are reloading the xmi files since we don't have a way to deep clone
+        rset = ResourceSet()
+        resource = rset.get_resource(self.model_uri)
+        geppetto_common_library = resource.contents[0]
         geppetto_model = GeppettoModel(name=name, libraries=[self.geppetto_common_library])
         return geppetto_model
 
@@ -55,5 +62,5 @@ class GeppettoModelFactory():
         variable = Variable(id=id)
         variable.types.append(self.geppetto_common_library.types[2])
         if initialValue is not None:
-            variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[2],initialValue))
+            variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[2], initialValue))
         return variable

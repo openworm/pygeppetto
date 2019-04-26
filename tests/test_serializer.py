@@ -2,10 +2,11 @@ import json
 import os
 
 from pyecore.resources import ResourceSet, URI
+from pygeppetto.model.model_factory import GeppettoModelFactory
 from pygeppetto.model.model_serializer import GeppettoModelSerializer as GeppettoSerializer
 
 
-def testSerializer():
+def test_serializer():
     #  Initialize the factory and the resource set
     resSet = ResourceSet()
     #  How to read
@@ -18,24 +19,62 @@ def testSerializer():
     expected_json = json.loads(jsonResource)
 
     # FIXME Empty strings attr are converted to None and the serializer removes the attr (( from: pyecore -> xmi.py -> _init_modelroot))
-    geppettoModel.eSet('id', '')
-    geppettoModel.eSet('name', '')
-    geppettoModel.getVariables()[0].eSet('id', '')
-    geppettoModel.getLibraries()[0].eSet('id', '')
-    geppettoModel.getLibraries()[0].types[0].eSet('id', '')
+    geppettoModel.id = ''
+    geppettoModel.name = ''
+    geppettoModel.variables[0].id = ''
+    geppettoModel.getLibraries()[0].id = ''
+    geppettoModel.getLibraries()[0].types[0].id = ''
 
+    assert not geppettoModel.variables[0].synched
+
+    # First serialization: the object is serialized without any sync activated.
     produced_json = temporary_fix(json.loads(GeppettoSerializer.serialize(geppettoModel)))
     assert produced_json == expected_json
 
-    assert geppettoModel.getVariables()[0].eGet('synched')
+    assert not geppettoModel.variables[0].synched
     
     stringify_sync_model = '{"eClass":"GeppettoModel","id":"","name":"","variables":[{"synched":true}],"libraries":[{"synched":true}]}'
     expected_json_synched = json.loads(stringify_sync_model)
-    assert json.loads(GeppettoSerializer.serialize(geppettoModel, True)) == expected_json_synched
 
-    produced_json = temporary_fix(json.loads(GeppettoSerializer.serialize(geppettoModel)))
+    # Second serialization: we activate the sync but we expect the same result.
+    produced_json = temporary_fix(json.loads(GeppettoSerializer.serialize(geppettoModel, True)))
     assert produced_json == expected_json
-    
+    assert geppettoModel.variables[0].synched
+    # Third serialization: we activate the sync and now we find everything on sync.
+    produced_json = json.loads(GeppettoSerializer.serialize(geppettoModel, True))
+    assert produced_json == expected_json_synched
+
+    # Fourth serialization: the object is synched, but we want the full serialization anyway
+    produced_json = temporary_fix(json.loads(GeppettoSerializer.serialize(geppettoModel)))
+    assert geppettoModel.variables[0].synched
+    assert produced_json == expected_json
+
+
+def test_references():
+    resSet = ResourceSet()
+    resource = resSet.get_resource(URI(os.path.join(os.path.dirname(__file__), "xmi-data/GeppettoModelTest.xmi")))
+    model1 = resource.contents[0]
+    resSet = ResourceSet()
+    resource = resSet.get_resource(URI(os.path.join(os.path.dirname(__file__), "xmi-data/GeppettoModelTest.xmi")))
+    model2 = resource.contents[0]
+
+    factory = GeppettoModelFactory()
+
+    variable = factory.createStateVariable('0')
+    model1.variables.append(variable)
+    model1.libraries.append(factory.geppetto_common_library)
+    model2.variables.append(variable)
+    model2.libraries.append(factory.geppetto_common_library)
+    serialized1 = json.loads(GeppettoSerializer.serialize(model1, False))
+    serialized2 = json.loads(GeppettoSerializer.serialize(model2, False))
+    assert serialized1 == serialized2
+
+    assert json.loads(GeppettoSerializer.serialize(model1, True)) == json.loads(
+        GeppettoSerializer.serialize(model2, True))
+    assert json.loads(GeppettoSerializer.serialize(model1, True)) == json.loads(
+        GeppettoSerializer.serialize(model2, True))
+    assert json.loads(GeppettoSerializer.serialize(model1, False)) == json.loads(
+        GeppettoSerializer.serialize(model2, False))
 
 # FIXME Serialization is slightly different from expected
 def temporary_fix(produced_json):

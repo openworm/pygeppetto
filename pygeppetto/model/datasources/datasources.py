@@ -103,7 +103,7 @@ class QueryMatchingCriteria(EObject):
 
 
 class QueryResult(AQueryResult):
-    values = EAttribute(eType=EJavaObject, upper=-1)
+    values = EAttribute(eType=EJavaObject, upper=-1, unique=False)
 
     def __init__(self, values=None, **kwargs):
         super(QueryResult, self).__init__(**kwargs)
@@ -112,7 +112,7 @@ class QueryResult(AQueryResult):
 
 
 class SerializableQueryResult(AQueryResult):
-    values = EAttribute(eType=EString, upper=-1)
+    values = EAttribute(eType=EString, upper=-1, unique=False)
 
     def __init__(self, values=None, **kwargs):
         super(SerializableQueryResult, self).__init__(**kwargs)

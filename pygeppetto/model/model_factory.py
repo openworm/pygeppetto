@@ -1,30 +1,40 @@
 import os.path
 
 from pyecore.resources import ResourceSet, URI
+from pygeppetto.utils import clone
 
 from .model import GeppettoModel
 from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue
 from .variables import Variable, TypeToValueMap
 
 
-class GeppettoModelFactory():
+class GeppettoCommonLibrary:
+    rset = ResourceSet()
+    # Build the model URI
+    model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
+                                 'ecore', 'GeppettoCommonLibrary.xmi'))
+    resource = rset.get_resource(model_uri)  # We load the model
+    instance = resource.contents[0]
 
-    def __init__(self):
-        self.rset = ResourceSet()
-        # Build the model URI
-        self.model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
-                                     'ecore', 'GeppettoCommonLibrary.xmi'))
-        resource = self.rset.get_resource(self.model_uri)  # We load the model
-        self.geppetto_common_library = resource.contents[0]
+    @classmethod
+    def instance_copy(cls):
+        return clone(cls.instance)
 
-    def createGeppettoModel(self, name):
+
+class GeppettoModelFactory:
+
+    def __init__(self, geppetto_model):
+        self.geppetto_model = geppetto_model
+
+    @property
+    def geppetto_common_library(self):
+        return next(lib for lib in self.geppetto_model.libraries if lib.id == 'common')
+
+    @classmethod
+    def createGeppettoModel(cls, name):
         # We create a GeppettoModel instance and we add the common library to it
 
-        # FIXME we are reloading the xmi files since we don't have a way to deep clone
-        rset = ResourceSet()
-        resource = rset.get_resource(self.model_uri)
-        geppetto_common_library = resource.contents[0]
-        geppetto_model = GeppettoModel(name=name, libraries=[self.geppetto_common_library])
+        geppetto_model = GeppettoModel(name=name, libraries=[clone(GeppettoCommonLibrary.instance)])
         return geppetto_model
 
     def createCylinder(self, id, bottomRadius=1.0, topRadius=1.0,
@@ -47,13 +57,15 @@ class GeppettoModelFactory():
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[8], sphere))
         return variable
 
-    def createTimeSeries(self, id, values, unit=None):
+    @classmethod
+    def createTimeSeries(cls, id, values, unit=None):
         if unit:
             unit = Unit(unit)
         ts = TimeSeries(value=values, unit=unit)
         return ts
 
-    def createImportValue(self):
+    @classmethod
+    def createImportValue(cls):
         iv = ImportValue()
         return iv
 

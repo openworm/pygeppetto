@@ -5,7 +5,7 @@ from pygeppetto.services.model_interpreter import ModelInterpreter
 
 class MockModelInterpreter(ModelInterpreter):
     def __init__(self):
-        self.factory = GeppettoModelFactory()
+        self.factory = GeppettoModelFactory(GeppettoModelFactory.createGeppettoModel('test'))
 
     def importType(self, url=None, typeName='MyGeppettoModel', library='mylib', commonLibraryAccess=None):
         '''

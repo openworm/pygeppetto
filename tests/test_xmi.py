@@ -9,8 +9,7 @@ def rset():
 
 
 def test_model_factory():
-    factory = GeppettoModelFactory()
-    geppetto_model = factory.createGeppettoModel('testModel')
+    geppetto_model = GeppettoModelFactory.createGeppettoModel('testModel')
     assert geppetto_model
 
 

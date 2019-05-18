@@ -4,7 +4,7 @@ from pyecore.resources import ResourceSet, URI
 from pygeppetto.utils import clone
 
 from .model import GeppettoModel
-from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue
+from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue, Text
 from .variables import Variable, TypeToValueMap
 
 
@@ -75,4 +75,11 @@ class GeppettoModelFactory:
         variable.types.append(self.geppetto_common_library.types[2])
         if initialValue is not None:
             variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[2], initialValue))
+        return variable
+
+    def createTextVariable(self, id, text=''):
+        variable = Variable(name=id, id=f"{id}_id")
+        variable.types.append(self.geppetto_common_library.types[5])
+        variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[5], Text(text)))
+        
         return variable

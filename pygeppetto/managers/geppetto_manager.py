@@ -8,14 +8,14 @@ from pygeppetto.services import model_interpreter
 from pygeppetto.utils import Singleton
 
 from .experiment_run_manager import ExperimentRunManager
-from ..constants import UserPrivileges, ExperimentStatus
-from ..model import ExperimentState
-from ..model.utils import pointer_utility as PointerUtility
+from pygeppetto.constants import UserPrivileges, ExperimentStatus
+from pygeppetto.model import ExperimentState
+from pygeppetto.model.utils import pointer_utility as PointerUtility
 
 # Creates a Python 2 and 3 compatible base class
 ABC = abc.ABCMeta('ABC', (object,), {'__slots__': ()})
 
-from ..model.exceptions import GeppettoAccessException, GeppettoExecutionException, ModelInterpreterException
+from pygeppetto.model.exceptions import GeppettoAccessException, GeppettoExecutionException, ModelInterpreterException
 import logging
 
 @unique
@@ -176,11 +176,10 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
 
     def load_project(self, project):
         if self.scope is not Scope.RUN:
-            if self.user and \
-                    UserPrivileges.READ_PROJECT not in self.user.group.privileges:
+            if self.user and UserPrivileges.READ_PROJECT not in self.user.group.privileges:
                 raise GeppettoAccessException("Insufficient access rights to"
                                               "load project")
-            is_user_project = (project.volatile or project.public
+            is_user_project = (project.volatile or project.isPublic
                                or self.is_user_project(project.id))
             if not is_user_project:
                 raise GeppettoAccessException('Project not found for the '

@@ -1,14 +1,15 @@
 #!/usr/bin/env python
 
-from setuptools import setup, find_packages
 import sys
 
-__version__ = "0.4.2"
+from setuptools import setup, find_packages
+
+__version__ = "1.0.0"
 
 if sys.version_info < (3, 3):
     required_packages = ['pyecore-py2']
 else:
-    required_packages = ['pyecore']
+    required_packages = ['pyecore', 'multimethod']
 
 
 setup(

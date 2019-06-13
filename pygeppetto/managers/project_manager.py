@@ -1,0 +1,2 @@
+class ProjectManager(object):
+    pass

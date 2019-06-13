@@ -1,8 +1,10 @@
 """Definition of meta model 'types'."""
 from functools import partial
+
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import ISynchable, Node
+
+from ..model import Node
 
 name = 'types'
 nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//types'
@@ -40,7 +42,6 @@ class Type(Node):
 
     def extendsType(self, type):
         raise NotImplementedError('Operation extendsType(...) is not yet implemented')
-
 
 class VisualType(Type):
     defaultValue = EReference(containment=True)
@@ -80,6 +81,8 @@ class CompositeType(Type):
         if defaultValue is not None:
             self.defaultValue = defaultValue
 
+    def getVariables(self):
+        return self.variables
 
 class PointerType(Type):
     defaultValue = EReference(containment=True)

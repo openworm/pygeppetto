@@ -18,7 +18,7 @@ $ python setup.py install
 First, import the pygeppetto API:
 
 ```Python
-import model as pygeppetto
+import pygeppetto
 ```
 
 This will load the pygeppetto API and name it `pygeppetto`. Then, you can create

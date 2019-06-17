@@ -77,8 +77,8 @@ resource.save(output=URI('my_new_file.xmi'))
 
 ## Dependencies
 
-* Python 2.7 or Python >= 3.4
-* `pyecore-py2` for Python 2.7, `pyecore` for Python 3
+*  Python >= 3.5
+* `pyecore`
 
 ## Contributions
 

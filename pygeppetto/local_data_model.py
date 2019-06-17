@@ -50,19 +50,3 @@ class LocalExperiment(object):
         self.last_modified = None
         self.start_date = None
         self.last_ran = None
-    #
-    #
-    # private List<LocalAspectConfiguration> aspectConfigurations;
-    #
-    #
-    #
-# private Date creationDate;
-#
-# private Date lastModified;
-#
-#
-# private Date startDate;
-#
-# private Date endDate;
-#
-# private Date lastRan;

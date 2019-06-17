@@ -49,21 +49,12 @@ class PointerElement(EObject):
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
         super(PointerElement, self).__init__()
-        if index is not None:
-            self.index = index
+
+        self.index = index
         if variable is not None:
             self.variable = variable
         if type is not None:
             self.type = type
-
-    def setVariable(self, variable):
-        self.variable = variable
-
-    def setType(self, tp):
-        self.type = tp
-
-    def setIndex(self, index):
-        self.index = index
 
 
 @EMetaclass
@@ -197,30 +188,29 @@ class Pointer(Value):
 
     def __init__(self, elements=None, point=None, path=None, **kwargs):
         super(Pointer, self).__init__(**kwargs)
-        if path is not None:
-            self.path = path
+
         if elements:
             self.elements.extend(elements)
         if point is not None:
             self.point = point
+        if path is not None:
+            self.path = path
+        else:
+            self.path = self.get_instance_path()
 
-    def getInstancePath(self):
+    def get_instance_path(self):
         """ generated source for method getInstancePath """
-        instancePath = []
-        for element in self.elements:
-            instancePath.append(element.variable.id)
-            instancePath.append("(" + element.type.id + ")")
+        instance_path = []
+        for i, element in enumerate(self.elements):
+            instance_path.append(element.variable.id)
+            instance_path.append("(" + element.type.id + ")")
             if element.index is not None and element.index > -1:
-                instancePath.append("[{}]".format(element.index))
-            if self.elements[-1] != element:
-                instancePath.append(".")
-        return ''.join(instancePath)
+                instance_path.append("[{0}]".format(element.index))
+            if i != len(self.elements) - 1:
+                instance_path.append(".")
+        return ''.join(instance_path)
 
-    def getElements(self):
-        return self.elements
 
-    def setPath(self, path):
-        self.path = path
 
 
 

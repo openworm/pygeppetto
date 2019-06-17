@@ -56,27 +56,26 @@ class RuntimeProject(object):
 
     def resolve_import_value(self, path):
         """
-        Retrieves the value from the path and updated the Geppetto Model with the new value
+        Retrieves the value from the path and updates the Geppetto Model with the new value
         :param path: the instance path to replace
         :return:
         """
-        # value =  PointerUtility.getValue(self.model, path, StateVariableType) TODO verify the following 2 lines are correct in replacement of this line
-        pointer = PointerUtility.getPointer(self.model, path)
-        variable = pointer.elements[-1].variable  # TODO handle variable not found. Is it possible?
+        variable = PointerUtility.find_variable_from_path(self.model, path)
 
-        value = variable.initialValues[0].value
         variable.synched = False  # This will say to the serializer to send the value
-        variable_type = variable.eContainer()
-        variable_type.synched = False
-        variable_library = variable_type.eContainer()
-        variable_library.synched = False
+        variable_container = variable.eContainer()
 
-        # TODO here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
-        actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(variable_library)
+        source_library = variable_container.eContainer()
+
+        # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
+        actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(source_library)
         new_value = actual_model_interpreter.importValue(path)
 
         # Set the new value in replacement of ImportValue
         variable.initialValues[0].value = new_value
+        # TODO? it would be nice here to have an api that sets a value and also handles the sync
+        variable_container.synched = False
+        source_library.synched = False
         return self.model
 
     def resolve_import_type(self, typePaths):
@@ -85,7 +84,7 @@ class RuntimeProject(object):
         #  let's find the importType
 
         for typePath in typePaths:
-            type_ = PointerUtility.getType(self.model, typePath)
+            type_ = PointerUtility.get_type(self.model, typePath)
 
             try:
                 importedType = None
@@ -117,6 +116,8 @@ class RuntimeProject(object):
 
         return self.model
 
+    def populate_new_experiment(self, experiment):
+        raise NotImplemented()
 
 class RuntimeExperiment(object):
     def __init__(self, project, experiment):

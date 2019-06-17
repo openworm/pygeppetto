@@ -7,35 +7,36 @@ from pygeppetto.services.model_interpreter import add_model_interpreter
 
 from .mocks import MockModelInterpreter
 
+model_interpreter = MockModelInterpreter()
+geppetto_model = model_interpreter.create_model(library='mocklibrary')
+geppetto_project = LocalGeppettoProject(name='TestProject', experiments=None,
+                                        geppetto_model=geppetto_model, id=None)
+geppetto_project.volatile = True
+geppetto_manager = geppetto_manager.GeppettoManager()
 
-class ImportValueTest(object):
+group = LocalUserGroup('testgroup', privileges=[e for e in UserPrivileges])
 
-    def __init__(self):
-        group = LocalUserGroup(name='TestGroup', privileges=(UserPrivileges.READ_PROJECT,))
-        self.model_interpreter = MockModelInterpreter()
-        self.geppetto_model = self.model_interpreter.importType(library='mocklibrary')
-        self.geppetto_project = LocalGeppettoProject(name='TestProject', experiments=None,
-                                                     geppetto_model=self.geppetto_model, id_=None,
-                                                     url_base=None)
-        self.geppetto_project.volatile = True
-        self.geppetto_manager = geppetto_manager.GeppettoManager()
-        self.geppetto_manager.user = LocalUser(id=1, name='TestUser', projects=(self.geppetto_project,),
-                                               group=group)
-        self.geppetto_manager.load_project(self.geppetto_project)
+geppetto_manager.user = LocalUser(id=1, name='TestUser', projects=(geppetto_project,),
+                                  group=group)
+geppetto_manager.load_project(geppetto_project)
 
-        add_model_interpreter('mocklibrary', self.model_interpreter)
+add_model_interpreter('mocklibrary', model_interpreter)
+from pygeppetto.model.model_serializer import GeppettoModelSerializer
 
-    def test_importvalue(self):
-        assert ImportValue == type(
-            pointer_utility.findVariable(type_=self.geppetto_model, variablename='v1').initialValues[0].value)
-        assert 1 == \
-               pointer_utility.findVariable(type_=self.geppetto_model, variablename='v2').initialValues[0].value.value[
-                   0]
 
-        model = self.geppetto_manager.resolve_import_value(path='v1', geppetto_project=self.geppetto_project,
-                                                           experiment=None)
-        assert model is not None
-        assert not pointer_utility.findVariable(type_=model, variablename='v1').synched
-        assert pointer_utility.findVariable(type_=model, variablename='v2').synched
-        assert pointer_utility.findVariable(type_=model, variablename='v3').synched
-        assert 4 == pointer_utility.findVariable(type_=model, variablename='v1').initialValues[0].value.value[0]
+def test_importvalue():
+    assert ImportValue == type(pointer_utility.find_variable_from_path(geppetto_model, 'v3.v31').initialValues[0].value)
+
+    GeppettoModelSerializer.serialize(geppetto_model, True)  # now the model is in sync
+    model = geppetto_manager.resolve_import_value(path='v3.v31', geppetto_project=geppetto_project,
+                                                  experiment=None)
+    assert model is not None
+
+    # assert not pointer_utility.find_variable_from_path(model=model, path='v3').eContainer().synched
+    # print(GeppettoModelSerializer.serialize(model, True))
+    assert not pointer_utility.find_variable_from_path(model=model, path='v3.v31').synched
+    assert pointer_utility.find_variable_from_path(model=model, path='v1').synched
+    assert pointer_utility.find_variable_from_path(model=model, path='v2').synched
+    assert 4 == pointer_utility.find_variable_from_path(model=model, path='v3.v31').initialValues[0].value.value[0]
+
+    print(GeppettoModelSerializer.serialize(model, True))

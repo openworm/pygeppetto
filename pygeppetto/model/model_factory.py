@@ -83,7 +83,7 @@ class GeppettoModelFactory:
         return variable
 
     def createTextVariable(self, id, text=''):
-        variable = Variable(name=id, id=f"{id}_id")
+        variable = Variable(name=id, id="{0}_id".format(id))
         variable.types.append(self.geppetto_common_library.types[5])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[5], Text(text)))
 

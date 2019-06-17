@@ -1,13 +1,13 @@
 from pygeppetto.model import GeppettoModel, GeppettoLibrary, CompositeType, Variable
 from pygeppetto.model.model_factory import GeppettoModelFactory
-from pygeppetto.services.model_interpreter import ModelInterpreter
 
 
-class MockModelInterpreter(ModelInterpreter):
+class MockModelInterpreter:
+
     def __init__(self):
         self.factory = GeppettoModelFactory(GeppettoModelFactory.createGeppettoModel('test'))
 
-    def importType(self, url=None, typeName='MyGeppettoModel', library='mylib', commonLibraryAccess=None):
+    def create_model(self, url=None, typeName='MyGeppettoModel', library='mylib', commonLibraryAccess=None):
         '''
         Returns a geppetto model with this structure:
 
@@ -24,9 +24,9 @@ class MockModelInterpreter(ModelInterpreter):
         :return:
         '''
         flib = GeppettoLibrary(id=library)
-        model = GeppettoModel(name=typeName, libraries=[flib])
+        model = GeppettoModel(id='typeName', name=typeName, libraries=[flib])
 
-        v1 = self.factory.createStateVariable(id='v1', initialValue=self.factory.createImportValue())
+        v1 = self.factory.createStateVariable(id='v1', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
         v2 = self.factory.createStateVariable(id='v2', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
         v3 = Variable(id='v3')
         model.variables.append(v1)

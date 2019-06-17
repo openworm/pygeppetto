@@ -1,6 +1,7 @@
 class GeppettoProject(object):
 
-    def __init__(self, id, name, geppetto_model, volatile, base_url=None, public=False, experiments=None, view=None):
+    def __init__(self, id, name, geppetto_model, volatile=True, base_url=None, public=False, experiments=None,
+                 view=None):
         self.id = id
         self.name = name
         self.geppettoModel = geppetto_model  # Beware must use the camelCase here otherwise we cannot import from JSON
@@ -15,34 +16,9 @@ class GeppettoProject(object):
         return self.id == o.id if hasattr(o, 'id') else False
 
     def __hash__(self) -> int:
-        return self.id
+        return hash(self.id)
 
     def __str__(self) -> str:
         return "GeppettoProject[id={}, name={}]".format(self.id, self.name)
 
-    # TODO remove getters and setters. We still need them here while porting code from Java
-    def getName(self): return self.name
 
-    def setName(self, name): self.name = name
-
-    def getExperiments(self): return self.experiments
-
-    def getActiveExperimentId(self): pass
-
-    def setActiveExperimentId(self, experimentId): pass
-
-    def getGeppettoModel(self): return self.geppettoModel
-
-    def isVolatile(self): return self.volatile
-
-    def setVolatile(self, is_project_volatile): self.volatile = is_project_volatile
-
-    def isPublic(self): return self.isPublic
-
-    def setView(self, view): self.view = view
-
-    def getView(self): return self.view
-
-    def getBaseURL(self): return self.baseUrl
-
-    def setBaseURL(self, base_url): self.baseUrl = base_url

@@ -397,7 +397,7 @@ class GeppettoMessageHandler:
         """ generated source for method retrieveExperiment """
         theExperiment = None
         #  Look for experiment that matches id passed
-        for e in geppettoProject.getExperiments():
+        for e in geppettoProject.experiments:
             if e.getId() == experimentID:
                 #  The experiment is found
                 theExperiment = e

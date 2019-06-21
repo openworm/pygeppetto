@@ -18,9 +18,9 @@ from . import outbound_messages as OutboundMessages
 
 
 class GeppettoHandlerTypedException(Exception):
-    def __init__(self, msg, msg_type=None, exc=None):
+    def __init__(self, msg_type=OutboundMessages.ERROR, msg='Error not specified', exc=None):
         Exception.__init__(self, msg)
-        self.payload = msg
+        self.payload = msg.__dict__ if hasattr('__dict__', msg) else {"error": msg}
         self.exc = exc
         self.msg_type = msg_type
 
@@ -284,10 +284,12 @@ class GeppettoMessageHandler:
                 pass
 
         except GeppettoHandlerTypedException as e:
-            self.send_message(requestID, e.msg_type, e.payload.__dict__)
+            self.send_message(requestID, e.msg_type, e.payload)
         except AttributeError as e:
             logging.error('Message type not handled:' + payload['type'])
             raise e
+        except Exception as e:
+            self.send_message(requestID, OutboundMessages.ERROR, {})
 
         if msg_data is not None:
             return_msg_type = lookup_return_msg_type(msg_type)
@@ -300,9 +302,11 @@ class GeppettoMessageHandler:
 
     def loadProjectFromUrl(self, requestID, urlString):
         dataManager = DataManagerHelper.getDataManager()
-
-        geppettoProject = dataManager.get_project_from_url(urlString)
-
+        try:
+            geppettoProject = dataManager.get_project_from_url(urlString)
+        except Exception as e:
+            raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT,
+                                                f"Error while loading project from url: {urlString}: {e}")
         if geppettoProject == None:
             raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT,
                                                 "Project not found")
@@ -363,7 +367,7 @@ class GeppettoMessageHandler:
             else:
                 self.loadGeppettoProject(requestID, self.geppettoProject, experimentId)
         except Exception as e:
-            raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT, "")
+            raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT, str(e), e)
 
     def resolveImportType(self, requestID, projectId, typePaths):
         """ generated source for method resolveImportType """
@@ -453,10 +457,10 @@ class GeppettoMessageHandler:
 
     # NOTE: no other websocket expected for now
 
-    # 
+    #
     # 	 * @param runnableQueries
     # 	 * @return A list based on the EMF class. It's not possible to use directly the EMF class as Gson requires fields with public access modifiers which breaks EMF encapsulation
-    # 	 
+    #
 
     def convertRunnableQueriesDataTransferModel(self, runnableQueries):
         """ generated source for method convertRunnableQueriesDataTransferModel """

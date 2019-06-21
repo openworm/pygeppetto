@@ -352,10 +352,6 @@ class GeppettoMessageHandler:
         except Exception as e:
             self.error(e, "Could not load geppetto project")
 
-    #
-    # 	 * @param requestID
-    # 	 * @param projectId
-    #
     def loadProjectFromId(self, requestID, projectId, experimentId):
         """ generated source for method loadProjectFromId """
         dataManager = DataManagerHelper.getDataManager()
@@ -386,17 +382,12 @@ class GeppettoMessageHandler:
         experiment = self.retrieveExperiment(experimentId, geppettoProject)
         try:
             geppettoModel = self.geppettoManager.resolve_import_value(path, geppettoProject, experiment)
-            return GeppettoSerializer.serialize(geppettoModel, True).decode('utf-8')
+            return GeppettoSerializer.serialize(geppettoModel, True)
         except IOError as e:
             self.error(e, "Error importing value " + path)
         except GeppettoExecutionException as e:
             self.error(e, "Error importing value " + path)
 
-    #
-    # 	 * @param experimentID
-    # 	 * @param geppettoProject
-    # 	 * @return
-    #
     def retrieveExperiment(self, experimentID, geppettoProject):
         """ generated source for method retrieveExperiment """
         theExperiment = None
@@ -408,19 +399,11 @@ class GeppettoMessageHandler:
                 break
         return theExperiment
 
-    #
-    # 	 * @param projectId
-    # 	 * @return
-    #
     def retrieveGeppettoProject(self, projectId):
         """ generated source for method retrieveGeppettoProject """
         dataManager = DataManagerHelper.getDataManager()
         return dataManager.getGeppettoProjectById(projectId)
 
-    #
-    # 	 * @param exception
-    # 	 * @param errorMessage
-    #
     def error(self, exception: Exception, errorMessage):
         """ generated source for method error """
         exceptionMessage = ""
@@ -431,20 +414,11 @@ class GeppettoMessageHandler:
 
         raise GeppettoHandlerTypedException(OutboundMessages.ERROR, error)
 
-    #
-    # 	 * @param requestID
-    # 	 * @param exception
-    # 	 * @param errorMessage
-    #
     def info(self, requestID, message):
         """ generated source for method info """
         logging.info(message)
         raise GeppettoHandlerTypedException(OutboundMessages.INFO_MESSAGE, message)
 
-    #
-    # 	 * @param geppettoProject
-    # 	 * @throws GeppettoExecutionException
-    #
     def setConnectionProject(self, geppettoProject):
         """ generated source for method setConnectionProject """
         if self.geppettoProject != None:
@@ -455,12 +429,6 @@ class GeppettoMessageHandler:
         import pkg_resources  # part of setuptools
         return pkg_resources.require("pygeppetto")[0].version
 
-    # NOTE: no other websocket expected for now
-
-    #
-    # 	 * @param runnableQueries
-    # 	 * @return A list based on the EMF class. It's not possible to use directly the EMF class as Gson requires fields with public access modifiers which breaks EMF encapsulation
-    #
 
     def convertRunnableQueriesDataTransferModel(self, runnableQueries):
         """ generated source for method convertRunnableQueriesDataTransferModel """

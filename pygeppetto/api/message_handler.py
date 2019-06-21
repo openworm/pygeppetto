@@ -20,7 +20,7 @@ from . import outbound_messages as OutboundMessages
 class GeppettoHandlerTypedException(Exception):
     def __init__(self, msg_type=OutboundMessages.ERROR, msg='Error not specified', exc=None):
         Exception.__init__(self, msg)
-        self.payload = msg.__dict__ if hasattr('__dict__', msg) else {"error": msg}
+        self.payload = msg.__dict__ if hasattr('__dict__', msg) else {"error": str(msg)}
         self.exc = exc
         self.msg_type = msg_type
 

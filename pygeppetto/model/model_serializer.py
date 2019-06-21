@@ -55,7 +55,7 @@ def serialize(geppetto_model, onlySerialiseDelta=False):
         resource.register_mapper(ISynchable, IgnoreSyncMapper())
 
     resource.save(options={JsonOptions.SERIALIZE_DEFAULT_VALUES: True})
-    return uri.getvalue()
+    return uri.getvalue().decode("utf-8")
 
 
 def load(json):

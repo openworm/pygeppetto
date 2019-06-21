@@ -342,7 +342,7 @@ class GeppettoMessageHandler:
             runtime_project = self.geppettoManager.get_runtime_project(geppettoProject)
 
             geppettoModelJSON = GeppettoSerializer.serialize(
-                runtime_project.model, False).decode('UTF-8')
+                runtime_project.model, False)
             self.send_message(requestID, OutboundMessages.GEPPETTO_MODEL_LOADED, geppettoModelJSON)
 
             GeppettoSerializer.serialize(

@@ -5,7 +5,7 @@ from pygeppetto.model import MDTimeSeries
 from pygeppetto.utils import clone
 
 from .model import GeppettoModel
-from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue, Text
+from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit, ImportValue, Text, HTML
 from .variables import Variable, TypeToValueMap
 
 
@@ -86,5 +86,22 @@ class GeppettoModelFactory:
         variable = Variable(name=id, id="{0}_id".format(id))
         variable.types.append(self.geppetto_common_library.types[5])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[5], Text(text)))
+
+        return variable
+
+    def createHTMLTable(self, id, cols, rows, data):
+        import pandas as pd
+        
+        html = pd.DataFrame(
+            columns=cols,
+            index=rows,
+            data=data, 
+        ).to_html(
+            classes="pd-dataframe"
+        )
+
+        variable = Variable(name=id, id=f"{id}_id")
+        variable.types.append(self.geppetto_common_library.types[3])
+        variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[3], HTML(html)))
 
         return variable

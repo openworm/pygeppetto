@@ -100,7 +100,7 @@ class GeppettoModelFactory:
             classes="pd-dataframe"
         )
 
-        variable = Variable(name=id, id=f"{id}_id")
+        variable = Variable(name=id, id="{0}_id".format(id))
         variable.types.append(self.geppetto_common_library.types[3])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[3], HTML(html)))
 

@@ -284,12 +284,13 @@ class GeppettoMessageHandler:
                 pass
 
         except GeppettoHandlerTypedException as e:
+            logging.error('Error occurred during message {} handling: {}'.format(msg_type, e.payload), exc_info=True)
             self.send_message(requestID, e.msg_type, e.payload)
-        except AttributeError as e:
-            logging.error('Message type not handled:' + payload['type'])
-            raise e
+
         except Exception as e:
-            self.send_message(requestID, OutboundMessages.ERROR, {})
+            logging.error('Unexpected error occurred during message {} handling: {}'.format(msg_type, e), exc_info=True)
+            self.send_message(requestID, OutboundMessages.ERROR, {"error": str(e)})
+
 
         if msg_data is not None:
             return_msg_type = lookup_return_msg_type(msg_type)

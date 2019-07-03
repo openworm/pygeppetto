@@ -36,7 +36,8 @@ class TransportMessageFactory(object):
     def getTransportMessage(cls, requestID, type_, update):
         """ generated source for method getTransportMessage """
         messageType = type_
-        payload = {}
+
+        payload = update if type(update) == dict else {}
         if type_ == ERROR:
             payload.update({'message': update})
         elif type_ == INFO_MESSAGE:

@@ -284,11 +284,11 @@ class GeppettoMessageHandler:
                 pass
 
         except GeppettoHandlerTypedException as e:
-            logging.exception('Error occurred during message {} handling'.format(msg_type), exc_info=True)
+            logging.error('Error occurred during message {} handling'.format(msg_type), exc_info=True)
             self.send_message(requestID, e.msg_type, e.payload)
 
         except Exception as e:
-            logging.exception('Unexpected error occurred during message {} handling'.format(msg_type), exc_info=True)
+            logging.error('Unexpected error occurred during message {} handling'.format(msg_type), exc_info=True)
             self.send_message(requestID, OutboundMessages.ERROR, {"error": str(e)})
 
 

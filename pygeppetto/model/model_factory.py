@@ -82,8 +82,8 @@ class GeppettoModelFactory:
             variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[2], initialValue))
         return variable
 
-    def createTextVariable(self, id, text=''):
-        variable = Variable(name=id, id=id)
+    def createTextVariable(self, id, name='str', text=''):
+        variable = Variable(id=id, name=name)
         variable.types.append(self.geppetto_common_library.types[5])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[5], Text(text)))
 

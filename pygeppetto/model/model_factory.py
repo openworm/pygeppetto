@@ -21,18 +21,16 @@ class SharedLibraryManager:
     def instance_copy(cls):  # The serializer does not work correctly if we don't copy
         return clone(cls.instance)
 
+
     @classmethod
     def get_shared_common_library(cls):
         return cls.instance_copy()
 
 class GeppettoModelFactory:
 
-    def __init__(self, geppetto_common_library=None):
-        if geppetto_common_library is None:
-            geppetto_common_library = SharedLibraryManager.get_shared_common_library()
+    def __init__(self, geppetto_common_library):
         self.geppetto_common_library = geppetto_common_library
 
-    @classmethod
     def createGeppettoModel(cls, name):
         return GeppettoModel(name=name, libraries=(SharedLibraryManager.get_shared_common_library(),))
 

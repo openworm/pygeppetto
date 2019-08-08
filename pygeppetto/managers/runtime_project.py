@@ -15,7 +15,6 @@ class RuntimeProject(object):
         :param project: pygeppetto.data_model.GeppettoProject
         :param manager: GeppettoManager
         """
-
         self.geppetto_manager = manager
         self.project = project
         self.experiments = {}
@@ -65,6 +64,7 @@ class RuntimeProject(object):
 
         # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(source_library)
+
         var_to_import = pointer_utility.find_variable_from_path(self.model, path)
         value = var_to_import.initialValues[0].value
         new_value = actual_model_interpreter.importValue(value)

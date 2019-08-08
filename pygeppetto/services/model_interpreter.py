@@ -55,15 +55,6 @@ def get_model_interpreter_from_library(library) -> ModelInterpreter:
 class ModelInterpreterNotFound(Exception): pass
 
 
-def get_model_interpreter_from_variable(variable) -> ModelInterpreter:
-    '''
-
-    :param geppetto_model_type: EObject
-    :return:
-    '''
-    library = variable.types[0].eContainer()
-    return get_model_interpreter_from_library(library)
-
 def get_model_interpreter_from_type(geppetto_model_type) -> ModelInterpreter:
     '''
 

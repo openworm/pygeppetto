@@ -2,7 +2,7 @@ import json
 import os
 
 from pyecore.resources import ResourceSet, URI
-from pygeppetto.model.model_factory import GeppettoModelFactory, GeppettoCommonLibrary
+from pygeppetto.model.model_factory import GeppettoModelFactory, SharedLibraryManager
 from pygeppetto.model.model_serializer import GeppettoModelSerializer as GeppettoSerializer
 
 
@@ -54,11 +54,11 @@ def test_references():
     res_set = ResourceSet()
     resource = res_set.get_resource(URI(os.path.join(os.path.dirname(__file__), "xmi-data/GeppettoModelTest.xmi")))
     model1 = resource.contents[0]
-    model1.libraries.append(GeppettoCommonLibrary.instance_copy())
+    model1.libraries.append(SharedLibraryManager.instance_copy())
     res_set = ResourceSet()
     resource = res_set.get_resource(URI(os.path.join(os.path.dirname(__file__), "xmi-data/GeppettoModelTest.xmi")))
     model2 = resource.contents[0]
-    model2.libraries.append(GeppettoCommonLibrary.instance_copy())
+    model2.libraries.append(SharedLibraryManager.instance_copy())
 
     factory = GeppettoModelFactory(model1)
 

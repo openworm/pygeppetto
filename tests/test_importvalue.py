@@ -7,7 +7,7 @@ from pygeppetto.services.model_interpreter import add_model_interpreter
 
 from .mocks import MockModelInterpreter
 
-model_interpreter = MockModelInterpreter()
+model_interpreter = MockModelInterpreter
 geppetto_model = model_interpreter.create_model(library='mocklibrary')
 geppetto_project = LocalGeppettoProject(name='TestProject', experiments=None,
                                         geppetto_model=geppetto_model, id=None)

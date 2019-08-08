@@ -1,13 +1,16 @@
+from pygeppetto.model.model_access import GeppettoModelAccess
+
+
 class ModelInterpreter():
 
     def __init__(self):
         pass
 
-    def importType(self, url, typeName, library, commonLibraryAccess):
+    def importType(self, url, typeName, library, commonLibraryAccess: GeppettoModelAccess):
         raise NotImplemented(
             "{} not implemented in class {}".format(ModelInterpreter.importType.__name__, self.__class__.__name__))
 
-    def importValue(self, importValue):
+    def importValue(self, importValue, geppetto_model_access: GeppettoModelAccess):
         raise NotImplemented(
             "{} not implemented in class {}".format(ModelInterpreter.importValue.__name__, self.__class__.__name__))
 

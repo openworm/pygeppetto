@@ -9,7 +9,7 @@ from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit,
 from .variables import Variable, TypeToValueMap
 
 
-class GeppettoCommonLibrary:
+class SharedLibraryManager:
     rset = ResourceSet()
     # Build the model URI
     model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
@@ -18,25 +18,17 @@ class GeppettoCommonLibrary:
     instance = resource.contents[0]
 
     @classmethod
-    def instance_copy(cls):
+    def instance_copy(cls):  # The serializer does not work correctly if we don't copy
         return clone(cls.instance)
 
+    @classmethod
+    def get_shared_common_library(cls):
+        return cls.instance_copy()
 
 class GeppettoModelFactory:
 
-    def __init__(self, geppetto_model):
-        self.geppetto_model = geppetto_model
-
-    @property
-    def geppetto_common_library(self):
-        return next(lib for lib in self.geppetto_model.libraries if lib.id == 'common')
-
-    @classmethod
-    def createGeppettoModel(cls, name):
-        # We create a GeppettoModel instance and we add the common library to it
-
-        geppetto_model = GeppettoModel(name=name, libraries=[clone(GeppettoCommonLibrary.instance)])
-        return geppetto_model
+    def __init__(self, geppetto_common_library):
+        self.geppetto_common_library = geppetto_common_library
 
     def createCylinder(self, id, bottomRadius=1.0, topRadius=1.0,
                        position=None, distal=None):

@@ -15,6 +15,7 @@ class RuntimeProject(object):
         :param project: pygeppetto.data_model.GeppettoProject
         :param manager: GeppettoManager
         """
+
         self.geppetto_manager = manager
         self.project = project
         self.experiments = {}

@@ -62,8 +62,8 @@ class GeppettoModelFactory:
         return MD_ts
 
     @classmethod
-    def createImportValue(cls):
-        iv = ImportValue()
+    def createImportValue(cls, modelInterpreterId=None):
+        iv = ImportValue(modelInterpreterId)
         return iv
 
     def createStateVariable(self, id, initialValue=None):

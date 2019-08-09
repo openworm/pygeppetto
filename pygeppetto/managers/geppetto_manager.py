@@ -3,6 +3,7 @@ import functools
 from enum import Enum, unique
 
 from pygeppetto.constants import UserPrivileges, ExperimentStatus
+from pygeppetto.managers.runtime_project import RuntimeProject
 
 from pygeppetto.utils import Singleton
 

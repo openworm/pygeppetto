@@ -28,9 +28,12 @@ class SharedLibraryManager:
 
 class GeppettoModelFactory:
 
-    def __init__(self, geppetto_common_library):
+    def __init__(self, geppetto_common_library=None):
+        if geppetto_common_library is None:
+            geppetto_common_library = SharedLibraryManager.get_shared_common_library()
         self.geppetto_common_library = geppetto_common_library
 
+    @classmethod
     def createGeppettoModel(cls, name):
         return GeppettoModel(name=name, libraries=(SharedLibraryManager.get_shared_common_library(),))
 

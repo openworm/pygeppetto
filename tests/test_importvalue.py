@@ -2,13 +2,16 @@ import pygeppetto.model.utils.pointer_utility as pointer_utility
 from pygeppetto.constants import UserPrivileges
 from pygeppetto.local_data_model import LocalGeppettoProject, LocalUser, LocalUserGroup
 from pygeppetto.managers import geppetto_manager
+from pygeppetto.model import GeppettoLibrary
 from pygeppetto.model.values import ImportValue
 from pygeppetto.services.model_interpreter import add_model_interpreter
 
 from .mocks import MockModelInterpreter
 
-model_interpreter = MockModelInterpreter
-geppetto_model = model_interpreter.create_model(library='mocklibrary')
+model_interpreter = MockModelInterpreter()
+
+model_library = GeppettoLibrary(name='mocklibrary', id='mocklibrary')
+geppetto_model = model_interpreter.create_model(library=model_library)
 geppetto_project = LocalGeppettoProject(name='TestProject', experiments=None,
                                         geppetto_model=geppetto_model, id=None)
 geppetto_project.volatile = True
@@ -20,7 +23,7 @@ geppetto_manager.user = LocalUser(id=1, name='TestUser', projects=(geppetto_proj
                                   group=group)
 geppetto_manager.load_project(geppetto_project)
 
-add_model_interpreter('mocklibrary', model_interpreter)
+add_model_interpreter(model_library.id, model_interpreter)
 from pygeppetto.model.model_serializer import GeppettoModelSerializer
 
 

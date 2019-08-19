@@ -5,9 +5,9 @@ from pygeppetto.model.model_factory import GeppettoModelFactory
 class MockModelInterpreter:
 
     def __init__(self):
-        self.factory = GeppettoModelFactory(GeppettoModelFactory.createGeppettoModel('test'))
+        self.factory = GeppettoModelFactory()
 
-    def create_model(self, url=None, typeName='MyGeppettoModel', library='mylib', commonLibraryAccess=None):
+    def create_model(self, url=None, typeName='MyGeppettoModel', library=None, commonLibraryAccess=None):
         '''
         Returns a geppetto model with this structure:
 
@@ -23,8 +23,8 @@ class MockModelInterpreter:
         :param commonLibraryAccess:
         :return:
         '''
-        flib = GeppettoLibrary(id=library)
-        model = GeppettoModel(id='typeName', name=typeName, libraries=[flib])
+
+        model = GeppettoModel(id='typeName', name=typeName, libraries=[self.factory.geppetto_common_library, library])
 
         v1 = self.factory.createStateVariable(id='v1', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
         v2 = self.factory.createStateVariable(id='v2', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
@@ -37,7 +37,7 @@ class MockModelInterpreter:
         v32 = self.factory.createStateVariable(id='v32', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
 
         ct = CompositeType(name='ct1', id='ct1', variables=[v31, v32])
-        flib.types.append(ct)
+        library.types.append(ct)
         v3.types.append(ct)
 
         return model

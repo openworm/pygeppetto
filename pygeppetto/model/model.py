@@ -170,10 +170,12 @@ class Node(ISynchable):
             self.name = name
         if tags:
             self.tags.extend(tags)
+
     def getPath(self):
         if not (isinstance(self.eContainer(), GeppettoModel)) and isinstance(self.eContainer(), Node):
             container = self.eContainer()
-            if container.eContainer().__class__.__name__ == "Variable":  # cannot use isinstance here due to circular reference
+            from pygeppetto.model import Variable  # Must import locally, circular reference otherwise
+            if container.eContainer().__class__ == Variable:
                 container = container.eContainer()
             return container.getPath() + "." + self.id
         else:

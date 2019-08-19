@@ -10,7 +10,11 @@ class GeppettoModelAccess:
         if (type(geppetto_model) == str):
             geppetto_model = self.create_geppetto_model(geppetto_model)
         self.geppetto_model = geppetto_model
-        self.geppetto_common_library = next(lib for lib in self.geppetto_model.libraries if lib.id == 'common')
+        try:
+            self.geppetto_common_library = next(lib for lib in self.geppetto_model.libraries if lib.id == 'common')
+        except StopIteration:
+            self.geppetto_common_library = SharedLibraryManager.get_shared_common_library()
+            geppetto_model.libraries.append(self.geppetto_common_library)
 
     @classmethod
     def create_geppetto_model(cls, name):

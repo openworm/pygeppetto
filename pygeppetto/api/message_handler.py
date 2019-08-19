@@ -302,9 +302,9 @@ class GeppettoMessageHandler:
         self.send_message_data(msg_data)
 
     def loadProjectFromUrl(self, requestID, urlString):
-        dataManager = DataManagerHelper.getDataManager()
+        data_manager = DataManagerHelper.getDataManager()
         try:
-            geppettoProject = dataManager.get_project_from_url(urlString)
+            geppettoProject = data_manager.get_project_from_url(urlString)
         except Exception as e:
             raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT,
                                                 f"Error while loading project from url: {urlString}: {e}")

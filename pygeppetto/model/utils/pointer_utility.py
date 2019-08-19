@@ -56,7 +56,7 @@ def get_pointer_model(model: GeppettoModel, instance_path):
                     v = find_variable(get_variable(token), (lastType).arrayType)
                 else:
                     raise GeppettoModelException(
-                        str(lastType.id) + " is not of type CompositeType there can't be nested variables")
+                        f"{lastType.name} is not of type CompositeType: there can't be nested variables")
         lastType = find_type(get_type_str(token), v)
         element.variable = v
         element.type = lastType

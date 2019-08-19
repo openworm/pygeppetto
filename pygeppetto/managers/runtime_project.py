@@ -2,7 +2,7 @@ from pygeppetto.data_model import GeppettoProject
 from pygeppetto.managers.runtime_experiment import RuntimeExperiment
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.types import ImportType
-from pygeppetto.model.utils import pointer_utility as PointerUtility, model_traversal
+from pygeppetto.model.utils import pointer_utility as PointerUtility, model_traversal, pointer_utility
 from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 
@@ -65,7 +65,9 @@ class RuntimeProject(object):
 
         # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(source_library)
-        new_value = actual_model_interpreter.importValue(path, self.geppetto_model_access)
+        var_to_import = pointer_utility.find_variable_from_path(self.model, path)
+        value = var_to_import.initialValues[0].value
+        new_value = actual_model_interpreter.importValue(value)
 
         # Set the new value in replacement of ImportValue
         variable.initialValues[0].value = new_value

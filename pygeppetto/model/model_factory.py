@@ -1,7 +1,7 @@
 import os.path
 
 from pyecore.resources import ResourceSet, URI
-from pygeppetto.model import MDTimeSeries
+from pygeppetto.model import MDTimeSeries, ArrayValue
 from pygeppetto.utils import clone
 
 from .model import GeppettoModel
@@ -27,8 +27,14 @@ class SharedLibraryManager:
 
 class GeppettoModelFactory:
 
-    def __init__(self, geppetto_common_library):
+    def __init__(self, geppetto_common_library=None):
+        if geppetto_common_library is None:
+            geppetto_common_library = SharedLibraryManager.get_shared_common_library()
         self.geppetto_common_library = geppetto_common_library
+
+    @classmethod
+    def createGeppettoModel(cls, name):
+        return GeppettoModel(name=name, libraries=(SharedLibraryManager.get_shared_common_library(),))
 
     def createCylinder(self, id, bottomRadius=1.0, topRadius=1.0,
                        position=None, distal=None):
@@ -70,13 +76,13 @@ class GeppettoModelFactory:
         initialValue = initialValue or PhysicalQuantity()
         variable = Variable(id=id)
         variable.types.append(self.geppetto_common_library.types[2])
-        if initialValue is not None:
-            variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[2], initialValue))
+
+        variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[2], initialValue))
         return variable
 
-    def createTextVariable(self, id, text=''):
-        variable = Variable(name=id, id=id)
+    def createTextVariable(self, id, text='', name=None):
+        variable = Variable(name=name if name is not None else id, id=id)
         variable.types.append(self.geppetto_common_library.types[5])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[5], Text(text)))
-
         return variable
+

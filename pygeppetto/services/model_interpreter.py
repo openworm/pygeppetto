@@ -5,28 +5,28 @@ from pygeppetto.model.values import ImportValue
 class ModelInterpreter():
 
     def importType(self, url, typeName, library, commonLibraryAccess: GeppettoModelAccess):
-        raise NotImplemented(
+        raise NotImplementedError(
             "{} not implemented in class {}".format(ModelInterpreter.importType.__name__, self.__class__.__name__))
 
     def importValue(self, importValue: ImportValue):
-        raise NotImplemented(
+        raise NotImplementedError(
             "{} not implemented in class {}".format(ModelInterpreter.importValue.__name__, self.__class__.__name__))
 
     def downloadModel(self, pointer, format, aspectConfiguration):
-        raise NotImplemented(
+        raise NotImplementedError(
             "{} not implemented in class {}".format(ModelInterpreter.downloadModel.__name__, self.__class__.__name__))
 
     def getSupportedOutputs(self, pointer):
-        raise NotImplemented(
+        raise NotImplementedError(
             "{} not implemented in class {}".format(ModelInterpreter.getSupportedOutputs.__name__,
                                                     self.__class__.__name__))
 
     def getName(self):
-        raise NotImplemented(
+        raise NotImplementedError(
             "{} not implemented in class {}".format(ModelInterpreter.getName.__name__, self.__class__.__name__))
 
     def getDependentModels(self):
-        raise NotImplemented(
+        raise NotImplementedError(
             "{} not implemented in class {}".format(ModelInterpreter.getDependentModels.__name__,
                                                     self.__class__.__name__))
 

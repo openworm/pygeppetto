@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="ASCII"?>
+<gep:GeppettoModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:gep="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore" xmlns:gep_1="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types" xmlns:gep_2="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values">  <variables
+      id="addressBook"
+      name="addressBook"
+      types="//@libraries.0/@types.5"/>
+  <libraries
+      id="sample"
+      name="sample">
+    <types xsi:type="gep_1:CompositeType"
+        id="address"
+        name="address">
+      <variables
+          id="street"
+          name="street"
+          types="//@libraries.0/@types.1"/>
+      <variables
+          id="postcode"
+          name="postcode"
+          types="//@libraries.0/@types.1"/>
+      <variables
+          id="district"
+          name="district"
+          types="//@libraries.0/@types.3"/>
+      <variables
+          id="zone"
+          name="zone"
+          types="//@libraries.0/@types.4"/>
+    </types>
+    <types xsi:type="gep_1:ParameterType"
+        id="genericParameter"
+        name="genericParameter"/>
+    <types xsi:type="gep_1:CompositeType"
+        id="person"
+        name="person">
+      <variables
+          id="name"
+          name="name"
+          types="//@libraries.0/@types.1"/>
+      <variables
+          id="address"
+          name="address"
+          types="//@libraries.0/@types.0"/>
+    </types>
+    <types xsi:type="gep_1:CompositeType"
+        id="district"
+        name="district">
+      <variables
+          id="area"
+          name="area"
+          types="//@libraries.0/@types.1"/>
+    </types>
+    <types xsi:type="gep_1:ArrayType"
+        id="zone"
+        name="zone"
+        superType="//@libraries.0/@types.3"
+        size="6"
+        arrayType="//@libraries.0/@types.3"/>
+    <types xsi:type="gep_1:ArrayType"
+        id="addressBook"
+        name="addressBook"
+        size="100"
+        arrayType="//@libraries.0/@types.2"/>
+  </libraries>
+</gep:GeppettoModel>

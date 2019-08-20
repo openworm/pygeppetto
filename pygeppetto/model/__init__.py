@@ -1,9 +1,8 @@
-from pyecore.resources import global_registry
 from .model import getEClassifier, eClassifiers
 from .model import name, nsURI, nsPrefix, eClass
 from .model import GeppettoModel, Node, GeppettoLibrary, LibraryManager, ExperimentState, VariableValue, Tag, DomainModel, ModelFormat, ExternalDomainModel, FileFormat, StringToStringMap, ISynchable
-from .types import Type, VisualType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, TextType, URLType, PointType, ArrayType, CompositeVisualType, ConnectionType, ImageType
-from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, Argument, Expression, HTML, Text, URL, Point, ArrayValue, VisualGroup, Image, StringToValueMap, Unit, Particles, PointerElement, PhysicalQuantity, Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, Cylinder, SkeletonAnimation, Connection, MDTimeSeries
+from .types import Type, VisualType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, JSONType, TextType, URLType, PointType, ArrayType, CompositeVisualType, ConnectionType, ImageType, SimpleArrayType
+from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, Argument, Expression, HTML, JSON, Text, URL, Point, ArrayValue, VisualGroup, Image, AArrayValue, StringToValueMap, Unit, PointerElement, PhysicalQuantity, Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, MDTimeSeries, Cylinder, Particles, SkeletonAnimation, Connection, Metadata, GenericArray
 from .variables import Variable, TypeToValueMap
 from .datasources import DataSource, Query, DataSourceLibraryConfiguration, QueryMatchingCriteria, AQueryResult, ProcessQuery, CompoundQuery, CompoundRefQuery, QueryResults
 from . import model
@@ -12,14 +11,10 @@ from . import values
 from . import variables
 from . import datasources
 
-
-__all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'ExperimentState', 'VariableValue',
-           'Tag', 'DomainModel', 'ModelFormat', 'ExternalDomainModel', 'FileFormat', 'StringToStringMap', 'ISynchable']
+__all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'ExperimentState', 'VariableValue', 'Tag', 'DomainModel', 'ModelFormat', 'ExternalDomainModel', 'FileFormat', 'StringToStringMap', 'ISynchable']
 
 eSubpackages = [types, values, variables, datasources]
 eSuperPackage = None
-model.eSubpackages = eSubpackages
-model.eSuperPackage = eSuperPackage
 
 # Non opposite EReferences
 GeppettoModel.variables.eType = Variable
@@ -51,6 +46,7 @@ DynamicsType.defaultValue.eType = Dynamics
 ArgumentType.defaultValue.eType = Argument
 ExpressionType.defaultValue.eType = Expression
 HTMLType.defaultValue.eType = HTML
+JSONType.defaultValue.eType = JSON
 TextType.defaultValue.eType = Text
 URLType.defaultValue.eType = URL
 PointType.defaultValue.eType = Point
@@ -61,6 +57,7 @@ CompositeVisualType.visualGroups.eType = VisualGroup
 ConnectionType.variables.eType = Variable
 ConnectionType.defaultValue.eType = Composite
 ImageType.defaultValue.eType = Image
+SimpleArrayType.defaultValue.eType = AArrayValue
 Composite.value.eType = StringToValueMap
 StringToValueMap.value.eType = Value
 PhysicalQuantity.unit.eType = Unit
@@ -87,6 +84,8 @@ Connection.b.eType = Pointer
 ArrayElement.position.eType = Point
 ArrayElement.initialValue.eType = Value
 ArrayValue.elements.eType = ArrayElement
+Metadata.value.eType = StringToValueMap
+GenericArray.elements.eType = Value
 Variable.anonymousTypes.eType = Type
 Variable.initialValues.eType = TypeToValueMap
 Variable.position.eType = Point
@@ -116,23 +115,10 @@ Variable.types.eOpposite = Type.referencedVariables
 otherClassifiers = [FileFormat]
 for classif in otherClassifiers:
     eClassifiers[classif.name] = classif
-    classif.ePackage = eClass
+    classif._container = model
 
 for classif in eClassifiers.values():
     eClass.eClassifiers.append(classif.eClass)
 
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
-
-# Manually register all the URI and master URI in the global registry
-# This registering is performed outside the previous 'for' to ease future
-# code merging (in case of new metamodel versions)
-geppetto_master_uri = ('https://raw.githubusercontent.com/openworm/'
-                       'org.geppetto.model/master/src/main/resources/'
-                       'geppettoModel.ecore')
-
-global_registry[nsURI] = model
-global_registry[geppetto_master_uri] = model
-for subpack in eSubpackages:
-    global_registry[subpack.nsURI] = subpack
-    global_registry[geppetto_master_uri + '#//' + subpack.name] = subpack

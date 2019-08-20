@@ -240,6 +240,12 @@ class SimpleArrayType(Type):
             self.defaultValue = defaultValue
 
 
+class MetadataType(Type):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+
 class CompositeVisualType(VisualType):
     variables = EReference(upper=-1, containment=True)
     visualGroups = EReference(upper=-1, containment=True)

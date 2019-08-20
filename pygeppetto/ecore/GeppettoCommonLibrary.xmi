@@ -43,4 +43,14 @@
   <types xsi:type="gep_1:ConnectionType"
       id="connection"
       name="Connection"/>
+  <types xsi:type="gep_1:VisualType"
+      id="particles"
+      name="Particles"/>
+  <types xsi:type="gep_1:JSONType"
+      id="JSON"
+      name="JSON"/>
+  <types xsi:type="gep_1:SimpleArrayType"
+      id="simplearray"
+      name="Simple Array"/>
+
 </gep:GeppettoLibrary>

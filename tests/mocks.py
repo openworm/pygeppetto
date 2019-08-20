@@ -26,15 +26,21 @@ class MockModelInterpreter:
         flib = GeppettoLibrary(id=library)
         model = GeppettoModel(id='typeName', name=typeName, libraries=[flib])
 
-        v1 = self.factory.createStateVariable(id='v1', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
-        v2 = self.factory.createStateVariable(id='v2', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
+        v1 = self.factory.createStateVariable(id='v1',
+                                              initialValue=self.factory.createTimeSeriesVariable(values=[1, 2, 3],
+                                                                                                 unit='s'))
+        v2 = self.factory.createStateVariable(id='v2',
+                                              initialValue=self.factory.createTimeSeriesVariable(values=[1, 2, 3],
+                                                                                                 unit='s'))
         v3 = Variable(id='v3')
         model.variables.append(v1)
         model.variables.append(v2)
         model.variables.append(v3)
 
         v31 = self.factory.createStateVariable(id='v31', initialValue=self.factory.createImportValue())
-        v32 = self.factory.createStateVariable(id='v32', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
+        v32 = self.factory.createStateVariable(id='v32',
+                                               initialValue=self.factory.createTimeSeriesVariable(values=[1, 2, 3],
+                                                                                                  unit='s'))
 
         ct = CompositeType(name='ct1', id='ct1', variables=[v31, v32])
         flib.types.append(ct)
@@ -43,7 +49,7 @@ class MockModelInterpreter:
         return model
 
     def importValue(self, importValue):
-        return self.factory.createTimeSeries('tsx', [4, 5, 6])
+        return self.factory.createTimeSeriesVariable([4, 5, 6], 's')
 
     def downloadModel(self, pointer, format, aspectConfiguration):
         pass

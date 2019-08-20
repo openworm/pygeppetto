@@ -2,7 +2,6 @@ import os
 
 import pytest
 from pyecore.resources import ResourceSet, URI
-from pygeppetto.model.model_factory import GeppettoModelFactory
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -15,9 +14,6 @@ def filepath(filename):
     return os.path.join(HERE, 'xmi-data', filename)
 
 
-def test_model_factory():
-    geppetto_model = GeppettoModelFactory.createGeppettoModel('testModel')
-    assert geppetto_model
 
 
 def test_read_mediumXMI(rset):

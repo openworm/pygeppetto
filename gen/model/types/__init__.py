@@ -3,23 +3,30 @@ from .types import name, nsURI, nsPrefix, eClass
 from .types import Type, VisualType, ImportType, CompositeType, PointerType, QuantityType, ParameterType, \
     StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, JSONType, TextType, URLType, PointType, \
     ArrayType, CompositeVisualType, ConnectionType, SimpleType, ImageType, SimpleArrayType
+
+from model import DomainModel, Tag
+from model.values import Point, URL, Text, AArrayValue, Expression, Quantity, Pointer, Composite, Argument, Image, \
+    VisualValue, Dynamics, JSON, HTML, VisualGroup, ArrayValue
+from model.variables import Variable
+
 from . import types
 from .. import model
 
 __all__ = ['Type', 'VisualType', 'ImportType', 'CompositeType', 'PointerType', 'QuantityType', 'ParameterType',
-           'StateVariableType', 'DynamicsType', 'ArgumentType', 'ExpressionType', 'HTMLType', 'JSONType', 'TextType',
-           'URLType', 'PointType', 'ArrayType', 'CompositeVisualType', 'ConnectionType', 'SimpleType', 'ImageType',
-           'SimpleArrayType']
+           'StateVariableType', 'DynamicsType', 'ArgumentType',
+           'ExpressionType', 'HTMLType', 'JSONType', 'TextType', 'URLType', 'PointType', 'ArrayType',
+           'CompositeVisualType', 'ConnectionType', 'SimpleType', 'ImageType', 'SimpleArrayType']
 
 eSubpackages = []
 eSuperPackage = model
+types.eSubpackages = eSubpackages
+types.eSuperPackage = eSuperPackage
 
-
-# Manage all other EClassifiers (EEnum, EDatatypes...)
 otherClassifiers = []
+
 for classif in otherClassifiers:
     eClassifiers[classif.name] = classif
-    classif._container = types
+    classif.ePackage = eClass
 
 for classif in eClassifiers.values():
     eClass.eClassifiers.append(classif.eClass)

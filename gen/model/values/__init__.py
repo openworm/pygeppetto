@@ -5,25 +5,31 @@ from .values import Value, Composite, StringToValueMap, Quantity, PhysicalQuanti
     Expression, VisualValue, Collada, OBJ, Sphere, Cylinder, Particles, SkeletonAnimation, SkeletonTransformation, \
     VisualGroupElement, VisualGroup, Connection, Connectivity, ArrayElement, ArrayValue, Image, ImageFormat, \
     ImportValue, Metadata, JSON, GenericArray, StringArray, IntArray, DoubleArray, AArrayValue
+
+from model.variables import Variable
+from model.types import Type
+from model import Tag
+
 from . import values
 from .. import model
 
 __all__ = ['Value', 'Composite', 'StringToValueMap', 'Quantity', 'PhysicalQuantity', 'Unit', 'TimeSeries',
            'MDTimeSeries', 'MetadataValue', 'Text', 'URL', 'HTML', 'Pointer', 'PointerElement', 'Point', 'Dynamics',
-           'FunctionPlot', 'Function', 'Argument', 'Expression', 'VisualValue', 'Collada', 'OBJ', 'Sphere', 'Cylinder',
-           'Particles', 'SkeletonAnimation', 'SkeletonTransformation', 'VisualGroupElement', 'VisualGroup',
+           'FunctionPlot', 'Function', 'Argument', 'Expression', 'VisualValue', 'Collada', 'OBJ', 'Sphere',
+           'Cylinder', 'Particles', 'SkeletonAnimation', 'SkeletonTransformation', 'VisualGroupElement', 'VisualGroup',
            'Connection', 'Connectivity', 'ArrayElement', 'ArrayValue', 'Image', 'ImageFormat', 'ImportValue',
            'Metadata', 'JSON', 'GenericArray', 'StringArray', 'IntArray', 'DoubleArray', 'AArrayValue']
 
 eSubpackages = []
 eSuperPackage = model
+values.eSubpackages = eSubpackages
+values.eSuperPackage = eSuperPackage
 
-
-# Manage all other EClassifiers (EEnum, EDatatypes...)
 otherClassifiers = [Connectivity, ImageFormat]
+
 for classif in otherClassifiers:
     eClassifiers[classif.name] = classif
-    classif._container = values
+    classif.ePackage = eClass
 
 for classif in eClassifiers.values():
     eClass.eClassifiers.append(classif.eClass)

@@ -2,14 +2,14 @@ from .types import getEClassifier, eClassifiers
 from .types import name, nsURI, nsPrefix, eClass
 from .types import Type, VisualType, ImportType, CompositeType, PointerType, QuantityType, ParameterType, \
     StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, JSONType, TextType, URLType, PointType, \
-    ArrayType, CompositeVisualType, ConnectionType, SimpleType, ImageType, SimpleArrayType
+    ArrayType, CompositeVisualType, ConnectionType, SimpleType, ImageType, SimpleArrayType, MetadataType
 from . import types
 from .. import model
 
 __all__ = ['Type', 'VisualType', 'ImportType', 'CompositeType', 'PointerType', 'QuantityType', 'ParameterType',
            'StateVariableType', 'DynamicsType', 'ArgumentType', 'ExpressionType', 'HTMLType', 'JSONType', 'TextType',
            'URLType', 'PointType', 'ArrayType', 'CompositeVisualType', 'ConnectionType', 'SimpleType', 'ImageType',
-           'SimpleArrayType']
+           'SimpleArrayType', 'MetadataType']
 
 eSubpackages = []
 eSuperPackage = model

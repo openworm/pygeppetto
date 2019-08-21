@@ -20,7 +20,7 @@ class GeppettoModelAccess:
     def create_geppetto_model(cls, name):
         # We create a GeppettoModel instance and we add the common library to it
 
-        geppetto_model = GeppettoModel(name=name, libraries=[SharedLibraryManager.instance_copy()])
+        geppetto_model = GeppettoModel(name=name, libraries=[SharedLibraryManager.get_shared_common_library()])
         return geppetto_model
 
     def swap_type(self, itype: ImportType, newtype):

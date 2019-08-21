@@ -61,7 +61,7 @@ class GeppettoModelFactory:
         return GeppettoModel(name=name, libraries=(SharedLibraryManager.get_shared_common_library(),))
 
     def create_variable(self, id, cl_type, raw_initial_value):
-        variable = Variable(id=id)
+        variable = Variable(id=id, name=id)
         variable.types.append(self.geppetto_common_library.types[cl_type])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[cl_type], raw_initial_value))
         return variable

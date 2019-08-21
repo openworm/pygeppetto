@@ -19,8 +19,8 @@ from . import outbound_messages as OutboundMessages
 
 class GeppettoHandlerTypedException(Exception):
     def __init__(self, msg_type=OutboundMessages.ERROR, msg='Error not specified', exc=None):
-        Exception.__init__(self, msg)
-        self.payload = msg.__dict__ if hasattr('__dict__', msg) else {"error": str(msg)}
+        Exception.__init__(self, str(msg))
+        self.payload = msg.__dict__ if hasattr(msg, '__dict__') else {"error": str(msg)}
         self.exc = exc
         self.msg_type = msg_type
 
@@ -31,7 +31,7 @@ class Error(object):
     def __init__(self, errorCode, errorMessage, jsonExceptionMsg, id):
         """ generated source for method __init__ """
         self.error_code = errorCode.__str__()
-        self.message = errorMessage
+        self.message = json.dumps(errorMessage)
         self.exception = jsonExceptionMsg
         self.id = id
 
@@ -76,7 +76,7 @@ class GeppettoMessageHandler:
         self.send_message(None, OutboundMessages.CLIENT_ID, self.CLIENT_ID)
 
     def send_message_data(self, msg_data):
-        raise NotImplemented()
+        raise NotImplemented
 
     def handle_message(self, payload):
         '''

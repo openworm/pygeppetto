@@ -39,7 +39,10 @@ class TransportMessageFactory(object):
 
         payload = update if type(update) == dict else {}
         if type_ == ERROR:
-            payload.update({'message': update})
+            if (type(update) == dict):
+                payload.update(update)
+            else:
+                payload.update({'message': update})
         elif type_ == INFO_MESSAGE:
             payload.update({'message': update})
         elif type_ == ERROR_LOADING_PROJECT:

@@ -26,15 +26,15 @@ class MockModelInterpreter:
 
         model = GeppettoModel(id='typeName', name=typeName, libraries=[self.factory.geppetto_common_library, library])
 
-        v1 = self.factory.createStateVariable(id='v1', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
-        v2 = self.factory.createStateVariable(id='v2', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
+        v1 = self.factory.create_time_series_variable(id='v1', values=[1, 2, 3], unit='s')
+        v2 = self.factory.create_time_series_variable(id='v2', values=[1, 2, 3], unit='s')
         v3 = Variable(id='v3')
         model.variables.append(v1)
         model.variables.append(v2)
         model.variables.append(v3)
 
         v31 = self.factory.createStateVariable(id='v31', initialValue=self.factory.createImportValue())
-        v32 = self.factory.createStateVariable(id='v32', initialValue=self.factory.createTimeSeries('ts1', [1, 2, 3]))
+        v32 = self.factory.create_time_series_variable(id='v32', values=[1, 2, 3], unit='s')
 
         ct = CompositeType(name='ct1', id='ct1', variables=[v31, v32])
         library.types.append(ct)
@@ -43,7 +43,7 @@ class MockModelInterpreter:
         return model
 
     def importValue(self, importValue):
-        return self.factory.createTimeSeries('tsx', [4, 5, 6])
+        return self.factory.createTimeSeries(values=[4, 5, 6], unit='s')
 
     def downloadModel(self, pointer, format, aspectConfiguration):
         pass

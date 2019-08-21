@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 __version__ = "0.5.0"
 
-required_packages = ['pyecore==0.10.2', 'multimethod']
+required_packages = ['pyecore==0.10.2', 'multimethod', 'deprecated']
 
 
 setup(

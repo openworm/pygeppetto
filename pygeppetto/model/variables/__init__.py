@@ -8,15 +8,13 @@ __all__ = ['Variable', 'TypeToValueMap']
 
 eSubpackages = []
 eSuperPackage = model
-variables.eSubpackages = eSubpackages
-variables.eSuperPackage = eSuperPackage
 
 
 # Manage all other EClassifiers (EEnum, EDatatypes...)
 otherClassifiers = []
 for classif in otherClassifiers:
     eClassifiers[classif.name] = classif
-    classif.ePackage = eClass
+    classif._container = variables
 
 for classif in eClassifiers.values():
     eClass.eClassifiers.append(classif.eClass)

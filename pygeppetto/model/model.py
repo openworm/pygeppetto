@@ -11,11 +11,11 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
+
 FileFormat = EEnum('FileFormat', literals=['ZIP', 'HDF5'])  # noqa
 
 
-@EMetaclass
-class GeppettoModel(EObject):
+class GeppettoModel(EObject, metaclass=MetaEClass):
     """The root of every Geppetto model"""
     id = EAttribute(eType=EString)
     name = EAttribute(eType=EString)
@@ -29,7 +29,7 @@ class GeppettoModel(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(GeppettoModel, self).__init__()
+        super().__init__()
         if id is not None:
             self.id = id
         if name is not None:
@@ -46,21 +46,19 @@ class GeppettoModel(EObject):
             self.queries.extend(queries)
 
 
-@EMetaclass
-class LibraryManager(EObject):
+class LibraryManager(EObject, metaclass=MetaEClass):
     libraries = EReference(upper=-1, containment=True)
 
     def __init__(self, libraries=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(LibraryManager, self).__init__()
+        super().__init__()
         if libraries:
             self.libraries.extend(libraries)
 
 
-@EMetaclass
-class ExperimentState(EObject):
+class ExperimentState(EObject, metaclass=MetaEClass):
     experimentId = EAttribute(eType=ELong)
     projectId = EAttribute(eType=ELong)
     recordedVariables = EReference(upper=-1, containment=True)
@@ -70,7 +68,7 @@ class ExperimentState(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(ExperimentState, self).__init__()
+        super().__init__()
         if experimentId is not None:
             self.experimentId = experimentId
         if projectId is not None:
@@ -81,8 +79,7 @@ class ExperimentState(EObject):
             self.setParameters.extend(setParameters)
 
 
-@EMetaclass
-class VariableValue(EObject):
+class VariableValue(EObject, metaclass=MetaEClass):
     pointer = EReference(containment=True)
     value = EReference(containment=True)
 
@@ -90,15 +87,14 @@ class VariableValue(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(VariableValue, self).__init__()
+        super().__init__()
         if pointer is not None:
             self.pointer = pointer
         if value is not None:
             self.value = value
 
 
-@EMetaclass
-class DomainModel(EObject):
+class DomainModel(EObject, metaclass=MetaEClass):
     domainModel = EAttribute(eType=EJavaObject)
     format = EReference(containment=True)
 
@@ -106,28 +102,26 @@ class DomainModel(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(DomainModel, self).__init__()
+        super().__init__()
         if domainModel is not None:
             self.domainModel = domainModel
         if format is not None:
             self.format = format
 
 
-@EMetaclass
-class ModelFormat(EObject):
+class ModelFormat(EObject, metaclass=MetaEClass):
     modelFormat = EAttribute(eType=EString)
 
     def __init__(self, modelFormat=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(ModelFormat, self).__init__()
+        super().__init__()
         if modelFormat is not None:
             self.modelFormat = modelFormat
 
 
-@EMetaclass
-class StringToStringMap(EObject):
+class StringToStringMap(EObject, metaclass=MetaEClass):
     key = EAttribute(eType=EString)
     value = EAttribute(eType=EString)
 
@@ -135,7 +129,7 @@ class StringToStringMap(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(StringToStringMap, self).__init__()
+        super().__init__()
         if key is not None:
             self.key = key
         if value is not None:
@@ -143,15 +137,14 @@ class StringToStringMap(EObject):
 
 
 @abstract
-@EMetaclass
-class ISynchable(EObject):
+class ISynchable(EObject, metaclass=MetaEClass):
     synched = EAttribute(eType=EBoolean)
 
     def __init__(self, synched=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(ISynchable, self).__init__()
+        super().__init__()
         if synched is not None:
             self.synched = synched
 
@@ -163,7 +156,7 @@ class Node(ISynchable):
     tags = EReference(upper=-1)
 
     def __init__(self, id=None, name=None, tags=None, **kwargs):
-        super(Node, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if id is not None:
             self.id = id
         if name is not None:
@@ -187,7 +180,7 @@ class Tag(ISynchable):
     tags = EReference(upper=-1, containment=True)
 
     def __init__(self, tags=None, name=None, **kwargs):
-        super(Tag, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if name is not None:
             self.name = name
         if tags:
@@ -198,7 +191,7 @@ class ExternalDomainModel(DomainModel):
     fileFormat = EAttribute(eType=FileFormat)
 
     def __init__(self, fileFormat=None, **kwargs):
-        super(ExternalDomainModel, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if fileFormat is not None:
             self.fileFormat = fileFormat
 
@@ -208,11 +201,10 @@ class GeppettoLibrary(Node):
     sharedTypes = EReference(upper=-1)
 
     def __init__(self, types=None, sharedTypes=None, **kwargs):
-        super(GeppettoLibrary, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if types:
             self.types.extend(types)
         if sharedTypes:
             self.sharedTypes.extend(sharedTypes)
-
     def getTypeById(self):
-        raise NotImplementedError('operation getTypeById(...) not yet implemented')
+        raise NotImplementedError('Operation getTypeById(...) is not yet implemented')

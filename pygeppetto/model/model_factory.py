@@ -97,7 +97,7 @@ class GeppettoModelFactory:
 
     @classmethod
     @deprecated(version='0.6', reason='Use the snake case version')
-    def createTimeSeries(cls, id, values, unit=None):
+    def createTimeSeries(cls, id=None, values=None, unit=None):
         return cls.create_time_series(values, unit)
 
 

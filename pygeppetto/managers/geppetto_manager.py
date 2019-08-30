@@ -76,7 +76,7 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
             if self.user and UserPrivileges.READ_PROJECT not in self.user.group.privileges:
                 raise GeppettoAccessException("Insufficient access rights to"
                                               "load project")
-            is_user_project = (project.volatile or project.isPublic
+            is_user_project = (project.volatile or project.is_public
                                or self.is_user_project(project.id))
             if not is_user_project:
                 raise GeppettoAccessException('Project not found for the '
@@ -159,5 +159,5 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
         return self.get_runtime_project(geppetto_project).resolve_import_value(path)
 
     # @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import type')
-    def resolve_import_type(self, typePaths, geppetto_project):
-        return self.get_runtime_project(geppetto_project).resolve_import_type(typePaths)
+    def resolve_import_type(self, type_paths, geppetto_project):
+        return self.get_runtime_project(geppetto_project).resolve_import_type(type_paths)

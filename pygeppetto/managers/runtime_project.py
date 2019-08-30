@@ -2,11 +2,11 @@ from pygeppetto.data_model import GeppettoProject
 from pygeppetto.managers.runtime_experiment import RuntimeExperiment
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.types import ImportType
-from pygeppetto.model.utils import pointer_utility as PointerUtility, model_traversal, pointer_utility
+from pygeppetto.model.utils import model_traversal
 from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 
-from pygeppetto.model.exceptions import GeppettoExecutionException, ModelInterpreterException
+from pygeppetto.model.exceptions import GeppettoExecutionException
 
 
 class RuntimeProject(object):
@@ -20,9 +20,9 @@ class RuntimeProject(object):
         self.project = project
         self.experiments = {}
         self.active_experiment = None
-        self.model = project.geppettoModel
+        self.model = project.geppetto_model
         self.geppetto_model_access = GeppettoModelAccess(self.model)
-        self.import_types(self.model)
+        self.import_autoresolve_types(self.model)
 
         # TODO handle views
         # TODO handle experiments
@@ -30,14 +30,16 @@ class RuntimeProject(object):
     def release(self):
         pass
 
-    def import_types(self, model):
+    def import_autoresolve_types(self, model):
         model_traversal.apply(model, self.import_type,
-                              lambda eobject: type(eobject) == ImportType and eobject.autoresolve)
+                              lambda node: type(node) == ImportType and node.autoresolve)
 
     def import_type(self, itype: ImportType):
         library = itype.eContainer()
+
+        url = itype.url if None is None else url_reader.getURL(itype.url, self.project.base_url)
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(library)
-        newtype = actual_model_interpreter.importType(itype.url, itype.id, library, self.geppetto_model_access)
+        newtype = actual_model_interpreter.importType(url, itype.id, library, self.geppetto_model_access)
         self.geppetto_model_access.swap_type(itype, newtype)
 
     def open_experiment(self, experiment):
@@ -56,7 +58,7 @@ class RuntimeProject(object):
         :param path: the instance path to replace
         :return:
         """
-        variable = PointerUtility.find_variable_from_path(self.model, path)
+        variable = self.geppetto_model_access.get_variable(path)
 
         variable.synched = False  # This will say to the serializer to send the value
         variable_container = variable.eContainer()
@@ -66,7 +68,7 @@ class RuntimeProject(object):
         # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(source_library)
 
-        var_to_import = pointer_utility.find_variable_from_path(self.model, path)
+        var_to_import = self.geppetto_model_access.get_variable(path)
         value = var_to_import.initialValues[0].value
         new_value = actual_model_interpreter.importValue(value)
 
@@ -77,28 +79,16 @@ class RuntimeProject(object):
         source_library.synched = False
         return self.model
 
-    def resolve_import_type(self, typePaths):
-        """Loads a new Geppetto Model"""
+    def resolve_import_type(self, type_paths):
+        """Loads types to the model"""
 
         #  let's find the importType
 
-        for typePath in typePaths:
-            type_ = PointerUtility.get_type(self.model, typePath)
+        for type_path in type_paths:
+            itype = self.geppetto_model_access.get_type(type_path)
 
             try:
-                importedType = None
-
-                # this import type is inside a library
-                library = type_.eContainer()
-                actual_model_interpreter = model_interpreter.get_model_interpreter(library)
-                url = None
-                if type_.url != None:
-                    url = url_reader.getURL(type_.url, self.project.baseUrl)
-
-                self.model = actual_model_interpreter.importType(url, type_.id, library,
-                                                                 self.geppetto_model_access)
-
-                # FIXME to be completed. importType does not return a model
+                self.import_type(itype)
 
                 # TODO if we want to support default view customization, uncomment below and implement
                 # if self.gatherDefaultView and actual_model_interpreter.isSupported(
@@ -106,15 +96,10 @@ class RuntimeProject(object):
                 #     viewCustomisations.add((actual_model_interpreter.getFeature(
                 #         GeppettoFeature.DEFAULT_VIEW_CUSTOMISER_FEATURE)).getDefaultViewCustomisation(
                 #         importedType))
-
-
-            except IOError as e:
-                raise GeppettoExecutionException(e)
-
-            except ModelInterpreterException as e:
-                raise GeppettoExecutionException(e)
+            except Exception as e:
+                raise GeppettoExecutionException('Error importing type ' + type_path) from e
 
         return self.model
 
     def populate_new_experiment(self, experiment):
-        raise NotImplemented()
+        raise NotImplemented

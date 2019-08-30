@@ -1,6 +1,8 @@
 from pygeppetto.model import GeppettoModel
+from pygeppetto.model.exceptions import GeppettoModelException
 from pygeppetto.model.model_factory import SharedLibraryManager
 from pygeppetto.model.types import ImportType
+from pygeppetto.model.utils import pointer_utility
 
 
 class GeppettoModelAccess:
@@ -30,3 +32,15 @@ class GeppettoModelAccess:
             variable.synched = False
             variable.types.clear()
             variable.types.append(newtype)
+
+    def get_variable(self, variable_path):
+        return pointer_utility.find_variable_from_path(self.geppetto_model, variable_path)
+
+    def get_type(self, type_path):
+        return pointer_utility.get_type(self.geppetto_model, type_path)
+
+    def get_value(self, variable_path):
+        try:
+            return self.get_variable(variable_path).initialValues[0].value
+        except Exception as e:
+            raise GeppettoModelException("Can't find a value for path " + variable_path) from e

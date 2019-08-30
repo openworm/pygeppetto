@@ -4,7 +4,7 @@ class GeppettoProject(object):
                  view=None):
         self.id = id
         self.name = name
-        self.geppetto_model = geppetto_model  # Beware must use the camelCase here otherwise we cannot import from JSON
+        self.geppettoModel = geppetto_model  # Beware must use the camelCase here otherwise we cannot import from JSON
         self.base_url = base_url
         self.experiments = list(experiments) if experiments is not None else []
         self.active_experiment_id = -1 if not experiments else 0

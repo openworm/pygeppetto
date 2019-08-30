@@ -20,7 +20,7 @@ class RuntimeProject(object):
         self.project = project
         self.experiments = {}
         self.active_experiment = None
-        self.model = project.geppetto_model
+        self.model = project.geppettoModel
         self.geppetto_model_access = GeppettoModelAccess(self.model)
         self.import_autoresolve_types(self.model)
 

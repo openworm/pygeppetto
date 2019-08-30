@@ -45,7 +45,7 @@ def create_geppetto_manager():
 
 
 def test_import_value(geppetto_project):
-    geppetto_model = geppetto_project.geppetto_model
+    geppetto_model = geppetto_project.geppettoModel
     geppetto_manager = create_geppetto_manager()
     geppetto_manager.load_project(geppetto_project)
     assert ImportValue == type(pointer_utility.find_variable_from_path(geppetto_model, 'v3.v31').initialValues[0].value)
@@ -66,7 +66,7 @@ def test_import_value(geppetto_project):
 
 
 def test_import_type(geppetto_project):
-    geppetto_model = geppetto_project.geppetto_model
+    geppetto_model = geppetto_project.geppettoModel
 
     geppetto_manager = create_geppetto_manager()
     geppetto_manager.load_project(geppetto_project)

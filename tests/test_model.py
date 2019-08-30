@@ -3,6 +3,7 @@ import json
 import pytest
 from pyecore.ecore import EString
 from pyecore.resources import ResourceSet, URI
+from pygeppetto.model import TypeToValueMap, Variable
 from pygeppetto.model.types import *
 from pygeppetto.model.values import *
 from pygeppetto.model.model_factory import GeppettoModelFactory
@@ -10,11 +11,38 @@ from pygeppetto.model.model_factory import GeppettoModelFactory
 
 @pytest.fixture()
 def model_factory():
-    return GeppettoModelFactory(GeppettoModelFactory.create_geppetto_model('testModel'))
+    return GeppettoModelFactory()
 
 
-def test_model_factory(model_factory):
-    assert model_factory.geppetto_model
+def test_array_nested_type(model_factory):
+    level1_type = CompositeType(id='level1type')
+    level1_type = level1_type
+
+    level2_type = CompositeType(id='level2type')
+    level2_type = level2_type
+    level2_type.variables.append(model_factory.create_text_variable(id='l3', text='default text'))
+
+    vl2 = Variable(id='l2', name='l2', types=(level2_type,))
+    level1_type.variables.append(vl2)
+
+    vl1value = Composite()
+
+    vl2value = Composite()
+    vl2value.value.append(StringToValueMap('l3', Text('my_text')))
+
+    vl1value.value.append(StringToValueMap('l2', vl2value))
+
+    array_value = ArrayValue()
+    array_value.elements.append(ArrayElement(index=0, initialValue=vl1value))
+
+    assert array_value.elements[0].initialValue is not None
+
+    referencing_type = ArrayType(defaultValue=ArrayValue(), arrayType=level1_type)
+    v = Variable(id='list', types=(referencing_type,))
+    v.initialValues.append(TypeToValueMap(referencing_type, array_value))
+
+
+
 
 
 def test_create_cylinder(model_factory):

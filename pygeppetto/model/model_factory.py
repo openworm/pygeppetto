@@ -13,7 +13,6 @@ from .values import Cylinder, Sphere, Point, PhysicalQuantity, TimeSeries, Unit,
 from .variables import Variable, TypeToValueMap
 
 
-
 class GeppettoCommonLibrary:
     TYPE_PARAMETER = 0
     TYPE_DYNAMICS = 1
@@ -43,24 +42,26 @@ class GeppettoCommonLibrary:
         return clone(cls.instance)
 
 
+class SharedLibraryManager:
+
+    @staticmethod
+    def get_shared_common_library():
+        return GeppettoCommonLibrary.instance_copy()
+
 class GeppettoModelFactory:
 
-    def __init__(self, geppetto_model):
-        self.geppetto_model = geppetto_model
 
-    @property
-    def geppetto_common_library(self):
-        return next(lib for lib in self.geppetto_model.libraries if lib.id == 'common')
+    def __init__(self, geppetto_common_library=None):
+        if geppetto_common_library is None:
+            geppetto_common_library = SharedLibraryManager.get_shared_common_library()
+        self.geppetto_common_library = geppetto_common_library
 
     @classmethod
-    def create_geppetto_model(cls, name):
-        # We create a GeppettoModel instance and we add the common library to it
-
-        geppetto_model = GeppettoModel(name=name, libraries=[clone(GeppettoCommonLibrary.instance)])
-        return geppetto_model
+    def createGeppettoModel(cls, name):
+        return GeppettoModel(name=name, libraries=(SharedLibraryManager.get_shared_common_library(),))
 
     def create_variable(self, id, cl_type, raw_initial_value):
-        variable = Variable(id=id)
+        variable = Variable(id=id, name=id)
         variable.types.append(self.geppetto_common_library.types[cl_type])
         variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[cl_type], raw_initial_value))
         return variable

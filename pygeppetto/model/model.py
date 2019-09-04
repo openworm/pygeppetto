@@ -1,5 +1,5 @@
-"""Definition of meta model 'model'."""
 from functools import partial
+
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
 
@@ -171,7 +171,13 @@ class Node(ISynchable):
         if tags:
             self.tags.extend(tags)
     def getPath(self):
-        raise NotImplementedError('Operation getPath(...) is not yet implemented')
+        if not (isinstance(self.eContainer(), GeppettoModel)) and isinstance(self.eContainer(), Node):
+            container = self.eContainer()
+            if container.eContainer().__class__.__name__ == "Variable":  # cannot use isinstance here due to circular reference
+                container = container.eContainer()
+            return container.getPath() + "." + self.id
+        else:
+            return self.id
 
 
 class Tag(ISynchable):

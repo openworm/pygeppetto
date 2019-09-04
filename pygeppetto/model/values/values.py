@@ -1,7 +1,9 @@
 """Definition of meta model 'values'."""
 from functools import partial
+
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
+
 from ..model import ISynchable
 from ..model import Node
 
@@ -47,8 +49,8 @@ class PointerElement(EObject):
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
         super(PointerElement, self).__init__()
-        if index is not None:
-            self.index = index
+
+        self.index = index
         if variable is not None:
             self.variable = variable
         if type is not None:
@@ -133,6 +135,21 @@ class Unit(Value):
             self.unit = unit
 
 
+from pyecore.valuecontainer import EList
+from pyecore.notification import Notification, Kind
+
+
+def no_check_eattribute_extend(self, sublist):
+    super(EList, self).extend(sublist)
+    self.owner.notify(Notification(new=sublist,
+                                   feature=self.feature,
+                                   kind=Kind.ADD_MANY))
+    self.owner._isset.add(self.feature)
+
+
+EList.no_check_eattribute_extend = no_check_eattribute_extend
+
+
 class TimeSeries(Value):
     scalingFactor = EAttribute(eType=EInt)
     value = EAttribute(eType=EDouble, upper=-1, unique=False)
@@ -143,7 +160,7 @@ class TimeSeries(Value):
         if scalingFactor is not None:
             self.scalingFactor = scalingFactor
         if value:
-            self.value.extend(value)
+            self.value.no_check_eattribute_extend(value)
         if unit is not None:
             self.unit = unit
 
@@ -171,14 +188,30 @@ class Pointer(Value):
 
     def __init__(self, elements=None, point=None, path=None, **kwargs):
         super(Pointer, self).__init__(**kwargs)
-        if path is not None:
-            self.path = path
+
         if elements:
             self.elements.extend(elements)
         if point is not None:
             self.point = point
-    def getInstancePath(self):
-        raise NotImplementedError('Operation getInstancePath(...) is not yet implemented')
+        if path is not None:
+            self.path = path
+        else:
+            self.path = self.get_instance_path()
+
+    def get_instance_path(self):
+        """ generated source for method getInstancePath """
+        instance_path = []
+        for i, element in enumerate(self.elements):
+            instance_path.append(element.variable.id)
+            instance_path.append("(" + element.type.id + ")")
+            if element.index is not None and element.index > -1:
+                instance_path.append("[{0}]".format(element.index))
+            if i != len(self.elements) - 1:
+                instance_path.append(".")
+        return ''.join(instance_path)
+
+
+
 
 
 class Point(Value):

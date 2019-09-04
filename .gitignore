@@ -91,3 +91,7 @@ ENV/
 
 # Emacs tmp files
 *~
+
+*.DS_Store
+.vscode
+.pytest_cache

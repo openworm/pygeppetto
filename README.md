@@ -134,5 +134,3 @@ Or, if you want to avoid using `tox`, you can just:
 $ python -m pytest tests/
 ```
 
-Currently, the tests are only related to the ability to read/write more or less
-huge tests models. The test matrix used by tox considers Python 2 and Python 3.

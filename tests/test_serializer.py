@@ -2,7 +2,7 @@ import json
 import os
 
 from pyecore.resources import ResourceSet, URI
-from pygeppetto.model.model_factory import GeppettoModelFactory, GeppettoCommonLibrary
+from pygeppetto.model.model_factory import GeppettoModelFactory, SharedLibraryManager
 from pygeppetto.model.model_serializer import GeppettoModelSerializer as GeppettoSerializer
 
 
@@ -54,19 +54,21 @@ def test_references():
     res_set = ResourceSet()
     resource = res_set.get_resource(URI(os.path.join(os.path.dirname(__file__), "xmi-data/GeppettoModelTest.xmi")))
     model1 = resource.contents[0]
-    model1.libraries.append(GeppettoCommonLibrary.instance_copy())
+    common_library_1 = SharedLibraryManager.get_shared_common_library()
+    model1.libraries.append(common_library_1)
     res_set = ResourceSet()
     resource = res_set.get_resource(URI(os.path.join(os.path.dirname(__file__), "xmi-data/GeppettoModelTest.xmi")))
     model2 = resource.contents[0]
-    model2.libraries.append(GeppettoCommonLibrary.instance_copy())
+    common_library_2 = SharedLibraryManager.get_shared_common_library()
+    model2.libraries.append(common_library_2)
 
-    factory = GeppettoModelFactory(model1)
+    factory = GeppettoModelFactory(common_library_1)
 
     variable = factory.createStateVariable('0')
     model1.variables.append(variable)
     model1.libraries.append(factory.geppetto_common_library)
 
-    factory2 = GeppettoModelFactory(model2)
+    factory2 = GeppettoModelFactory(common_library_2)
     variable = factory2.createStateVariable('0')
     model2.variables.append(variable)
 

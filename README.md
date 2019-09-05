@@ -98,16 +98,24 @@ there is manual modifications in the current version).
 The pygeppetto API is generated from the
 [`geppettoModel.ecore`](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)
 using the PyEcore Acceleo generator
-([`ecore2pyecore.mtl`](https://github.com/pyecore/pyecore-py2/blob/master/generator/ecore2pyecore.mtl)).
+([`ecore2pyecore.mtl`](https://github.com/pyecore/pyecore/blob/master/generator/ecore2pyecore.mtl)).
 The `.ecore` is a copy of the `geppettoModel.ecore` from
 [org.geppetto.model](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)
-(`development` branch). The script can be directly used in Eclipse as a simple
-Acceleo generator. The generated code had been directly placed inside the
-repository without manual modification.
+(`development` branch). 
 
-If manual modifications have been introduced in the version of the static
+#### Generate the code with Eclipse
+The `ecore2pyecore.mtl` script can be directly used in Eclipse as a 
+[Acceleo](https://wiki.eclipse.org/Acceleo/Getting_Started) generator.
+1. Install the [Acceleo plugin](https://marketplace.eclipse.org/content/acceleo) into eclipse
+1. Create a new Acceleo project
+1. Add the file `ecore2pyecore.mtl` to the project main package
+1. run `ecore2pyecore.mtl` as an acceleo project. The run configuration will popup: specify the `geppettoModel.ecore` 
+file to use and the generation path. Generate the code in a path different from pygeppetto and merge the code
+
+#### Merge manual modifications
+Manual modifications have been introduced in the version of the static
 Geppetto metamodel (_e.g_: implementation of some methods or technical method
-additions), this version must be manually merged with the new generated one
+additions). The generated version must be manually merged with the new generated one
 (_e.g_: using meld or other tool).
 
 
@@ -126,5 +134,3 @@ Or, if you want to avoid using `tox`, you can just:
 $ python -m pytest tests/
 ```
 
-Currently, the tests are only related to the ability to read/write more or less
-huge tests models. The test matrix used by tox considers Python 2 and Python 3.

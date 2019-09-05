@@ -21,9 +21,7 @@ ImageFormat = EEnum('ImageFormat', literals=[
                     'PNG', 'JPEG', 'IIP', 'DCM', 'NIFTI', 'TIFF', 'DZI', 'GOOGLE_MAP'])
 
 
-
-@EMetaclass
-class StringToValueMap(EObject):
+class StringToValueMap(EObject, metaclass=MetaEClass):
     key = EAttribute(eType=EString)
     value = EReference(containment=True)
 
@@ -31,15 +29,14 @@ class StringToValueMap(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(StringToValueMap, self).__init__()
+        super().__init__()
         if key is not None:
             self.key = key
         if value is not None:
             self.value = value
 
 
-@EMetaclass
-class PointerElement(EObject):
+class PointerElement(EObject, metaclass=MetaEClass):
     index = EAttribute(eType=EInteger)
     variable = EReference()
     type = EReference()
@@ -48,7 +45,7 @@ class PointerElement(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(PointerElement, self).__init__()
+        super().__init__()
 
         self.index = index
         if variable is not None:
@@ -57,8 +54,7 @@ class PointerElement(EObject):
             self.type = type
 
 
-@EMetaclass
-class FunctionPlot(EObject):
+class FunctionPlot(EObject, metaclass=MetaEClass):
     title = EAttribute(eType=EString)
     xAxisLabel = EAttribute(eType=EString)
     yAxisLabel = EAttribute(eType=EString)
@@ -70,7 +66,7 @@ class FunctionPlot(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(FunctionPlot, self).__init__()
+        super().__init__()
         if title is not None:
             self.title = title
         if xAxisLabel is not None:
@@ -85,15 +81,14 @@ class FunctionPlot(EObject):
             self.stepValue = stepValue
 
 
-@EMetaclass
-class SkeletonTransformation(EObject):
+class SkeletonTransformation(EObject, metaclass=MetaEClass):
     skeletonTransformation = EAttribute(eType=EDouble, upper=-1)
 
     def __init__(self, skeletonTransformation=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(SkeletonTransformation, self).__init__()
+        super().__init__()
         if skeletonTransformation:
             self.skeletonTransformation.extend(skeletonTransformation)
 
@@ -102,14 +97,14 @@ class SkeletonTransformation(EObject):
 class Value(ISynchable):
 
     def __init__(self, **kwargs):
-        super(Value, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
 
 class Composite(Value):
     value = EReference(upper=-1, containment=True)
 
     def __init__(self, value=None, **kwargs):
-        super(Composite, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if value:
             self.value.extend(value)
 
@@ -119,7 +114,7 @@ class Quantity(Value):
     value = EAttribute(eType=EDouble)
 
     def __init__(self, scalingFactor=None, value=None, **kwargs):
-        super(Quantity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if scalingFactor is not None:
             self.scalingFactor = scalingFactor
         if value is not None:
@@ -130,7 +125,7 @@ class Unit(Value):
     unit = EAttribute(eType=EString)
 
     def __init__(self, unit=None, **kwargs):
-        super(Unit, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if unit is not None:
             self.unit = unit
 
@@ -156,7 +151,7 @@ class TimeSeries(Value):
     unit = EReference(containment=True)
 
     def __init__(self, unit=None, scalingFactor=None, value=None, **kwargs):
-        super(TimeSeries, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if scalingFactor is not None:
             self.scalingFactor = scalingFactor
         if value:
@@ -169,8 +164,8 @@ class MDTimeSeries(Value):
     value = EReference(containment=True, upper=-1)
 
     def __init__(self, value=None, **kwargs):
-        super(MDTimeSeries, self).__init__(**kwargs)
-        if value is not None:
+        super().__init__(**kwargs)
+        if value:
             self.value.extend(value)
 
 
@@ -178,7 +173,7 @@ class MDTimeSeries(Value):
 class MetadataValue(Value):
 
     def __init__(self, **kwargs):
-        super(MetadataValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
 
 
 class Pointer(Value):
@@ -187,8 +182,7 @@ class Pointer(Value):
     point = EReference(containment=True)
 
     def __init__(self, elements=None, point=None, path=None, **kwargs):
-        super(Pointer, self).__init__(**kwargs)
-
+        super().__init__(**kwargs)
         if elements:
             self.elements.extend(elements)
         if point is not None:
@@ -220,7 +214,7 @@ class Point(Value):
     z = EAttribute(eType=EDouble)
 
     def __init__(self, x=None, y=None, z=None, **kwargs):
-        super(Point, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if x is not None:
             self.x = x
         if y is not None:
@@ -234,7 +228,7 @@ class Dynamics(Value):
     dynamics = EReference(containment=True)
 
     def __init__(self, initialCondition=None, dynamics=None, **kwargs):
-        super(Dynamics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if initialCondition is not None:
             self.initialCondition = initialCondition
         if dynamics is not None:
@@ -247,7 +241,7 @@ class Function(Value):
     functionPlot = EReference(containment=True)
 
     def __init__(self, arguments=None, expression=None, functionPlot=None, **kwargs):
-        super(Function, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if arguments:
             self.arguments.extend(arguments)
         if expression is not None:
@@ -260,7 +254,7 @@ class Argument(Value):
     argument = EAttribute(eType=EString)
 
     def __init__(self, argument=None, **kwargs):
-        super(Argument, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if argument is not None:
             self.argument = argument
 
@@ -269,7 +263,7 @@ class Expression(Value):
     expression = EAttribute(eType=EString)
 
     def __init__(self, expression=None, **kwargs):
-        super(Expression, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if expression is not None:
             self.expression = expression
 
@@ -280,7 +274,7 @@ class VisualValue(Value):
     position = EReference(containment=True)
 
     def __init__(self, groupElements=None, position=None, **kwargs):
-        super(VisualValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if groupElements:
             self.groupElements.extend(groupElements)
         if position is not None:
@@ -288,10 +282,10 @@ class VisualValue(Value):
 
 
 class Particles(Value):
-    particles = EReference(containment=True, upper=-1)
+    particles = EReference(upper=-1, containment=True)
 
     def __init__(self, particles=None, **kwargs):
-        super(Particles, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if particles:
             self.particles.extend(particles)
 
@@ -301,7 +295,7 @@ class VisualGroupElement(Node):
     parameter = EReference(containment=True)
 
     def __init__(self, defaultColor=None, parameter=None, **kwargs):
-        super(VisualGroupElement, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if defaultColor is not None:
             self.defaultColor = defaultColor
         if parameter is not None:
@@ -315,7 +309,7 @@ class VisualGroup(Node):
     visualGroupElements = EReference(upper=-1, containment=True)
 
     def __init__(self, lowSpectrumColor=None, highSpectrumColor=None, type=None, visualGroupElements=None, **kwargs):
-        super(VisualGroup, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if lowSpectrumColor is not None:
             self.lowSpectrumColor = lowSpectrumColor
         if highSpectrumColor is not None:
@@ -332,7 +326,7 @@ class Connection(Value):
     b = EReference(containment=True)
 
     def __init__(self, a=None, b=None, connectivity=None, **kwargs):
-        super(Connection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if connectivity is not None:
             self.connectivity = connectivity
         if a is not None:
@@ -347,7 +341,7 @@ class ArrayElement(Value):
     initialValue = EReference(containment=True)
 
     def __init__(self, index=None, position=None, initialValue=None, **kwargs):
-        super(ArrayElement, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if index is not None:
             self.index = index
         if position is not None:
@@ -360,7 +354,7 @@ class ArrayValue(Value):
     elements = EReference(upper=-1, containment=True)
 
     def __init__(self, elements=None, **kwargs):
-        super(ArrayValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if elements:
             self.elements.extend(elements)
 
@@ -372,7 +366,7 @@ class Image(Value):
     format = EAttribute(eType=ImageFormat)
 
     def __init__(self, data=None, name=None, reference=None, format=None, **kwargs):
-        super(Image, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if data is not None:
             self.data = data
         if name is not None:
@@ -387,16 +381,23 @@ class ImportValue(Value):
     modelInterpreterId = EAttribute(eType=EString)
 
     def __init__(self, modelInterpreterId=None, **kwargs):
-        super(ImportValue, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if modelInterpreterId is not None:
             self.modelInterpreterId = modelInterpreterId
+
+
+@abstract
+class AArrayValue(Value):
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
 
 
 class PhysicalQuantity(Quantity):
     unit = EReference(containment=True)
 
     def __init__(self, unit=None, **kwargs):
-        super(PhysicalQuantity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if unit is not None:
             self.unit = unit
 
@@ -405,7 +406,7 @@ class Text(MetadataValue):
     text = EAttribute(eType=EString)
 
     def __init__(self, text=None, **kwargs):
-        super(Text, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if text is not None:
             self.text = text
 
@@ -414,7 +415,7 @@ class URL(MetadataValue):
     url = EAttribute(eType=EString)
 
     def __init__(self, url=None, **kwargs):
-        super(URL, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if url is not None:
             self.url = url
 
@@ -423,7 +424,7 @@ class HTML(MetadataValue):
     html = EAttribute(eType=EString)
 
     def __init__(self, html=None, **kwargs):
-        super(HTML, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if html is not None:
             self.html = html
 
@@ -432,7 +433,7 @@ class Collada(VisualValue):
     collada = EAttribute(eType=EString)
 
     def __init__(self, collada=None, **kwargs):
-        super(Collada, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if collada is not None:
             self.collada = collada
 
@@ -441,7 +442,7 @@ class OBJ(VisualValue):
     obj = EAttribute(eType=EString)
 
     def __init__(self, obj=None, **kwargs):
-        super(OBJ, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if obj is not None:
             self.obj = obj
 
@@ -450,7 +451,7 @@ class Sphere(VisualValue):
     radius = EAttribute(eType=EDouble)
 
     def __init__(self, radius=None, **kwargs):
-        super(Sphere, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if radius is not None:
             self.radius = radius
 
@@ -462,7 +463,7 @@ class Cylinder(VisualValue):
     distal = EReference(containment=True)
 
     def __init__(self, bottomRadius=None, topRadius=None, height=None, distal=None, **kwargs):
-        super(Cylinder, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if bottomRadius is not None:
             self.bottomRadius = bottomRadius
         if topRadius is not None:
@@ -477,6 +478,60 @@ class SkeletonAnimation(VisualValue):
     skeletonTransformationSeries = EReference(upper=-1)
 
     def __init__(self, skeletonTransformationSeries=None, **kwargs):
-        super(SkeletonAnimation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if skeletonTransformationSeries:
             self.skeletonTransformationSeries.extend(skeletonTransformationSeries)
+
+
+class Metadata(MetadataValue):
+    value = EReference(upper=-1, containment=True)
+
+    def __init__(self, value=None, **kwargs):
+        super().__init__(**kwargs)
+        if value:
+            self.value.extend(value)
+
+
+class JSON(MetadataValue):
+    json = EAttribute(eType=EString)
+
+    def __init__(self, json=None, **kwargs):
+        super().__init__(**kwargs)
+        if json is not None:
+            self.json = json
+
+
+class GenericArray(AArrayValue):
+    elements = EReference(upper=-1, containment=True)
+
+    def __init__(self, elements=None, **kwargs):
+        super().__init__(**kwargs)
+        if elements:
+            self.elements.extend(elements)
+
+
+class StringArray(AArrayValue):
+    elements = EAttribute(eType=EString, upper=-1)
+
+    def __init__(self, elements=None, **kwargs):
+        super().__init__(**kwargs)
+        if elements:
+            self.elements.extend(elements)
+
+
+class IntArray(AArrayValue):
+    elements = EAttribute(eType=EInt, upper=-1)
+
+    def __init__(self, elements=None, **kwargs):
+        super().__init__(**kwargs)
+        if elements:
+            self.elements.extend(elements)
+
+
+class DoubleArray(AArrayValue):
+    elements = EAttribute(eType=EDouble, upper=-1)
+
+    def __init__(self, elements=None, **kwargs):
+        super().__init__(**kwargs)
+        if elements:
+            self.elements.extend(elements)

@@ -56,7 +56,7 @@ def get_pointer_model(model: GeppettoModel, instance_path):
                     v = find_variable(get_variable(token), (lastType).arrayType)
                 else:
                     raise GeppettoModelException(
-                        lastType.id + " is not of type CompositeType there can't be nested variables")
+                        lastType.name + " is not of type CompositeType: there can't be nested variables")
         lastType = find_type(get_type_str(token), v)
         element.variable = v
         element.type = lastType
@@ -113,7 +113,7 @@ def get_type_pointer(pointer: Pointer):
     return pointer.elements[-1].type
 
 
-def get_value(model, path, stateVariablType):
+def get_value(model, path, state_variable_type=None):
     st = iter(path.split('.'))
     lastType = None
     lastVar = None
@@ -142,7 +142,14 @@ def get_value(model, path, stateVariablType):
     if lastType is not None and lastType.path == path:
         return lastType.defaultValue
     elif lastVar is not None:
-        return lastVar.initialValues[stateVariablType]
+        if state_variable_type is not None:
+            try:
+                return next(type_value_map.value for type_value_map in lastVar.initialValues if
+                            type_value_map.type == state_variable_type)
+            except StopIteration as e:
+                raise GeppettoModelException("Couldn't find a value for the path " + path) from e
+        else:
+            return lastVar.initialValues[0].value
     else:
         raise GeppettoModelException("Couldn't find a value for the path " + path)
 

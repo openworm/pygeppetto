@@ -5,12 +5,12 @@ class GeppettoProject(object):
         self.id = id
         self.name = name
         self.geppettoModel = geppetto_model  # Beware must use the camelCase here otherwise we cannot import from JSON
-        self.baseUrl = base_url
+        self.base_url = base_url
         self.experiments = list(experiments) if experiments is not None else []
-        self.activeExperimentId = -1 if not experiments else 0
+        self.active_experiment_id = -1 if not experiments else 0
         self.volatile = volatile
         self.view = view
-        self.isPublic = public
+        self.is_public = public
 
     def __eq__(self, o: object) -> bool:
         return self.id == o.id if hasattr(o, 'id') else False

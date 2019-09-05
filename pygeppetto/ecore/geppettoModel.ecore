@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore"
     nsPrefix="gep">
   <eClassifiers xsi:type="ecore:EClass" name="GeppettoModel">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -112,7 +112,7 @@
         eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Boolean"
         transient="true"/>
   </eClassifiers>
-  <eSubpackages name="types" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//types"
+  <eSubpackages name="types" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types"
       nsPrefix="gep">
     <eClassifiers xsi:type="ecore:EClass" name="Type" abstract="true" eSuperTypes="#//Node">
       <eOperations name="getDefaultValue" eType="#//values/Value"/>
@@ -178,6 +178,10 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/HTML"
           containment="true"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="JSONType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/JSON"
+          containment="true"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="TextType" eSuperTypes="#//types/Type">
       <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Text"
           containment="true"/>
@@ -213,8 +217,13 @@
     <eClassifiers xsi:type="ecore:EClass" name="ImageType" eSuperTypes="#//types/Type">
       <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/Image"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="SimpleArrayType" eSuperTypes="#//types/Type">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="defaultValue" eType="#//values/AArrayValue"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="MetadataType" eSuperTypes="#//types/Type"/>
   </eSubpackages>
-  <eSubpackages name="values" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//values"
+  <eSubpackages name="values" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values"
       nsPrefix="gep">
     <eClassifiers xsi:type="ecore:EClass" name="Value" abstract="true" eSuperTypes="#//ISynchable"/>
     <eClassifiers xsi:type="ecore:EClass" name="Composite" eSuperTypes="#//values/Value">
@@ -406,8 +415,33 @@
     <eClassifiers xsi:type="ecore:EClass" name="ImportValue" eSuperTypes="#//values/Value">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="modelInterpreterId" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Metadata" eSuperTypes="#//values/MetadataValue">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="value" upperBound="-1"
+          eType="#//values/StringToValueMap" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="JSON" eSuperTypes="#//values/MetadataValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="json" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="GenericArray" eSuperTypes="#//values/AArrayValue">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+          eType="#//values/Value" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StringArray" eSuperTypes="#//values/AArrayValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="elements" unique="false"
+          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="IntArray" eSuperTypes="#//values/AArrayValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="elements" unique="false"
+          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DoubleArray" eSuperTypes="#//values/AArrayValue">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="elements" unique="false"
+          upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Double"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="AArrayValue" abstract="true" eSuperTypes="#//values/Value"/>
   </eSubpackages>
-  <eSubpackages name="variables" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//variables"
+  <eSubpackages name="variables" nsURI="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//variables"
       nsPrefix="gep">
     <eClassifiers xsi:type="ecore:EClass" name="Variable" eSuperTypes="#//Node">
       <eStructuralFeatures xsi:type="ecore:EReference" name="anonymousTypes" upperBound="-1"

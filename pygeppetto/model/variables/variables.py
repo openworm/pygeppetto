@@ -15,9 +15,7 @@ eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
 
-
-@EMetaclass
-class TypeToValueMap(EObject):
+class TypeToValueMap(EObject, metaclass=MetaEClass):
     key = EReference()
     value = EReference(containment=True)
 
@@ -25,7 +23,7 @@ class TypeToValueMap(EObject):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
-        super(TypeToValueMap, self).__init__()
+        super().__init__()
         if key is not None:
             self.key = key
         if value is not None:
@@ -40,7 +38,7 @@ class Variable(Node):
     position = EReference(containment=True)
 
     def __init__(self, anonymousTypes=None, types=None, initialValues=None, static=None, position=None, **kwargs):
-        super(Variable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         if static is not None:
             self.static = static
         if anonymousTypes:

@@ -44,3 +44,7 @@ class GeppettoModelAccess:
             return self.get_variable(variable_path).initialValues[0].value
         except Exception as e:
             raise GeppettoModelException("Can't find a value for path " + variable_path) from e
+
+    def get_query(self, queryPath):
+        #TODO GeppettoModelAccess.get_query
+        pass

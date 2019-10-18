@@ -39,7 +39,9 @@ class Error(object):
 in_out_msg_lookup = {
     InboundMessages.GEPPETTO_VERSION: OutboundMessages.GEPPETTO_VERSION,
     InboundMessages.RESOLVE_IMPORT_TYPE: OutboundMessages.IMPORT_TYPE_RESOLVED,
-    InboundMessages.RESOLVE_IMPORT_VALUE: OutboundMessages.IMPORT_VALUE_RESOLVED
+    InboundMessages.RESOLVE_IMPORT_VALUE: OutboundMessages.IMPORT_VALUE_RESOLVED,
+    InboundMessages.RUN_QUERY: OutboundMessages.RETURN_QUERY,
+    InboundMessages.RUN_QUERY_COUNT: OutboundMessages.RETURN_QUERY_COUNT
 }
 
 
@@ -102,20 +104,24 @@ class GeppettoMessageHandler:
                 msg_data = self.getVersionNumber(requestID)
 
             elif msg_type == InboundMessages.RESOLVE_IMPORT_VALUE:
-                receivedObject = json.loads(gmsg['data'])
-                msg_data = self.resolveImportValue(requestID, receivedObject['projectId'],
-                                                   receivedObject['experimentId'],
-                                                   receivedObject['path'])
+                received_object = json.loads(gmsg['data'])
+                msg_data = self.resolveImportValue(requestID, received_object['projectId'],
+                                                   received_object['experimentId'],
+                                                   received_object['path'])
 
             elif msg_type == InboundMessages.RESOLVE_IMPORT_TYPE:
-                receivedObject = gmsg['data']
-                msg_data = self.resolveImportType(requestID, receivedObject.projectId,
-                                                  receivedObject.paths)
+                received_object = gmsg['data']
+                msg_data = self.resolveImportType(requestID, received_object.projectId,
+                                                  received_object.paths)
             elif msg_type == InboundMessages.LOAD_PROJECT_FROM_CONTENT:
                 self.loadProjectFromContent(requestID, gmsg['data'])
             elif msg_type == InboundMessages.LOAD_PROJECT_FROM_URL:
                 msg_data = self.loadProjectFromUrl(requestID, gmsg['data'])
-
+            elif msg_type == InboundMessages.RUN_QUERY:
+                received_object = gmsg['data']
+                geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
+                runnable_queries = self.convertRunnableQueriesDataTransferModel(received_object['runnableQueries'])
+                msg_data = self.geppettoManager.run_query(runnable_queries, geppetto_project)
             # TODO From here on, implementation is not complete: just bare porting from Java
             elif msg_type == InboundMessages.USER_PRIVILEGES:
                 msg_data = self.checkUserPrivileges(requestID)
@@ -124,8 +130,8 @@ class GeppettoMessageHandler:
                 projectId = int(parameters.get("projectId"))
                 msg_data = self.newExperiment(requestID, projectId)
             elif msg_type == InboundMessages.NEW_EXPERIMENT_BATCH:
-                receivedObject = gmsg['data']
-                msg_data = self.newExperimentBatch(requestID, receivedObject.projectId, receivedObject)
+                received_object = gmsg['data']
+                msg_data = self.newExperimentBatch(requestID, received_object.projectId, received_object)
             elif msg_type == InboundMessages.CLONE_EXPERIMENT:
                 parameters = gmsg['data']
                 projectId = int(parameters.get("projectId"))
@@ -153,23 +159,23 @@ class GeppettoMessageHandler:
                 projectId = int(parameters.get("projectId"))
                 msg_data = self.downloadProject(requestID, projectId)
             elif msg_type == InboundMessages.SAVE_PROJECT_PROPERTIES:
-                receivedObject = gmsg['data']
-                msg_data = self.saveProjectProperties(requestID, receivedObject.projectId,
-                                                      receivedObject.properties)
+                received_object = gmsg['data']
+                msg_data = self.saveProjectProperties(requestID, received_object.projectId,
+                                                      received_object.properties)
             elif msg_type == InboundMessages.SAVE_EXPERIMENT_PROPERTIES:
-                receivedObject = gmsg['data']
-                msg_data = self.saveExperimentProperties(requestID, receivedObject.projectId,
-                                                         receivedObject.experimentId,
-                                                         receivedObject.properties)
+                received_object = gmsg['data']
+                msg_data = self.saveExperimentProperties(requestID, received_object.projectId,
+                                                         received_object.experimentId,
+                                                         received_object.properties)
             elif msg_type == InboundMessages.LOAD_EXPERIMENT:
                 parameters = gmsg['data']
                 experimentId = int(parameters.get("experimentId"))
                 projectId = int(parameters.get("projectId"))
                 msg_data = self.loadExperiment(requestID, experimentId, projectId)
             elif msg_type == InboundMessages.GET_SCRIPT:
-                receivedObject = gmsg['data']
-                msg_data = self.sendScriptData(requestID, receivedObject.projectId,
-                                               receivedObject.scriptURL,
+                received_object = gmsg['data']
+                msg_data = self.sendScriptData(requestID, received_object.projectId,
+                                               received_object.scriptURL,
                                                self.websocketConnection)
             elif msg_type == InboundMessages.GET_DATA_SOURCE_RESULTS:
                 url = None
@@ -184,25 +190,25 @@ class GeppettoMessageHandler:
                 except IOError as e:
                     self.send_message(requestID, OutboundMessages.ERROR_READING_SCRIPT, "")
             elif msg_type == InboundMessages.GET_EXPERIMENT_STATE:
-                receivedObject = gmsg['data']
-                msg_data = self.getExperimentState(requestID, receivedObject.experimentId,
-                                                   receivedObject.projectId,
-                                                   receivedObject.variables)
+                received_object = gmsg['data']
+                msg_data = self.getExperimentState(requestID, received_object.experimentId,
+                                                   received_object.projectId,
+                                                   received_object.variables)
             elif msg_type == InboundMessages.DELETE_EXPERIMENT:
-                receivedObject = gmsg['data']
-                msg_data = self.deleteExperiment(requestID, receivedObject.experimentId,
-                                                 receivedObject.projectId)
+                received_object = gmsg['data']
+                msg_data = self.deleteExperiment(requestID, received_object.experimentId,
+                                                 received_object.projectId)
             elif msg_type == InboundMessages.RUN_EXPERIMENT:
-                receivedObject = gmsg['data']
-                msg_data = self.runExperiment(requestID, receivedObject.experimentId,
-                                              receivedObject.projectId)
+                received_object = gmsg['data']
+                msg_data = self.runExperiment(requestID, received_object.experimentId,
+                                              received_object.projectId)
             elif msg_type == InboundMessages.SET_WATCHED_VARIABLES:
-                receivedObject = gmsg['data']
+                received_object = gmsg['data']
                 try:
-                    msg_data = self.setWatchedVariables(requestID, receivedObject.variables,
-                                                        receivedObject.experimentId,
-                                                        receivedObject.projectId,
-                                                        receivedObject.watch)
+                    msg_data = self.setWatchedVariables(requestID, received_object.variables,
+                                                        received_object.experimentId,
+                                                        received_object.projectId,
+                                                        received_object.watch)
                 except GeppettoExecutionException as e:
                     self.send_message(requestID, OutboundMessages.ERROR_SETTING_WATCHED_VARIABLES, "")
                 except GeppettoInitializationException as e:
@@ -221,21 +227,21 @@ class GeppettoMessageHandler:
                 format = parameters.get("format")
                 msg_data = self.downloadModel(requestID, instancePath, format, experimentId, projectId)
             elif msg_type == InboundMessages.SET_PARAMETERS:
-                receivedObject = gmsg['data']
-                msg_data = self.setParameters(requestID, receivedObject.modelParameters,
-                                              receivedObject.projectId,
-                                              receivedObject.experimentId)
+                received_object = gmsg['data']
+                msg_data = self.setParameters(requestID, received_object.modelParameters,
+                                              received_object.projectId,
+                                              received_object.experimentId)
             elif msg_type == InboundMessages.SET_EXPERIMENT_VIEW:
-                receivedObject = gmsg['data']
-                msg_data = self.setExperimentView(requestID, receivedObject.view,
-                                                  receivedObject.projectId,
-                                                  receivedObject.experimentId)
+                received_object = gmsg['data']
+                msg_data = self.setExperimentView(requestID, received_object.view,
+                                                  received_object.projectId,
+                                                  received_object.experimentId)
             elif msg_type == InboundMessages.LINK_DROPBOX:
                 parameters = gmsg['data']
                 key = parameters.get("key")
                 msg_data = self.linkDropBox(requestID, key)
             elif msg_type == InboundMessages.GET_DROPBOX_TOKEN:
-                # ReceivedObject receivedObject = new gmsg['data'], ReceivedObject.class);
+                # ReceivedObject received_object = new gmsg['data'], ReceivedObject.class);
                 msg_data = self.getDropboxToken(requestID)
             elif msg_type == InboundMessages.UNLINK_DROPBOX:
                 parameters = gmsg['data']
@@ -265,21 +271,17 @@ class GeppettoMessageHandler:
             elif msg_type == InboundMessages.EXPERIMENT_STATUS:
                 msg_data = self.checkExperimentStatus(requestID, gmsg['data'])
             elif msg_type == InboundMessages.FETCH_VARIABLE:
-                receivedObject = gmsg['data']
-                msg_data = self.fetchVariable(requestID, receivedObject.projectId,
-                                              receivedObject.dataSourceId,
-                                              receivedObject.variableId)
+                received_object = gmsg['data']
+                msg_data = self.fetchVariable(requestID, received_object.projectId,
+                                              received_object.dataSourceId,
+                                              received_object.variableId)
 
-            elif msg_type == InboundMessages.RUN_QUERY:
-                receivedObject = gmsg['data']
-                msg_data = self.runQuery(requestID, receivedObject.projectId,
-                                         self.convertRunnableQueriesDataTransferModel(
-                                             receivedObject.runnableQueries))
+
             elif msg_type == InboundMessages.RUN_QUERY_COUNT:
-                receivedObject = gmsg['data']
-                msg_data = self.runQueryCount(requestID, receivedObject.projectId,
+                received_object = gmsg['data']
+                msg_data = self.runQueryCount(requestID, received_object.projectId,
                                               self.convertRunnableQueriesDataTransferModel(
-                                                  receivedObject.runnableQueries))
+                                                  received_object.runnableQueries))
             else:
                 pass
 
@@ -439,3 +441,4 @@ class GeppettoMessageHandler:
             rqEMF = RunnableQuery(targetVariablePath=dt.targetVariablePath, queryPath=dt.queryPath)
             runnableQueriesEMF.append(rqEMF)
         return runnableQueriesEMF
+

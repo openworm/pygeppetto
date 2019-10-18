@@ -9,7 +9,7 @@ from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, 
     Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, MDTimeSeries, \
     Cylinder, Particles, SkeletonAnimation, Connection, Metadata, GenericArray
 from .variables import Variable, TypeToValueMap
-from .datasources import DataSource, Query, DataSourceLibraryConfiguration, QueryMatchingCriteria, AQueryResult, ProcessQuery, CompoundQuery, CompoundRefQuery, QueryResults
+from .datasources import DataSource, Query, DataSourceLibraryConfiguration, QueryMatchingCriteria, AQueryResult, ProcessQuery, CompoundQuery, CompoundRefQuery, QueryResults, SimpleQuery
 from . import model
 from . import types
 from . import values

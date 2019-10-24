@@ -12,6 +12,7 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
+
 BooleanOperator = EEnum('BooleanOperator', literals=['AND', 'NAND', 'OR'])  # noqa
 
 
@@ -49,7 +50,6 @@ class QueryResults(EObject, metaclass=MetaEClass):
             self.header.extend(header)
         if results:
             self.results.extend(results)
-
     def getValue(self, field=None, row=None):
         raise NotImplementedError('Operation getValue(...) is not yet implemented')
 

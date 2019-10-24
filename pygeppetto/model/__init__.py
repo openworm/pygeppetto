@@ -1,29 +1,26 @@
 from .model import getEClassifier, eClassifiers
 from .model import name, nsURI, nsPrefix, eClass
-from .model import GeppettoModel, Node, GeppettoLibrary, LibraryManager, ExperimentState, VariableValue, Tag, DomainModel, ModelFormat, ExternalDomainModel, FileFormat, StringToStringMap, ISynchable
-from .types import Type, VisualType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, \
-    DynamicsType, ArgumentType, ExpressionType, HTMLType, JSONType, TextType, URLType, PointType, ArrayType, \
-    CompositeVisualType, ConnectionType, ImageType, SimpleArrayType
-from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, Argument, Expression, HTML, JSON, Text, \
-    URL, Point, ArrayValue, VisualGroup, Image, AArrayValue, StringToValueMap, Unit, PointerElement, PhysicalQuantity, \
-    Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, MDTimeSeries, \
-    Cylinder, Particles, SkeletonAnimation, Connection, Metadata, GenericArray
+from .model import GeppettoModel, Node, GeppettoLibrary, LibraryManager, ExperimentState, VariableValue, Tag, DomainModel, ModelFormat, ExternalDomainModel, FileFormat, StringToStringMap, ISynchable, World
+from .types import Type, VisualType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, JSONType, TextType, URLType, PointType, ArrayType, CompositeVisualType, ConnectionType, ImageType, SimpleArrayType
+from .values import Pointer, Value, VisualValue, Composite, Quantity, Dynamics, Argument, Expression, HTML, JSON, Text, URL, Point, ArrayValue, VisualGroup, Image, AArrayValue, StringToValueMap, Unit, PointerElement, PhysicalQuantity, Function, FunctionPlot, VisualGroupElement, SkeletonTransformation, ArrayElement, TimeSeries, MDTimeSeries, Cylinder, Particles, SkeletonAnimation, Connection, Metadata, GenericArray
 from .variables import Variable, TypeToValueMap
 from .datasources import DataSource, Query, DataSourceLibraryConfiguration, QueryMatchingCriteria, AQueryResult, ProcessQuery, CompoundQuery, CompoundRefQuery, QueryResults
+from .instances import Instance, SimpleInstance, SimpleConnectionInstance
 from . import model
 from . import types
 from . import values
 from . import variables
 from . import datasources
+from . import instances
 
-__all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'ExperimentState', 'VariableValue', 'Tag',
-           'DomainModel', 'ModelFormat', 'ExternalDomainModel', 'FileFormat', 'StringToStringMap', 'ISynchable']
+__all__ = ['GeppettoModel', 'Node', 'GeppettoLibrary', 'LibraryManager', 'ExperimentState', 'VariableValue', 'Tag', 'DomainModel', 'ModelFormat', 'ExternalDomainModel', 'FileFormat', 'StringToStringMap', 'ISynchable', 'World']
 
-eSubpackages = [types, values, variables, datasources]
+eSubpackages = [types, values, variables, datasources, instances]
 eSuperPackage = None
 
 # Non opposite EReferences
 GeppettoModel.variables.eType = Variable
+GeppettoModel.worlds.eType = World
 GeppettoModel.libraries.eType = GeppettoLibrary
 GeppettoModel.tags.eType = Tag
 GeppettoModel.dataSources.eType = DataSource
@@ -38,6 +35,8 @@ VariableValue.pointer.eType = Pointer
 VariableValue.value.eType = Value
 Tag.tags.eType = Tag
 DomainModel.format.eType = ModelFormat
+World.variables.eType = Variable
+World.instances.eType = Instance
 Type.superType.eType = Type
 Type.visualType.eType = VisualType
 Type.domainModel.eType = DomainModel
@@ -110,6 +109,12 @@ CompoundQuery.queryChain.eType = Query
 CompoundRefQuery.queryChain.eType = Query
 QueryResults.results.eType = AQueryResult
 QueryMatchingCriteria.type.eType = Type
+Instance.type.eType = Type
+Instance.value.eType = Value
+SimpleInstance.visualValue.eType = VisualValue
+SimpleInstance.position.eType = Point
+SimpleConnectionInstance.a.eType = SimpleInstance
+SimpleConnectionInstance.b.eType = SimpleInstance
 
 # opposite EReferences
 Type.referencedVariables.eType = Variable

@@ -1,10 +1,9 @@
 from functools import partial
-
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
 
 name = 'model'
-nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore'
+nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore'
 nsPrefix = 'gep'
 
 eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
@@ -12,20 +11,22 @@ eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
+
 FileFormat = EEnum('FileFormat', literals=['ZIP', 'HDF5'])  # noqa
 
 
 class GeppettoModel(EObject, metaclass=MetaEClass):
-    """The root of every Geppetto model"""
+    """The root of every Geppetto model. This is the configuration of the Geppetto Model, to not be confused with the model Instantiation."""
     id = EAttribute(eType=EString)
     name = EAttribute(eType=EString)
     variables = EReference(upper=-1, containment=True)
+    worlds = EReference(upper=-1, containment=True)
     libraries = EReference(upper=-1, containment=True)
     tags = EReference(upper=-1, containment=True)
     dataSources = EReference(upper=-1, containment=True)
     queries = EReference(upper=-1, containment=True)
 
-    def __init__(self, variables=None, libraries=None, tags=None, id=None, name=None, dataSources=None, queries=None, **kwargs):
+    def __init__(self, variables=None, worlds=None, libraries=None, tags=None, id=None, name=None, dataSources=None, queries=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
@@ -36,6 +37,8 @@ class GeppettoModel(EObject, metaclass=MetaEClass):
             self.name = name
         if variables:
             self.variables.extend(variables)
+        if worlds:
+            self.worlds.extend(worlds)
         if libraries:
             self.libraries.extend(libraries)
         if tags:
@@ -147,6 +150,24 @@ class ISynchable(EObject, metaclass=MetaEClass):
         super().__init__()
         if synched is not None:
             self.synched = synched
+
+
+class World(EObject, metaclass=MetaEClass):
+    name = EAttribute(eType=EString)
+    variables = EReference(upper=-1, containment=True)
+    instances = EReference(upper=-1, containment=True)
+
+    def __init__(self, variables=None, instances=None, name=None, **kwargs):
+        if kwargs:
+            raise AttributeError('unexpected arguments: {}'.format(kwargs))
+
+        super().__init__()
+        if name is not None:
+            self.name = name
+        if variables:
+            self.variables.extend(variables)
+        if instances:
+            self.instances.extend(instances)
 
 
 @abstract

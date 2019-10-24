@@ -1,5 +1,5 @@
 from pyecore.ecore import EObject
-from pygeppetto.visitor import Switch
+from pygeppetto.visitors import Switch
 
 
 def apply_single(eobject: EObject, fn, condition=lambda eobject: True):

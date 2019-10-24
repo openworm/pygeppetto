@@ -36,7 +36,7 @@ class ExecuteQueryVisitor(Switch):
 
     @do_switch.register(ProcessQuery)
     def case_process_query(self, query: ProcessQuery):
-        pass
+        pass # TODO ExecuteQueryVisitor.case_process_query
 
 
     @do_switch.register(CompoundRefQuery)
@@ -46,7 +46,7 @@ class ExecuteQueryVisitor(Switch):
 
     @do_switch.register(SimpleQuery)
     def case_simple_query(self, query: SimpleQuery):
-        pass
+        pass # TODO ExecuteQueryVisitor.case_simple_query
 
     def merge_results(self, results):
-        pass
+        pass # TODO ExecuteQueryVisitor.merge_results

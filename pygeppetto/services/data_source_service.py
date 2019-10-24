@@ -1,15 +1,11 @@
 from pygeppetto.model import Query, DataSource, QueryResults
-from pygeppetto.model.datasources import RunnableQuery
+from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
 from pygeppetto.model.model_access import GeppettoModelAccess
-from pygeppetto.visitor.data_source_visitors import ExecuteQueryVisitor
+from pygeppetto.model.utils.datasource import query_check
+from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 
 
 class GeppettoDataSourceException(Exception): pass
-
-class BooleanOperator:
-    AND = 0
-    NAND = 1
-    OR = 2
 
 
 class DataSourceService:
@@ -21,18 +17,18 @@ class DataSourceService:
     def fetch_variable(self):
         raise NotImplemented
 
-    def execute(self, queries):
-        return self.merge_results(
+    def execute(self, queries, count_only=False):
+        return self.get_results(
             {self.execute_runnable_query(runnable_query): runnable_query.booleanOperator for runnable_query in queries}
         )
 
     def get_number_of_results(self, queries):
-        raise NotImplemented
+        return len(self.execute(queries, count_only=True).results)
 
-    def get_available_queries(self):
-        raise NotImplemented
+    def get_available_queries(self, variable):
+        return [query for query in self.configuration.queries if query_check(query, variable)]
 
-    def execute_runnable_query(self, runnable_query: RunnableQuery):
+    def execute_runnable_query(self, runnable_query: RunnableQuery, count_only=False):
         """
         Moved from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java
         Implementation is simplified without caching
@@ -41,17 +37,17 @@ class DataSourceService:
         """
         variable = self.model_access.get_variable(runnable_query.targetVariablePath)
         query = self.model_access.get_query(runnable_query.queryPath)
-        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access)
+        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access, count_only=count_only)
         return self.process_response(execute_query_visitor.do_switch(query))
 
-    def merge_results(self, results: dict) -> QueryResults:
+    def get_results(self, results: dict) -> QueryResults:
         """
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
         final_results = QueryResults(header=next(iter(results.values())).header)
         first = True
         for result, operator in results:
-            if final_results.header != result.header: # TODO test it: may not be supported
+            if final_results.header != result.header:  # TODO test it: may not be supported
                 raise GeppettoDataSourceException(
                     "Multiple queries were executed but they returned incompatible headers"
                 )
@@ -59,7 +55,7 @@ class DataSourceService:
                 if first:
                     final_results.results += [r for r in result.results]
 
-        #TODO finish
+        # TODO finish
         return final_results
 
     def process_response(self, response_dict):

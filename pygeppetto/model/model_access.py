@@ -1,4 +1,4 @@
-from pygeppetto.model import GeppettoModel
+from pygeppetto.model import GeppettoModel, model_utility
 from pygeppetto.model.exceptions import GeppettoModelException
 from pygeppetto.model.model_factory import SharedLibraryManager
 from pygeppetto.model.types import ImportType
@@ -45,6 +45,5 @@ class GeppettoModelAccess:
         except Exception as e:
             raise GeppettoModelException("Can't find a value for path " + variable_path) from e
 
-    def get_query(self, queryPath):
-        #TODO GeppettoModelAccess.get_query
-        pass
+    def get_query(self, query_path):
+        return model_utility.get_query(model=self.geppetto_model, query_path=query_path)

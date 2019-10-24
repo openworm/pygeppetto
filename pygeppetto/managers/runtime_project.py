@@ -66,7 +66,7 @@ class RuntimeProject(object):
 
         source_library = variable_container.eContainer()
 
-        # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
+        # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitors call, we don't need that here anyway, unless we're missing something important
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(source_library)
 
         var_to_import = self.geppetto_model_access.get_variable(path)

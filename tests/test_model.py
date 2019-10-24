@@ -231,3 +231,14 @@ def test_create_metadata_variable(model_factory):
     assert type(var.types[0]) == MetadataType
     value = var.initialValues[0].value
     assert type(value) == Metadata
+
+def test_create_node_instance(model_factory):
+    value = JSON('{"a": 1}')
+    instance = model_factory.create_node_instance(id='inst', value=value)
+    assert json.loads(instance.value.json)['a'] == 1
+
+def test_create_edge_instance(model_factory):
+    a = model_factory.create_node_instance(id='a', value= JSON('{"a": 1}'))
+    b = model_factory.create_node_instance(id='b', value= JSON('{"b": 1}'))
+    edge = model_factory.create_edge_instance('ab', a, b, Connectivity.from_string('DIRECTIONAL'))
+    assert json.loads(edge.a.value.json)['a'] == 1

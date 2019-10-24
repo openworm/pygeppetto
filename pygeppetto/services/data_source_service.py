@@ -6,6 +6,11 @@ from pygeppetto.visitor.data_source_visitors import ExecuteQueryVisitor
 
 class GeppettoDataSourceException(Exception): pass
 
+class BooleanOperator:
+    AND = 0
+    NAND = 1
+    OR = 2
+
 
 class DataSourceService:
 
@@ -28,20 +33,39 @@ class DataSourceService:
         raise NotImplemented
 
     def execute_runnable_query(self, runnable_query: RunnableQuery):
-        '''
+        """
         Moved from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java
         Implementation is simplified without caching
         :param runnable_query:
         :return:
-        '''
+        """
         variable = self.model_access.get_variable(runnable_query.targetVariablePath)
         query = self.model_access.get_query(runnable_query.queryPath)
         execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access)
-        return execute_query_visitor.do_switch(query)
+        return self.process_response(execute_query_visitor.do_switch(query))
 
     def merge_results(self, results: dict) -> QueryResults:
-        final_results = QueryResults()
-
+        """
+            Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
+        """
+        final_results = QueryResults(header=next(iter(results.values())).header)
+        first = True
         for result, operator in results:
-            final_results.header += result.header
+            if final_results.header != result.header: # TODO test it: may not be supported
+                raise GeppettoDataSourceException(
+                    "Multiple queries were executed but they returned incompatible headers"
+                )
+            if operator == BooleanOperator.AND:
+                if first:
+                    final_results.results += [r for r in result.results]
+
+        #TODO finish
         return final_results
+
+    def process_response(self, response_dict):
+        """
+        Custom logic to process response
+        :param response_dict:
+        :return:
+        """
+        raise NotImplemented

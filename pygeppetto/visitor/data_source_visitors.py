@@ -1,15 +1,22 @@
 from pygeppetto.model import Variable, CompoundQuery, ProcessQuery, CompoundRefQuery
 from pygeppetto.model.datasources import SimpleQuery
 from pygeppetto.model.model_access import GeppettoModelAccess
+from pygeppetto.model.utils import model_traversal
 from pygeppetto.visitor import Switch
 from pyecore.utils import dispatch
+
 
 class ExecuteQueryVisitor(Switch):
 
 
-    def __init__(self, variable: Variable, geppetto_model_access: GeppettoModelAccess):
+    def __init__(self, variable: Variable,
+                 geppetto_model_access: GeppettoModelAccess,
+                 count_only = False,
+                 processing_output_map = None):
         self.variable = variable
         self.geppetto_model_access = geppetto_model_access
+        self.count = count_only
+        self.processing_output_map = processing_output_map if processing_output_map else {}
 
 
     @dispatch
@@ -18,7 +25,11 @@ class ExecuteQueryVisitor(Switch):
 
     @do_switch.register(CompoundQuery)
     def case_compound_query(self, query: CompoundQuery):
-        pass
+        if self.count and not query.runForCount:
+            return None
+        run_query_visitor = ExecuteQueryVisitor(self.variable, self.geppetto_model_access, processing_output_map=self.processing_output_map)
+        model_traversal.apply_children_only(query, run_query_visitor)
+
 
 
     @do_switch.register(ProcessQuery)

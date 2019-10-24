@@ -1,2 +1,0 @@
-class DataSourceManager(object):
-    pass

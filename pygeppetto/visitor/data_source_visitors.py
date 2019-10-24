@@ -16,6 +16,7 @@ class ExecuteQueryVisitor(Switch):
         self.variable = variable
         self.geppetto_model_access = geppetto_model_access
         self.count = count_only
+        self.results = None
         self.processing_output_map = processing_output_map if processing_output_map else {}
 
 
@@ -28,7 +29,8 @@ class ExecuteQueryVisitor(Switch):
         if self.count and not query.runForCount:
             return None
         run_query_visitor = ExecuteQueryVisitor(self.variable, self.geppetto_model_access, processing_output_map=self.processing_output_map)
-        model_traversal.apply_children_only(query, run_query_visitor)
+        model_traversal.apply_direct_children_only(query, run_query_visitor)
+        self.merge_results(run_query_visitor.results)
 
 
 
@@ -44,4 +46,7 @@ class ExecuteQueryVisitor(Switch):
 
     @do_switch.register(SimpleQuery)
     def case_compound_query(self, query: SimpleQuery):
+        pass
+
+    def merge_results(self, results):
         pass

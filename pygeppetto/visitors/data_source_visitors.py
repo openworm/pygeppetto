@@ -2,7 +2,7 @@ from pygeppetto.model import Variable, CompoundQuery, ProcessQuery, CompoundRefQ
 from pygeppetto.model.datasources import SimpleQuery
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils import model_traversal
-from pygeppetto.visitor import Switch
+from pygeppetto.visitors import Switch
 from pyecore.utils import dispatch
 
 
@@ -22,7 +22,7 @@ class ExecuteQueryVisitor(Switch):
 
     @dispatch
     def do_switch(self, query):
-        pass
+        raise NotImplemented
 
     @do_switch.register(CompoundQuery)
     def case_compound_query(self, query: CompoundQuery):
@@ -45,7 +45,7 @@ class ExecuteQueryVisitor(Switch):
 
 
     @do_switch.register(SimpleQuery)
-    def case_compound_query(self, query: SimpleQuery):
+    def case_simple_query(self, query: SimpleQuery):
         pass
 
     def merge_results(self, results):

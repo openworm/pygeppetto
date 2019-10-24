@@ -1,5 +1,5 @@
 """
-Define ecore switch visitor model
+Define ecore switch visitors model
 """
 class Switch:
 

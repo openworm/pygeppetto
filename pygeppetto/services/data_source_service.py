@@ -1,5 +1,6 @@
 from pygeppetto.model import Query, DataSource, QueryResults
 from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
+from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
@@ -8,7 +9,26 @@ from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 class GeppettoDataSourceException(Exception): pass
 
 
-class DataSourceService:
+class ServiceCreator(type):
+    """
+    Collects all subclasses of DataSourceService and enables discovery
+    """
+    data_source_services = {}
+
+    def __init__(cls, name, bases, dct):
+        """Initializing a new DataSourceService class"""
+        super().__init__(name, bases, dct)
+        if cls.__name__ != 'DataSourceService':
+            ServiceCreator.data_source_services[cls.__name__] = cls
+
+    @classmethod
+    def get_new_service_instance(mcs, data_source_discovery_id, data_source, model_access):
+        if not data_source_discovery_id in ServiceCreator.data_source_services:
+            raise GeppettoInitializationException(f"The service {data_source_discovery_id} was not found!")
+        return mcs.data_source_services[data_source_discovery_id](data_source, model_access)
+
+
+class DataSourceService(metaclass=ServiceCreator):
 
     def __init__(self, configuration: DataSource, model_access: GeppettoModelAccess):
         self.configuration = configuration

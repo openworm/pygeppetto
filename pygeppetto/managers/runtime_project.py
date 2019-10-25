@@ -1,13 +1,13 @@
 from pygeppetto.data_model import GeppettoProject
 from pygeppetto.managers.runtime_experiment import RuntimeExperiment
-from pygeppetto.model import model_utility, CompoundRefQuery, DataSource
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.types import ImportType
 from pygeppetto.model.utils import model_traversal
 from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 
-from pygeppetto.model.exceptions import GeppettoExecutionException
+from pygeppetto.model.exceptions import GeppettoExecutionException, GeppettoModelException
+from pygeppetto.services.data_source_service import ServiceCreator
 
 
 class RuntimeProject(object):
@@ -24,6 +24,7 @@ class RuntimeProject(object):
         self.model = project.geppettoModel
         self.geppetto_model_access = GeppettoModelAccess(self.model)
         self.import_autoresolve_types(self.model)
+        self.data_source_services = {}
 
         # TODO handle views
         # TODO handle experiments
@@ -102,23 +103,16 @@ class RuntimeProject(object):
 
         return self.model
 
+    def get_data_source_service(self, data_source_id):
+        if not data_source_id in self.data_source_services:
+            try:
+                ds = next(ds for ds in self.geppetto_model_access.geppetto_model.dataSources if ds.id == data_source_id)
+                ds_service = ServiceCreator.get_new_service_instance(data_source_id, ds, self.geppetto_model_access)
+                self.data_source_services[data_source_id] = ds_service
+            except StopIteration:
+                raise GeppettoModelException("The datasource service for " + data_source_id + " was not found");
+
+        return self.data_source_services[data_source_id]
+
     def populate_new_experiment(self, experiment):
         raise NotImplemented
-
-    def run_query(self, queries):
-        query = model_utility.get_query(queries[0].queryPath, self.model)
-        if isinstance(query, CompoundRefQuery):
-            # Use the first query of the chain to have the datasource we want to start from
-            query = queries[0].queryPath
-        data_source = query.eContainer()
-        while not isinstance(data_source, DataSource):
-            data_source = data_source.eContainer()
-            assert data_source is not None, 'Bad data source definition'
-        data_source_service = self.get_data_source_service(data_source)
-        return data_source_service.execute(query)
-
-    def get_data_source_service(self, data_source):
-        # TODO get_data_source_service
-        pass
-
-

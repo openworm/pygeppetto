@@ -1,10 +1,21 @@
-from pygeppetto.model import Query, DataSource, QueryResults
+from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult
 from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 
+# Use to distinguish QueryResult by ID in a set
+def modified_hash(self):
+    return hash(self.values[self._id_pos])
+def modified_eq(self, other):
+    return self.values[self._id_pos] == other.values[self._id_pos]
+
+# Restore default set identification
+def regular_hash(self):
+    return super(AQueryResult, self).__hash__()
+def regular_eq(self, other):
+    return super(AQueryResult, self).__eq__(other)
 
 class GeppettoDataSourceException(Exception): pass
 
@@ -33,6 +44,7 @@ class DataSourceService(metaclass=ServiceCreator):
     def __init__(self, configuration: DataSource, model_access: GeppettoModelAccess):
         self.configuration = configuration
         self.model_access = model_access
+        self.ID = "ID"
 
     def fetch_variable(self):
         raise NotImplemented
@@ -64,18 +76,37 @@ class DataSourceService(metaclass=ServiceCreator):
         """
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
-        final_results = QueryResults(header=next(iter(results.values())).header)
+        if not results: 
+            return QueryResults()
+        final_results = QueryResults(header=next(iter(results.keys())).header)
         first = True
-        for result, operator in results:
+
+        id_index = final_results.header.index(self.ID)
+        setattr(AQueryResult, '_id_pos', id_index)
+        setattr(AQueryResult, '__eq__', modified_eq)
+        setattr(AQueryResult, '__hash__', modified_hash)
+        
+        for result, operator in results.items():
             if final_results.header != result.header:  # TODO test it: may not be supported
                 raise GeppettoDataSourceException(
                     "Multiple queries were executed but they returned incompatible headers"
                 )
-            if operator == BooleanOperator.AND:
-                if first:
-                    final_results.results += [r for r in result.results]
 
-        # TODO finish
+            if first or operator == BooleanOperator.OR:
+                method = "update"
+            
+            elif operator == BooleanOperator.AND:
+                method = "intersection_update"
+
+            elif operator == BooleanOperator.NAND:
+                method = "difference_update"
+            
+            getattr(final_results.results, method)([r for r in result.results])
+
+            first = False
+            
+        setattr(AQueryResult, '__eq__', regular_eq)
+        setattr(AQueryResult, '__hash__', regular_hash)
         return final_results
 
     def process_response(self, response_dict):

@@ -4,7 +4,8 @@ from pygeppetto.model import GeppettoModel, GeppettoLibrary, Variable
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, SimpleQuery, QueryMatchingCriteria
 
-from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor, QueryChecker
+from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
+from pygeppetto.model.utils import query_check
 
 from pygeppetto.services.model_interpreter import add_model_interpreter
 from pygeppetto.model.types import CompositeVisualType, VisualType, SimpleType
@@ -63,7 +64,6 @@ def test_visitor_merge_results(visitor):
 
 
 def test_query_check():
-    
     vt = VisualType()
     cvt = CompositeVisualType()
     
@@ -73,9 +73,9 @@ def test_query_check():
     mc1 = QueryMatchingCriteria(type=(vt,))
     mc2 = QueryMatchingCriteria(type=(cvt,))
 
-    q1 = SimpleQuery(query="MATCH (x) RETURN (x);", matchingCriteria=(mc1,))
-    q2 = SimpleQuery(query="MATCH (x) RETURN (x);", matchingCriteria=(mc2,))
+    q1 = SimpleQuery(query="dummy query;", matchingCriteria=(mc1,))
+    q2 = SimpleQuery(query="dummy query;", matchingCriteria=(mc2,))
     
-    assert not QueryChecker.check(query=q1, variable=var1)
-    assert QueryChecker.check(query=q1, variable=var2)
-    assert not QueryChecker.check(query=q2, variable=var1)
+    assert not query_check(query=q1, variable=var1)
+    assert query_check(query=q1, variable=var2)
+    assert not query_check(query=q2, variable=var1)

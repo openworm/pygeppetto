@@ -52,8 +52,7 @@ class ExecuteQueryVisitor(Switch):
     def case_simple_query(self, query: SimpleQuery):
         pass # TODO ExecuteQueryVisitor.case_simple_query
 
-    def merge_results(self, processed_results: QueryResults) -> None: # throws GeppettoDataSourceException
-        """ generated source for method mergeResults """
+    def merge_results(self, processed_results: QueryResults):
         #  if this arrives from a first query results should be empty, so we automatically assign
         #  processedResults to results
         if self.results != None:
@@ -73,31 +72,3 @@ class ExecuteQueryVisitor(Switch):
                     self.results.results[index].values.update(record.values)
         else:
             self.results = processed_results
-
-class QueryChecker(object):
-    """ generated source for class QueryChecker """
-    #
-    # 	 * @param query
-    # 	 *            the query to check
-    # 	 * @param variable
-    # 	 *            the types to be checked against
-    # 	 * @return true if any of the query criteria match against the types
-    #
-    @classmethod
-    def check(cls, query:Query, variable:Variable) -> bool:
-        """ generated source for method check """
-        if len(query.matchingCriteria) == 0:
-            return True
-        
-        all_types = set()
-        all_types.update(variable.types)
-        all_types.update(variable.anonymousTypes)
-        
-        for criteria in query.matchingCriteria:
-            for type_to_match in criteria.type:
-                if not type_to_match in all_types:
-                    for type_ in all_types:
-                        if type_.extends_type(type_to_match):
-                            return True
-        return False
-        

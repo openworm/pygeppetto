@@ -39,7 +39,6 @@ class Type(Node):
         raise NotImplementedError('Operation getDefaultValue(...) is not yet implemented')
 
     def extends_type(self, type):
-        # raise NotImplementedError('Operation extendsType(...) is not yet implemented')
         return isinstance(self, type.__class__)
 
 

@@ -1,4 +1,7 @@
-def query_check(cls, query:Query, variable:Variable) -> bool:
+from pygeppetto.model import Variable
+from pygeppetto.model.datasources import Query
+
+def query_check(query:Query, variable:Variable) -> bool:
     """
     https://github.com/openworm/org.geppetto.core/blob/master/src/main/java/org/geppetto/core/datasources/QueryChecker.java)
     :return:

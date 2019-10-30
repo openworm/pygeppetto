@@ -82,3 +82,49 @@ class MockModelInterpreter(ModelInterpreter):
 
     def getDependentModels(self):
         pass
+
+
+def neo4j_response():
+    # QUERY: "\"statement\": \"MATCH(n) RETURN (n);\""
+    # url: "http://localhost:7474/db/data/transaction/commit"
+    return {
+        "results": [{
+            "columns": [ "n" ],
+            "data": [
+                {
+                    "row": [{
+                        "title": "The Matrix",
+                        "released": 1999
+                    }],
+                    "meta": [{
+                        "id": 0,
+                        "type": "node",
+                        "deleted": False
+                    }]
+                },
+                {
+                    "row": [{
+                        "released": 1964,
+                        "title": "Keanu Reeves"
+                    }],
+                    "meta": [{
+                        "id": 1,
+                        "type": "node",
+                        "deleted": False
+                    }]
+                }
+            ]
+        }],
+        "errors": []
+    }
+
+def neo4j_response_error():
+    # QUERY: "\"statement\": \"MATCH(n) RETXXXXXXURN (n);\""
+    # url: "http://localhost:7474/db/data/transaction/commit"
+    return [{
+        "results": [],
+        "errors": [{
+                "code": "Neo.ClientError.Statement.SyntaxError",
+                "message": "Invalid input 'X': expected 'e/E' (line 1, column 11 (offset: 10))\\n\\\"MATCH(n) RXTURN (n);\\\"\\n^"
+        }]
+    }]

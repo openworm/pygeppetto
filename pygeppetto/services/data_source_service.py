@@ -4,6 +4,7 @@ from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
+from jinja2 import Template
 from .utils import set_custom_query_result_hash, unset_custom_query_result_hash
 
 ID = "ID"

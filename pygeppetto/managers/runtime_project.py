@@ -1,6 +1,6 @@
 from pygeppetto.data_model import GeppettoProject
 from pygeppetto.managers.runtime_experiment import RuntimeExperiment
-from pygeppetto.model import GeppettoModel
+from pygeppetto.model import GeppettoModel, model_utility, CompoundRefQuery, DataSource
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.types import ImportType
 from pygeppetto.model.utils import model_traversal
@@ -123,3 +123,15 @@ class RuntimeProject(object):
 
     def populate_new_experiment(self, experiment):
         raise NotImplemented
+
+    def run_query(self, queries):
+        query = model_utility.get_query(queries[0].queryPath, self.model)
+        if isinstance(query, CompoundRefQuery):
+            # Use the first query of the chain to have the datasource we want to start from
+            query = queries[0].queryPath
+        data_source = query.eContainer()
+        while not isinstance(data_source, DataSource):
+            data_source = data_source.eContainer()
+            assert data_source is not None, 'Bad data source definition'
+        data_source_service = self.get_data_source_service(data_source)
+        return data_source_service.execute(query)

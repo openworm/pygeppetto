@@ -33,11 +33,14 @@ class ServiceCreator(type):
             ServiceCreator.data_source_services[cls.__name__] = cls
 
     @classmethod
-    def get_new_service_instance(mcs, data_source_discovery_id, data_source, model_access):
+    def get_new_service_instance(mcs, data_source: DataSource, model_access):
+        data_source_discovery_id = data_source.dataSourceService
         if not data_source_discovery_id in ServiceCreator.data_source_services:
             raise GeppettoInitializationException(f"The service {data_source_discovery_id} was not found!")
         return mcs.data_source_services[data_source_discovery_id](data_source, model_access)
 
+class QueryProcessor:
+    pass
 
 class DataSourceService(metaclass=ServiceCreator):
 

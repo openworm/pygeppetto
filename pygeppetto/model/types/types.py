@@ -38,8 +38,8 @@ class Type(Node):
     def getDefaultValue(self):
         raise NotImplementedError('Operation getDefaultValue(...) is not yet implemented')
 
-    def extendsType(self, type):
-        raise NotImplementedError('Operation extendsType(...) is not yet implemented')
+    def extends_type(self, type):
+        return isinstance(self, type.__class__)
 
 
 class VisualType(Type):

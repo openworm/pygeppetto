@@ -118,7 +118,7 @@ class GeppettoMessageHandler:
             elif msg_type == InboundMessages.LOAD_PROJECT_FROM_URL:
                 msg_data = self.loadProjectFromUrl(requestID, gmsg['data'])
             elif msg_type == InboundMessages.RUN_QUERY:
-                received_object = gmsg['data']
+                received_object = json.loads(gmsg['data'])
                 geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
                 runnable_queries = self.convertRunnableQueriesDataTransferModel(received_object['runnableQueries'])
                 msg_data = self.geppettoManager.run_query(runnable_queries, geppetto_project)
@@ -435,10 +435,7 @@ class GeppettoMessageHandler:
 
     def convertRunnableQueriesDataTransferModel(self, runnableQueries):
         """ generated source for method convertRunnableQueriesDataTransferModel """
-        runnableQueriesEMF = EList('')
         from pygeppetto.model.datasources.datasources import RunnableQuery
-        for dt in runnableQueries:
-            rqEMF = RunnableQuery(targetVariablePath=dt.targetVariablePath, queryPath=dt.queryPath)
-            runnableQueriesEMF.append(rqEMF)
-        return runnableQueriesEMF
+
+        return [RunnableQuery(targetVariablePath=dt['targetVariablePath'], queryPath=dt['queryPath']) for dt in runnableQueries]
 

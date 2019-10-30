@@ -64,11 +64,8 @@ class ExecuteQueryVisitor(Switch):
                     from pygeppetto.services.data_source_service import ServiceCreator
                     ds = self.get_datasource(query=query)
 
-                    dss = ServiceCreator.get_new_service_instance(
-                        data_source_discovery_id=ds.dataSourceService,
-                        data_source=ds,
-                        model_access=self.geppetto_model_access
-                    )
+                    dss = ServiceCreator.get_new_service_instance(data_source=ds, 
+                                                                  model_access=self.geppetto_model_access)
 
                     queryString = query.countQuery if self.count else query.query
                     

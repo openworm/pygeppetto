@@ -39,7 +39,10 @@ class DataSourceService(metaclass=ServiceCreator):
 
     def execute(self, queries, count_only=False):
         return self.get_results(
-            {self.execute_runnable_query(runnable_query): runnable_query.booleanOperator for runnable_query in queries}
+            {
+                self.execute_runnable_query(runnable_query, count_only): runnable_query.booleanOperator
+                for runnable_query in queries
+            }
         )
 
     def get_number_of_results(self, queries):
@@ -65,6 +68,7 @@ class DataSourceService(metaclass=ServiceCreator):
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
         final_results = QueryResults(header=next(iter(results.values())).header)
+        final_ids = set()
         first = True
         for result, operator in results:
             if final_results.header != result.header:  # TODO test it: may not be supported
@@ -74,6 +78,14 @@ class DataSourceService(metaclass=ServiceCreator):
             if operator == BooleanOperator.AND:
                 if first:
                     final_results.results += [r for r in result.results]
+
+
+            elif operator == BooleanOperator.OR:
+                pass
+            elif operator == BooleanOperator.NAND:
+                pass
+
+            first = False
 
         # TODO finish
         return final_results

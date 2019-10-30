@@ -1,5 +1,6 @@
 from pygeppetto.data_model import GeppettoProject
 from pygeppetto.managers.runtime_experiment import RuntimeExperiment
+from pygeppetto.model import GeppettoModel
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.types import ImportType
 from pygeppetto.model.utils import model_traversal
@@ -21,7 +22,13 @@ class RuntimeProject(object):
         self.project = project
         self.experiments = {}
         self.active_experiment = None
-        self.model = project.geppettoModel
+        if isinstance(project.geppettoModel, GeppettoModel):
+            self.model = project.geppettoModel
+        elif hasattr(project.geppettoModel, 'url'):
+            raise NotImplementedError('PersistedData in project is not supported: cannot load model')
+        else:
+            raise GeppettoModelException('Bad formed project: model is not correctly specified')
+
         self.geppetto_model_access = GeppettoModelAccess(self.model)
         self.import_autoresolve_types(self.model)
         self.data_source_services = {}

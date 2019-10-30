@@ -25,11 +25,14 @@ class ServiceCreator(type):
             ServiceCreator.data_source_services[cls.__name__] = cls
 
     @classmethod
-    def get_new_service_instance(mcs, data_source_discovery_id, data_source, model_access):
+    def get_new_service_instance(mcs, data_source: DataSource, model_access):
+        data_source_discovery_id = data_source.dataSourceService
         if not data_source_discovery_id in ServiceCreator.data_source_services:
             raise GeppettoInitializationException(f"The service {data_source_discovery_id} was not found!")
         return mcs.data_source_services[data_source_discovery_id](data_source, model_access)
 
+class QueryProcessor:
+    pass
 
 class DataSourceService(metaclass=ServiceCreator):
 
@@ -42,7 +45,10 @@ class DataSourceService(metaclass=ServiceCreator):
 
     def execute(self, queries, count_only=False):
         return self.get_results(
-            {self.execute_runnable_query(runnable_query): runnable_query.booleanOperator for runnable_query in queries}
+            {
+                self.execute_runnable_query(runnable_query, count_only): runnable_query.booleanOperator
+                for runnable_query in queries
+            }
         )
 
     def get_number_of_results(self, queries):
@@ -67,7 +73,7 @@ class DataSourceService(metaclass=ServiceCreator):
         """
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
-        if not results: 
+        if not results:
             return QueryResults()
         final_results = QueryResults(header=next(iter(results.keys())).header)
         first = True

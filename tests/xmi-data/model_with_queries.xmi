@@ -8,7 +8,7 @@
     xmlns:gep_ds="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources">
   <libraries
       id="mgvlibrary"
-      name="MGV">
+      name="CUSTOM">
     <types xsi:type="gep_types:SimpleType"
         id="BrainRegion"
         name="BrainRegion"/>

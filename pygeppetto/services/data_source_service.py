@@ -7,8 +7,8 @@ from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 
 ID = "ID"
 
-class GeppettoDataSourceException(Exception): pass
 
+class GeppettoDataSourceException(Exception): pass
 
 
 class ServiceCreator(type):
@@ -30,8 +30,10 @@ class ServiceCreator(type):
             raise GeppettoInitializationException(f"The service {data_source_discovery_id} was not found!")
         return mcs.data_source_services[data_source_discovery_id](data_source, model_access)
 
+
 class QueryProcessor:
     pass
+
 
 class DataSourceService(metaclass=ServiceCreator):
 
@@ -81,7 +83,7 @@ class DataSourceService(metaclass=ServiceCreator):
 
         id_index = final_results.header.index(ID)
         set_custom_query_result_hash(id_index)
-        
+
         for result, operator in results.items():
             if final_results.header != result.header:  # TODO test it: may not be supported
                 raise GeppettoDataSourceException(
@@ -90,7 +92,7 @@ class DataSourceService(metaclass=ServiceCreator):
 
             if first or operator == BooleanOperator.OR:
                 method = final_results.results.update
-            
+
             elif operator == BooleanOperator.AND:
                 method = final_results.results.intersection_update
 
@@ -98,11 +100,11 @@ class DataSourceService(metaclass=ServiceCreator):
                 method = final_results.results.difference_update
             else:
                 raise GeppettoDataSourceException(f"Missing operator for query result {result}")
-            
+
             method(r for r in result.results)
 
             first = False
-            
+
         unset_custom_query_result_hash()
 
         return final_results

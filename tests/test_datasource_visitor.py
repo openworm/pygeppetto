@@ -5,7 +5,7 @@ import responses
 import logging
 from pygeppetto.model import GeppettoModel, GeppettoLibrary, Variable
 from pygeppetto.model.model_access import GeppettoModelAccess
-from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, SimpleQuery, QueryMatchingCriteria, DataSource
+from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, SimpleQuery, CompoundQuery, QueryMatchingCriteria, DataSource
 
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 from pygeppetto.model.utils.datasource import query_check
@@ -82,6 +82,25 @@ def test_simple_query_case(visitor):
     assert len(visitor.results.results) == 2
     assert visitor.results.results[0].values == ['0', '{"title": "The Matrix", "released": 1999}']
 
+
+@responses.activate
+def test_compound_query_case(visitor):
+    URL = "http://localhost:7474/db/data/transaction/commit"
+
+    responses.add(responses.POST, URL, json=mock_neo4j_response(), status=200)
+    
+    t = VisualType()
+    mc = QueryMatchingCriteria(type=(t,))
+    q = SimpleQuery(query="\"statement\": \"MATCH(n) RETURN id(n) as ID, n;\"", matchingCriteria=(mc,))
+
+    cq = CompoundQuery(queryChain=[q, q])
+
+    ds = DataSource(url=URL, queries=(cq,), dataSourceService=Neo4jDataSourceService.__name__)
+
+    visitor.do_switch(cq)
+    
+    assert len(visitor.results.results) == 2
+    assert visitor.results.results[0].values == ['0', '{"title": "The Matrix", "released": 1999}']
 
 def test_query_check():
     vt = VisualType()

@@ -15,5 +15,5 @@ def apply(eobject: EObject, visitor: Switch):
 
 
 def apply_direct_children_only(eobject: EObject, visitor: Switch):
-    for element in eobject.eContents():
+    for element in eobject.eContents:
         visitor.do_switch(element)

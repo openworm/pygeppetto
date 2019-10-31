@@ -14,6 +14,7 @@ from pygeppetto.services.model_interpreter import add_model_interpreter
 from pygeppetto.model.types import CompositeVisualType, VisualType, SimpleType
 from .mocks import MockModelInterpreter, neo4j_response as mock_neo4j_response
 from pygeppetto.services.data_source_service import DataSourceService
+from pygeppetto.services.data_source.neo4j import Neo4jDataSourceService
 
 HERE = os.path.dirname(os.path.realpath(__file__))
 
@@ -120,15 +121,14 @@ def test_simple_query_case(visitor):
     
     t = VisualType()
     mc = QueryMatchingCriteria(type=(t,))
-    q = SimpleQuery(query="\"statement\": \"MATCH(n) RETURN (n);\"", matchingCriteria=(mc,))
+    q = SimpleQuery(query="\"statement\": \"MATCH(n) RETURN id(n) as ID, n;\"", matchingCriteria=(mc,))
 
-    ds = DataSource(url=URL, queries=(q,), dataSourceService=DataSourceServiceTestNeo4jPOST.__name__)
+    ds = DataSource(url=URL, queries=(q,), dataSourceService=Neo4jDataSourceService.__name__)
 
     visitor.do_switch(q)
     
     assert len(visitor.results.results) == 2
-    item = visitor.results.results[0].values
-    assert item[0] == 0 and item[1] == "The Matrix" and item[2] == 1999
+    assert visitor.results.results[0].values == ['0', '{"title": "The Matrix", "released": 1999}']
 
 
 def test_query_check():

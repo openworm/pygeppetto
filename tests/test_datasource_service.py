@@ -7,7 +7,7 @@ from pygeppetto.model.datasources.datasources import DataSource, QueryResults, Q
 from pygeppetto.model.datasources import BooleanOperator
 from pygeppetto.services.data_source_service import DataSourceService
 from pygeppetto.services.model_interpreter import add_model_interpreter
-from pygeppetto.model.datasources.neo4j.Neo4jDatasourceService import Neo4jDataSourceService
+from pygeppetto.services.data_source.neo4j import Neo4jDataSourceService
 from .mocks import MockModelInterpreter, neo4j_response as mock_neo4j_response
 
 def create_result(id): 
@@ -69,9 +69,9 @@ def test_neo4j_datasource_service():
     neo4j_response = json.dumps(mock_neo4j_response())
 
     dss = Neo4jDataSourceService(configuration=DataSource(), model_access=model_access())
-    qrp = dss.get_query_response_processor()
-    query_results = qrp.process_response({ "response": [ neo4j_response ] })
     
-    assert query_results.header[0] == "n"
+    query_results = dss.process_response({ "response": [ neo4j_response ] })
+    
+    assert query_results.header == ["ID", "n"]
     assert len(query_results.results) == 2
-    assert query_results.results[0].values[0] == '{"title": "The Matrix", "released": 1999}'
+    assert query_results.results[0].values == ['0', '{"title": "The Matrix", "released": 1999}']

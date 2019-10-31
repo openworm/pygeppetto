@@ -85,33 +85,45 @@ class MockModelInterpreter(ModelInterpreter):
 
 
 def neo4j_response():
-    # QUERY: "\"statement\": \"MATCH(n) RETURN (n);\""
+    # QUERY: "\"statement\": \"MATCH(n) RETURN id(n) as ID, n;\""
     # url: "http://localhost:7474/db/data/transaction/commit"
     return {
         "results": [{
-            "columns": [ "n" ],
+            "columns": [ "ID", "n" ],
             "data": [
                 {
-                    "row": [{
-                        "title": "The Matrix",
-                        "released": 1999
-                    }],
-                    "meta": [{
-                        "id": 0,
-                        "type": "node",
-                        "deleted": False
-                    }]
+                    "row": [
+                        0, 
+                        {
+                            "title": "The Matrix",
+                            "released": 1999
+                        }
+                    ],
+                    "meta": [
+                        None,
+                        {
+                            "id": 0,
+                            "type": "node",
+                            "deleted": False
+                        }
+                    ]
                 },
                 {
-                    "row": [{
-                        "released": 1964,
-                        "title": "Keanu Reeves"
-                    }],
-                    "meta": [{
-                        "id": 1,
-                        "type": "node",
-                        "deleted": False
-                    }]
+                    "row": [
+                        1,
+                        {
+                            "released": 1964,
+                            "title": "Keanu Reeves"
+                        }
+                    ],
+                    "meta": [
+                        None,
+                        {
+                            "id": 1,
+                            "type": "node",
+                            "deleted": False
+                        }
+                    ]
                 }
             ]
         }],

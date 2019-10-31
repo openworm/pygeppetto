@@ -16,54 +16,6 @@ from .mocks import MockModelInterpreter, neo4j_response as mock_neo4j_response
 from pygeppetto.services.data_source_service import DataSourceService
 from pygeppetto.services.data_source.neo4j import Neo4jDataSourceService
 
-HERE = os.path.dirname(os.path.realpath(__file__))
-
-class DataSourceServiceTestNeo4jGET(DataSourceService):
-    def __init__(self, configuration: DataSource, model_access: GeppettoModelAccess):
-
-        super().__init__(configuration=configuration, model_access=model_access)
-    
-    def get_connection_type(self):
-        return "GET"
-
-    def get_template(self):
-        with open(os.path.join(HERE, "resources/neo4j.vm")) as f:
-            return f.read()
-
-class DataSourceServiceTestNeo4jPOST(DataSourceServiceTestNeo4jGET):
-    def get_connection_type(self):
-        return "POST"
-
-    def process_response(self, response:dict):
-        header = ["ID", "title", "released"]
-        query_results = [] 
-        if "response" in response: 
-            for chunk in response["response"]:
-                try:
-                    chunk = json.loads(chunk)
-                except:
-                    raise Exception("Error parsing Neo4j response")
-
-                if "errors" in chunk and not chunk["errors"]: 
-                    for container in chunk["results"]:
-                        for data in container["data"]:
-                            if "row" in data and "meta" in data:
-                                id = data["meta"][0]["id"]
-                                title = data["row"][0]["title"]
-                                release = data["row"][0]["released"]
-                                query_results.append(QueryResult(values=(id, title, release)))
-                            else:
-                                raise Exception("Missing `row` or `meta` key in Neo4j processed response.") 
-                else:
-                    for error in chunk["errors"]:
-                        logging.error(f'Neo4j: error_code {error["code"]}, error_message: {error["message"]})')
-                    raise Exception("The response from Neo4j contains errors.")
-            
-        else:
-            raise Exception("No `response` key found in Neo4j processed response.")
-
-        return QueryResults(id="neo4j-response-mockup", header=header, results=query_results)
-         
 
 def create_result(id): 
     return (id, f"Result number {id}")

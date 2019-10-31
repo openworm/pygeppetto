@@ -1,17 +1,20 @@
 import pytest
-from unittest.mock import patch, Mock
-import os
+from unittest.mock import Mock
 import json
+
+import responses
 
 from pyecore.resources import ResourceSet, URI
 from pygeppetto.api.inbound_messages import InboundMessages
 from pygeppetto.api.message_handler import GeppettoMessageHandler
 from pygeppetto.data_model import GeppettoProject
 from pygeppetto.model import GeppettoModel, QueryResults
+from pygeppetto.model.datasources import QueryResult
 from pygeppetto.services.data_manager import GeppettoDataManager, DataManagerHelper
 from pygeppetto.services.data_source_service import DataSourceService, ServiceCreator
 
 from .test_xmi import filepath
+from .mocks import neo4j_response
 
 
 def model() -> GeppettoModel:
@@ -26,8 +29,19 @@ def message_handler():
 
 
 class MockDataSourceService(DataSourceService):
-    pass
+    def get_template(self):
+        return '{"statement":"$QUERY"}'
 
+    def get_connection_type(self):
+        return 'POST'
+
+    def process_response(self, response):
+        response = json.loads(response[0])['results'][0]
+        qr = QueryResults()
+        qr.header.extend(response['columns'])
+        qr.results.extend(QueryResult(values=r) for r in response['data'])
+
+        return qr
 
 class MockDataManager(GeppettoDataManager):
 
@@ -44,7 +58,7 @@ def mock_send_message(message):
     print(message)
     assert not 'error' in message['type']
 
-
+@responses.activate
 def test_run_query(message_handler):
     # 1 preparation: first we need a RuntimeProject active and model loaded
     message_handler.send_message_data = Mock(side_effect=mock_send_message)
@@ -63,24 +77,21 @@ def test_run_query(message_handler):
     assert ServiceCreator.get_new_datasource_service_instance(runtime_project.model.dataSources[0],
                                                               None).__class__ == MockDataSourceService
 
-    with patch('pygeppetto.services.data_source_service.ExecuteQueryVisitor') as vis:
-        from pygeppetto.services.data_source_service import ExecuteQueryVisitor
-        assert ExecuteQueryVisitor is vis
-        vis.do_switch.return_value = QueryResults()
+    URL = "http://mg-neo4j/db/data/transaction"
 
-        assert isinstance(vis.do_switch(), QueryResults)
-        msg_data = json.dumps({
-            "projectId": 'mock',
-            "runnableQueries": [
-                {
-                    "queryPath": "mockDataSource.mock_query"
-                }
-            ]
-        })
-        run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.RUN_QUERY,
-                         "data": msg_data}
-        message_handler.handle_message(run_query_msg)
+    responses.add(responses.POST, URL, json=neo4j_response(), status=200)
+    msg_data = json.dumps({
+        "projectId": 'mock',
+        "runnableQueries": [
+            {
+                "queryPath": "mockDataSource.mock_query"
+            }
+        ]
+    })
+    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.RUN_QUERY,
+                     "data": msg_data}
+    message_handler.handle_message(run_query_msg)
 
-        assert message_handler.send_message_data.call_count == 3
+    assert message_handler.send_message_data.call_count == 3
 
-        assert vis.do_switch.call_count == 1
+

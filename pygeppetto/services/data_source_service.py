@@ -84,7 +84,8 @@ class DataSourceService(metaclass=ServiceCreator):
             variable = self.model_access.get_variable(runnable_query.targetVariablePath)
         query = self.model_access.get_query(runnable_query.queryPath)
         execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access, count_only=count_only)
-        return self.process_response(execute_query_visitor.do_switch(query))
+        execute_query_visitor.do_switch(query)
+        return execute_query_visitor.results
 
     def get_results(self, results: dict) -> QueryResults:
         """
@@ -130,7 +131,7 @@ class DataSourceService(metaclass=ServiceCreator):
     def get_template(self):
         raise NotImplemented
 
-    def process_response(self, response_dict):
+    def process_response(self, response) -> QueryResults:
         """
         Custom logic to process response
         :param response_dict:

@@ -1,7 +1,12 @@
-from pygeppetto.model import GeppettoModel, GeppettoLibrary, CompositeType, Variable
+import json
+
+from pygeppetto.model import GeppettoModel, GeppettoLibrary, CompositeType, Variable, ProcessQuery, DataSource, \
+    QueryResults
+from pygeppetto.model.datasources import QueryResult
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.model_factory import GeppettoModelFactory
 from pygeppetto.model.types import ImportType
+from pygeppetto.services.data_source_service import QueryProcessor
 from pygeppetto.services.model_interpreter import ModelInterpreter
 
 
@@ -84,16 +89,25 @@ class MockModelInterpreter(ModelInterpreter):
         pass
 
 
+class MockQueryProcessor(QueryProcessor):
+
+    def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
+                model_access: GeppettoModelAccess) -> QueryResults:
+        print("Processing query {}".format(query.id))
+        return results
+
+
+
 def neo4j_response():
     # QUERY: "\"statement\": \"MATCH(n) RETURN id(n) as ID, n;\""
     # url: "http://localhost:7474/db/data/transaction/commit"
     return {
         "results": [{
-            "columns": [ "ID", "n" ],
+            "columns": ["ID", "n"],
             "data": [
                 {
                     "row": [
-                        0, 
+                        0,
                         {
                             "title": "The Matrix",
                             "released": 1999
@@ -130,13 +144,14 @@ def neo4j_response():
         "errors": []
     }
 
+
 def neo4j_response_error():
     # QUERY: "\"statement\": \"MATCH(n) RETXXXXXXURN (n);\""
     # url: "http://localhost:7474/db/data/transaction/commit"
     return [{
         "results": [],
         "errors": [{
-                "code": "Neo.ClientError.Statement.SyntaxError",
-                "message": "Invalid input 'X': expected 'e/E' (line 1, column 11 (offset: 10))\\n\\\"MATCH(n) RXTURN (n);\\\"\\n^"
+            "code": "Neo.ClientError.Statement.SyntaxError",
+            "message": "Invalid input 'X': expected 'e/E' (line 1, column 11 (offset: 10))\\n\\\"MATCH(n) RXTURN (n);\\\"\\n^"
         }]
     }]

@@ -121,7 +121,8 @@ class GeppettoMessageHandler:
                 received_object = json.loads(gmsg['data'])
                 geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
                 runnable_queries = self.convertRunnableQueriesDataTransferModel(received_object['runnableQueries'])
-                msg_data = self.geppettoManager.run_query(runnable_queries, geppetto_project)
+                results = self.geppettoManager.run_query(runnable_queries, geppetto_project)
+                msg_data = GeppettoSerializer.serialize(results, True)
             # TODO From here on, implementation is not complete: just bare porting from Java
             elif msg_type == InboundMessages.USER_PRIVILEGES:
                 msg_data = self.checkUserPrivileges(requestID)
@@ -437,5 +438,5 @@ class GeppettoMessageHandler:
         """ generated source for method convertRunnableQueriesDataTransferModel """
         from pygeppetto.model.datasources.datasources import RunnableQuery
 
-        return [RunnableQuery(targetVariablePath=dt['targetVariablePath'], queryPath=dt['queryPath']) for dt in runnableQueries]
+        return [RunnableQuery(**dt) for dt in runnableQueries]
 

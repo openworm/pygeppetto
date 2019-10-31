@@ -1,15 +1,14 @@
-from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult
+from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult, Variable, SimpleQuery
 from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
-from pygeppetto.model.utils.datasource import query_check
+from pygeppetto.model.utils.datasource import query_check, set_custom_query_result_hash, unset_custom_query_result_hash
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
-from jinja2 import Template
-from .utils import set_custom_query_result_hash, unset_custom_query_result_hash
 
 ID = "ID"
 
 class GeppettoDataSourceException(Exception): pass
+
 
 
 class ServiceCreator(type):
@@ -61,7 +60,9 @@ class DataSourceService(metaclass=ServiceCreator):
         :param runnable_query:
         :return:
         """
-        variable = self.model_access.get_variable(runnable_query.targetVariablePath)
+        variable = None
+        if runnable_query.targetVariablePath:
+            variable = self.model_access.get_variable(runnable_query.targetVariablePath)
         query = self.model_access.get_query(runnable_query.queryPath)
         execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access, count_only=count_only)
         return self.process_response(execute_query_visitor.do_switch(query))
@@ -102,6 +103,13 @@ class DataSourceService(metaclass=ServiceCreator):
         unset_custom_query_result_hash()
 
         return final_results
+
+    def get_connection_type(self):
+        raise NotImplementedError("Method get_connection_type must be defined in every DataSourceService"
+                                  "and return either `GET` or `POST`.")
+
+    def get_template(self):
+        raise NotImplemented
 
     def process_response(self, response_dict):
         """

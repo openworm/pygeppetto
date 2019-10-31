@@ -1,0 +1,11 @@
+{  
+  "statements":[  
+    {  
+      $QUERY,
+      "resultDataContents":[  
+        "row"
+      ],
+      "includeStats":false
+    }
+  ]
+}

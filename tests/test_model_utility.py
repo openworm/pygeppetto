@@ -13,9 +13,9 @@ def model() -> GeppettoModel:
 
 
 def test_get_query(model):
-    query = model_utility.get_query('mockDataSourceService.mock_query', model)
+    query = model_utility.get_query('mockDataSource.mock_query', model)
 
     assert query.name == "A mock compound query"
 
     with pytest.raises(model_utility.QueryNotFoundException):
-        model_utility.get_query('mockDataSourceService', model)
+        model_utility.get_query('mockDataSource', model)

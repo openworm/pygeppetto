@@ -40,7 +40,7 @@ class Neo4jDataSourceService(DataSourceService):
     def process_response(self, response):
         query_results = QueryResults(header=[], results=[])
 
-        for chunk in response["response"]:
+        for chunk in response:
             try:
                 chunk = json.loads(chunk)
             except:

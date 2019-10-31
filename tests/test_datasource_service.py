@@ -70,7 +70,7 @@ def test_neo4j_datasource_service():
 
     dss = Neo4jDataSourceService(configuration=DataSource(), model_access=model_access())
     
-    query_results = dss.process_response({ "response": [ neo4j_response ] })
+    query_results = dss.process_response([ neo4j_response ])
     
     assert query_results.header == ["ID", "n"]
     assert len(query_results.results) == 2

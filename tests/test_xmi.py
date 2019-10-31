@@ -1,6 +1,7 @@
 import os
 
 import pytest
+
 from pyecore.resources import ResourceSet, URI
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -21,13 +22,13 @@ def test_read_mediumXMI(rset):
     root = resource.contents[0]
     assert root  # The root exists
 
-
+@pytest.mark.skip('Too slow')
 def test_read_BigXMI(rset):
     resource = rset.get_resource(URI(filepath('BigCA1.net.nml.xmi')))
     root = resource.contents[0]
     assert root  # The root exists
 
-
+@pytest.mark.skip('Too slow')
 def test_read_LargeXMI(rset):
     resource = rset.get_resource(URI(filepath('LargeConns.net.nml.xmi')))
     root = resource.contents[0]
@@ -40,14 +41,14 @@ def test_readwrite_mediumXMI(tmpdir, rset):
     f = tmpdir.mkdir('pyecore-tmp').join('medium.xmi')
     resource.save(output=URI(str(f)))
 
-
+@pytest.mark.skip('Too slow')
 def test_readwrite_BigXMI(tmpdir, rset):
     resource = rset.get_resource(URI(filepath('BigCA1.net.nml.xmi')))
     root = resource.contents[0]
     f = tmpdir.mkdir('pyecore-tmp').join('big.xmi')
     resource.save(output=URI(str(f)))
 
-
+@pytest.mark.skip('Too slow')
 def test_readwrite_LargeXMI(tmpdir, rset):
     resource = rset.get_resource(URI(filepath('LargeConns.net.nml.xmi')))
     root = resource.contents[0]
@@ -72,7 +73,7 @@ def test_roundtrip_mediumXMI(tmpdir, rset):
     assert root
     assert root.name == 'mediumTestModel'
 
-
+@pytest.mark.skip('Too slow')
 def test_roundtrip_BigXMI(tmpdir, rset):
     resource = rset.get_resource(URI(filepath('BigCA1.net.nml.xmi')))
     root = resource.contents[0]
@@ -90,7 +91,7 @@ def test_roundtrip_BigXMI(tmpdir, rset):
     assert root
     assert root.name == 'bigTestModel'
 
-
+@pytest.mark.skip('Too slow')
 def test_roundtrip_LargeXMI(tmpdir, rset):
     resource = rset.get_resource(URI(filepath('LargeConns.net.nml.xmi')))
     root = resource.contents[0]
@@ -107,7 +108,3 @@ def test_roundtrip_LargeXMI(tmpdir, rset):
     root = resource.contents[0]
     assert root
     assert root.name == 'largeTestModel'
-
-
-if __name__ == '__main__':
-    test_model_factory()

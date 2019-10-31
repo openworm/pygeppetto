@@ -84,7 +84,7 @@ class ExecuteQueryVisitor(Switch):
                     query_string = query.countQuery if self.count else query.query
 
                     processed_query_string = template.process_template(dss.get_template(),
-                                                                       ID=self.variable.id,
+                                                                       ID=self.variable.id if self.variable else '',
                                                                        QUERY=query_string,
                                                                        **self.processing_output_map)
 
@@ -92,7 +92,7 @@ class ExecuteQueryVisitor(Switch):
 
                     response = stream_requests(url=ds.url, params=json.loads(processed_query_string), method=method)
 
-                    self.results = dss.process_response({"response": response})
+                    self.results = dss.process_response(response=response)
 
             except GeppettoDataSourceException as e:
                 raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e

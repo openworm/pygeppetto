@@ -30,7 +30,7 @@ def data_source_service():
                              model_access=model_access())
 
 
-def test_visitor_merge_results(data_source_service):
+def test_datasource_service_get_results(data_source_service):
     header = ["ID", "content"]
 
     results = {}

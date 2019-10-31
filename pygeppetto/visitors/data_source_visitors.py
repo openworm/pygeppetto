@@ -69,10 +69,7 @@ class ExecuteQueryVisitor(Switch):
 
                     queryString = query.countQuery if self.count else query.query
                     
-                    properties = { ID: self.variable.id, "QUERY": queryString }
-                    
-                    if self.processing_output_map != None:
-                        properties.update(self.processing_output_map)
+                    properties = { ID: self.variable.id, "QUERY": queryString, **self.processing_output_map }
 
                     processed_query_string = dss.datasource_template.render(**properties)
 

@@ -54,12 +54,15 @@ class MockDataManager(GeppettoDataManager):
 DataManagerHelper.setDataManager(MockDataManager())
 
 
-def mock_send_message(message):
-    print(message)
-    assert not 'error' in message['type']
+
 
 @responses.activate
 def test_run_query(message_handler):
+    messages = []
+    def mock_send_message(message):
+        print(message)
+        messages.append(message)
+        assert not 'error' in message['type']
     # 1 preparation: first we need a RuntimeProject active and model loaded
     message_handler.send_message_data = Mock(side_effect=mock_send_message)
     message_handler.handle_message(
@@ -93,5 +96,9 @@ def test_run_query(message_handler):
     message_handler.handle_message(run_query_msg)
 
     assert message_handler.send_message_data.call_count == 3
+
+    result = json.loads(messages[2]['data'])
+    model = json.loads(result['return_query'])
+    assert model['eClass'] == QueryResults.__name__
 
 

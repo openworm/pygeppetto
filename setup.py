@@ -9,7 +9,7 @@ required_packages = [
     'multimethod',
     'deprecated',
     'airspeed',
-    'requests'
+    'requests>=2.0.0'
 ]
 
 
@@ -27,7 +27,7 @@ setup(
     package_data={'': ['README.md']},
     include_package_data=True,
     install_requires=required_packages,
-    extras_require={'testing': ['pytest']},
+    extras_require={'testing': ['pytest', 'responses']},
     classifiers=[
         "Programming Language :: Python",
         'Programming Language :: Python :: 2',

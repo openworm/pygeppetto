@@ -44,6 +44,7 @@ def mock_send_message(message):
     print(message)
     assert not 'error' in message['type']
 
+
 def test_run_query(message_handler):
     # 1 preparation: first we need a RuntimeProject active and model loaded
     message_handler.send_message_data = Mock(side_effect=mock_send_message)
@@ -69,15 +70,15 @@ def test_run_query(message_handler):
 
         assert isinstance(vis.do_switch(), QueryResults)
         msg_data = json.dumps({
-            "projectId":'mock',
-            "runnableQueries":[
+            "projectId": 'mock',
+            "runnableQueries": [
                 {
-                 "queryPath":"mockDataSource.mock_query"
-                 }
+                    "queryPath": "mockDataSource.mock_query"
+                }
             ]
         })
         run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.RUN_QUERY,
-         "data": msg_data}
+                         "data": msg_data}
         message_handler.handle_message(run_query_msg)
 
         assert message_handler.send_message_data.call_count == 3

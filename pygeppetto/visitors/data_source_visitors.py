@@ -29,10 +29,6 @@ class ExecuteQueryVisitor(Switch):
         self.results = None
         self.processing_output_map = processing_output_map if processing_output_map else {}
 
-        # self.merged_results = QueryResults(id="merge_results", 
-        #                                   header=["ID"], 
-        #                                   results=[])
-
     @dispatch
     def do_switch(self, query):
         raise NotImplemented

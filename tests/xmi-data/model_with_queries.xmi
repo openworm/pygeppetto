@@ -30,7 +30,7 @@
           name="Get default nodes base"
           description="Mock simple query"
           runForCount="false"
-          query="A,B,C"
+          query="SELECT FROM MYTABLE"
           countQuery="3"/>
       <queryChain
           xsi:type="gep_ds:ProcessQuery"

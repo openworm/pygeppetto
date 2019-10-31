@@ -14,20 +14,20 @@ from pygeppetto.services.model_interpreter import add_model_interpreter
 from pygeppetto.model.types import CompositeVisualType, VisualType, SimpleType
 from .mocks import MockModelInterpreter, neo4j_response as mock_neo4j_response
 from pygeppetto.services.data_source_service import DataSourceService
-from jinja2 import Template
 
+HERE = os.path.dirname(os.path.realpath(__file__))
 
 class DataSourceServiceTestNeo4jGET(DataSourceService):
     def __init__(self, configuration: DataSource, model_access: GeppettoModelAccess):
-        HERE = os.path.dirname(os.path.realpath(__file__))
-        DEST = "../pygeppetto/model/datasources/templates/neo4j.j2"
-        with open(os.path.join(HERE, DEST)) as f:
-            self.datasource_template = Template(f.read())
 
         super().__init__(configuration=configuration, model_access=model_access)
     
     def get_connection_type(self):
         return "GET"
+
+    def get_template(self):
+        with open(os.path.join(HERE, "resources/neo4j.vm")) as f:
+            return f.read()
 
 class DataSourceServiceTestNeo4jPOST(DataSourceServiceTestNeo4jGET):
     def get_connection_type(self):

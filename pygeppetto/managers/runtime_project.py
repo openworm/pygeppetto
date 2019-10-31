@@ -110,16 +110,13 @@ class RuntimeProject(object):
 
         return self.model
 
-    def get_data_source_service(self, data_source_id):
-        if not data_source_id in self.data_source_services:
-            try:
-                ds = next(ds for ds in self.geppetto_model_access.geppetto_model.dataSources if ds.id == data_source_id)
-                ds_service = ServiceCreator.get_new_service_instance(data_source_id, ds, self.geppetto_model_access)
-                self.data_source_services[data_source_id] = ds_service
-            except StopIteration:
-                raise GeppettoModelException("The datasource service for " + data_source_id + " was not found");
+    def get_data_source_service(self, data_source: DataSource):
+        if not data_source.id in self.data_source_services:
+            ds_service = ServiceCreator.get_new_service_instance(data_source,
+                                                                 self.geppetto_model_access)
+            self.data_source_services[data_source.id] = ds_service
 
-        return self.data_source_services[data_source_id]
+        return self.data_source_services[data_source.id]
 
     def populate_new_experiment(self, experiment):
         raise NotImplemented
@@ -134,4 +131,4 @@ class RuntimeProject(object):
             data_source = data_source.eContainer()
             assert data_source is not None, 'Bad data source definition'
         data_source_service = self.get_data_source_service(data_source)
-        return data_source_service.execute(query)
+        return data_source_service.execute(queries)

@@ -68,7 +68,14 @@ def test_run_query(message_handler):
         vis.do_switch.return_value = QueryResults()
 
         assert isinstance(vis.do_switch(), QueryResults)
-        msg_data = json.dumps({"projectId":'mock',"runnableQueries":[{"targetVariablePath":"WHATEVER","queryPath":"mock_query"}]})
+        msg_data = json.dumps({
+            "projectId":'mock',
+            "runnableQueries":[
+                {
+                 "queryPath":"mockDataSource.mock_query"
+                 }
+            ]
+        })
         run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.RUN_QUERY,
          "data": msg_data}
         message_handler.handle_message(run_query_msg)

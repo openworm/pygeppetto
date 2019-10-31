@@ -14,7 +14,7 @@
         name="BrainRegion"/>
   </libraries>
   <dataSources
-      id="MockDataSourceService"
+      id="mockDataSourceService"
       name="mock Data Source"
       dataSourceService="MockDataSourceService"
       url="http://mg-neo4j/db/data/transaction"

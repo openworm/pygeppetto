@@ -60,8 +60,8 @@ def test_run_query(message_handler):
     assert len(runtime_project.model.dataSources) == 1
     configured_data_source_service = runtime_project.model.dataSources[0].dataSourceService
     assert configured_data_source_service == MockDataSourceService.__name__
-    assert ServiceCreator.get_new_service_instance(runtime_project.model.dataSources[0],
-                                                   None).__class__ == MockDataSourceService
+    assert ServiceCreator.get_new_datasource_service_instance(runtime_project.model.dataSources[0],
+                                                              None).__class__ == MockDataSourceService
 
     with patch('pygeppetto.services.data_source_service.ExecuteQueryVisitor') as vis:
         from pygeppetto.services.data_source_service import ExecuteQueryVisitor

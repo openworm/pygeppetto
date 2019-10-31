@@ -48,7 +48,22 @@ class ExecuteQueryVisitor(Switch):
 
     @do_switch.register(ProcessQuery)
     def case_process_query(self, query: ProcessQuery):
-        raise NotImplemented  # TODO ExecuteQueryVisitor.case_process_query
+        if self.count and not query.runForCount:
+            return None
+        if not query_check(query, self.variable):
+            return None
+
+        from pygeppetto.services.data_source_service import ServiceCreator
+        try:
+            qp = ServiceCreator.get_new_service_instance(query.queryProcessorId)
+
+            self.results = qp.process(query, self.get_datasource(query=query), self.variable, self.results,
+                                      self.geppetto_model_access)
+            self.processing_output_map = qp.get_processing_output_map()
+        except GeppettoDataSourceException as e:
+            raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e
+        except GeppettoInitializationException as e:
+            raise GeppettoVisitingException(f"Initialization exception while running query {query.id}") from e
 
     @do_switch.register(CompoundRefQuery)
     def case_compound_query_ref(self, query: CompoundRefQuery):
@@ -63,8 +78,8 @@ class ExecuteQueryVisitor(Switch):
                     # had to import here to avoid circular import error
                     from pygeppetto.services.data_source_service import ServiceCreator
                     ds = self.get_datasource(query=query)
-                    dss = ServiceCreator.get_new_service_instance(data_source=ds,
-                                                                  model_access=self.geppetto_model_access)
+                    dss = ServiceCreator.get_new_datasource_service_instance(data_source=ds,
+                                                                             model_access=self.geppetto_model_access)
 
                     query_string = query.countQuery if self.count else query.query
 

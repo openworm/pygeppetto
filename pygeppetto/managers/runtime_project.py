@@ -112,8 +112,8 @@ class RuntimeProject(object):
 
     def get_data_source_service(self, data_source: DataSource):
         if not data_source.id in self.data_source_services:
-            ds_service = ServiceCreator.get_new_service_instance(data_source,
-                                                                 self.geppetto_model_access)
+            ds_service = ServiceCreator.get_new_datasource_service_instance(data_source,
+                                                                            self.geppetto_model_access)
             self.data_source_services[data_source.id] = ds_service
 
         return self.data_source_services[data_source.id]

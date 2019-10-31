@@ -1,4 +1,4 @@
-from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult, Variable, SimpleQuery
+from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult, Variable, SimpleQuery, ProcessQuery
 from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
@@ -24,15 +24,32 @@ class ServiceCreator(type):
             ServiceCreator.data_source_services[cls.__name__] = cls
 
     @classmethod
-    def get_new_service_instance(mcs, data_source: DataSource, model_access):
+    def get_new_datasource_service_instance(mcs, data_source: DataSource, model_access):
         data_source_discovery_id = data_source.dataSourceService
-        if not data_source_discovery_id in ServiceCreator.data_source_services:
-            raise GeppettoInitializationException(f"The service {data_source_discovery_id} was not found!")
-        return mcs.data_source_services[data_source_discovery_id](data_source, model_access)
+
+        return mcs.get_new_service_instance(data_source_discovery_id, data_source, model_access)
+
+    @classmethod
+    def get_new_service_instance(mcs, class_name, *params):
+        """
+        Finds ans instantiates a service registered with this metaclass
+        :param class_name: the class name
+        :param params:
+        :return:
+        """
+        if not class_name in ServiceCreator.data_source_services:
+            raise GeppettoInitializationException(f"The service {class_name} was not found!")
+        return mcs.data_source_services[class_name](*params)
 
 
-class QueryProcessor:
-    pass
+class QueryProcessor(metaclass=ServiceCreator):
+
+    def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
+                model_access: GeppettoModelAccess) -> QueryResults:
+        raise NotImplemented
+
+    def get_processing_output_map(self):
+        return None
 
 
 class DataSourceService(metaclass=ServiceCreator):

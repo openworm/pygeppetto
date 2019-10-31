@@ -3,35 +3,32 @@ from pygeppetto.model import Variable, CompoundQuery, ProcessQuery, CompoundRefQ
 from pygeppetto.model.datasources import Query, SimpleQuery
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils import model_traversal
-from pygeppetto.services.data_source_service import DataSourceService
 from pygeppetto.visitors import Switch
 from pyecore.utils import dispatch
-from pygeppetto.model.exceptions import GeppettoDataSourceException, GeppettoVisitingException, \
-    GeppettoInitializationException
+from pygeppetto.model.exceptions import GeppettoDataSourceException, GeppettoVisitingException, GeppettoInitializationException
 from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, DataSource
 from pygeppetto.model.utils.datasource import query_check
 
-from pygeppetto.model.utils import template
-from pygeppetto.utils import stream_requests
+from .utils import stream_requests
 
 ID = "ID"
-
 
 class ExecuteQueryVisitor(Switch):
 
     def __init__(self, variable: Variable,
                  geppetto_model_access: GeppettoModelAccess,
-                 count_only=False,
-                 processing_output_map=None):
+                 count_only = False,
+                 processing_output_map = None):
         self.variable = variable
         self.geppetto_model_access = geppetto_model_access
         self.count = count_only
         self.results = None
         self.processing_output_map = processing_output_map if processing_output_map else {}
-
+        
         # self.merged_results = QueryResults(id="merge_results", 
         #                                   header=["ID"], 
         #                                   results=[])
+
 
     @dispatch
     def do_switch(self, query):
@@ -41,18 +38,21 @@ class ExecuteQueryVisitor(Switch):
     def case_compound_query(self, query: CompoundQuery):
         if self.count and not query.runForCount:
             return None
-        run_query_visitor = ExecuteQueryVisitor(self.variable, self.geppetto_model_access,
-                                                processing_output_map=self.processing_output_map)
+        run_query_visitor = ExecuteQueryVisitor(self.variable, self.geppetto_model_access, processing_output_map=self.processing_output_map)
         model_traversal.apply_direct_children_only(query, run_query_visitor)
         self.merge_results(run_query_visitor.results)
 
+
+
     @do_switch.register(ProcessQuery)
     def case_process_query(self, query: ProcessQuery):
-        pass  # TODO ExecuteQueryVisitor.case_process_query
+        pass # TODO ExecuteQueryVisitor.case_process_query
+
 
     @do_switch.register(CompoundRefQuery)
     def case_compound_query_ref(self, query: CompoundRefQuery):
         raise NotImplemented
+
 
     @do_switch.register(SimpleQuery)
     def case_simple_query(self, query: SimpleQuery):
@@ -63,27 +63,28 @@ class ExecuteQueryVisitor(Switch):
                     # had to import here to avoid circular import error
                     from pygeppetto.services.data_source_service import ServiceCreator
                     ds = self.get_datasource(query=query)
-                    dss: DataSourceService
-                    dss = ServiceCreator.get_new_service_instance(data_source=ds,
+
+                    dss = ServiceCreator.get_new_service_instance(data_source=ds, 
                                                                   model_access=self.geppetto_model_access)
 
-                    query_string = query.countQuery if self.count else query.query
+                    queryString = query.countQuery if self.count else query.query
+                    
+                    properties = { ID: self.variable.id, "QUERY": queryString, **self.processing_output_map }
 
-                    processed_query_string = template.process_template(dss.get_template(),
-                                                                       ID=self.variable.id,
-                                                                       QUERY=query_string,
-                                                                       **self.processing_output_map)
+                    processed_query_string = dss.datasource_template.render(**properties)
 
-                    method = dss.get_connection_type()
-
+                    if dss.get_connection_type() == "POST":
+                        method = "POST"
+                    else:
+                        method = "GET"
                     response = stream_requests(url=ds.url, params=json.loads(processed_query_string), method=method)
 
-                    self.results = dss.process_response({"response": response})
+                    self.results = dss.process_response({ "response": response })
 
             except GeppettoDataSourceException as e:
-                raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e
+                return GeppettoVisitingException(e)
             except GeppettoInitializationException as e:
-                raise GeppettoVisitingException(f"Initialization exception while running query {query.id}") from e
+                return GeppettoVisitingException(e)
 
     def merge_results(self, processed_results: QueryResults):
         #  if this arrives from a first query results should be empty, so we automatically assign
@@ -91,7 +92,7 @@ class ExecuteQueryVisitor(Switch):
         if self.results != None:
             if not ID in self.results.header or not ID in processed_results.header:
                 raise GeppettoDataSourceException("Cannot merge without an ID in the results")
-
+            
             id_pos = self.results.header.index(ID)
             proc_id_pos = processed_results.header.index(ID)
 
@@ -106,7 +107,7 @@ class ExecuteQueryVisitor(Switch):
         else:
             self.results = processed_results
 
-    def get_datasource(self, query: Query):
+    def get_datasource(self, query:Query):
         parent = query.eContainer()
         while not isinstance(parent, DataSource):
             parent = parent.eContainer()

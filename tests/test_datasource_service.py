@@ -1,3 +1,4 @@
+import json
 import pytest
 
 from pygeppetto.model import GeppettoLibrary
@@ -6,9 +7,8 @@ from pygeppetto.model.datasources.datasources import DataSource, QueryResults, Q
 from pygeppetto.model.datasources import BooleanOperator
 from pygeppetto.services.data_source_service import DataSourceService
 from pygeppetto.services.model_interpreter import add_model_interpreter
-
-from .mocks import MockModelInterpreter
-
+from pygeppetto.model.datasources.neo4j.Neo4jDatasourceService import Neo4jDataSourceService
+from .mocks import MockModelInterpreter, neo4j_response as mock_neo4j_response
 
 def create_result(id): 
     return (id, f"Result number {id}")
@@ -64,3 +64,14 @@ def test_datasource_service_get_results(data_source_service):
 
     assert len(data_source_service.get_results(results).results) == 1
     assert data_source_service.get_results(results).results[0].values[1] == "Result number 1"
+
+def test_neo4j_datasource_service():
+    neo4j_response = json.dumps(mock_neo4j_response())
+
+    dss = Neo4jDataSourceService(configuration=DataSource(), model_access=model_access())
+    qrp = dss.get_query_response_processor()
+    query_results = qrp.process_response({ "response": [ neo4j_response ] })
+    
+    assert query_results.header[0] == "n"
+    assert len(query_results.results) == 2
+    assert query_results.results[0].values[0] == '{"title": "The Matrix", "released": 1999}'

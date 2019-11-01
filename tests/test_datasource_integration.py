@@ -128,3 +128,7 @@ def test_fetch_variable(message_handler):
     variable = next(var for var in runtime_project.model.variables if var.id == 'myvar')
 
     assert variable.name == MockFetchQueryProcessor.variable_name
+
+    variable_container = variable.eContainer()
+    assert not variable_container.synched
+    assert "myvar" in messages[2]['data']

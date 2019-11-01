@@ -1,16 +1,14 @@
 import json
+from pyecore.utils import dispatch
 from pygeppetto.model import Variable, CompoundQuery, ProcessQuery, CompoundRefQuery
 from pygeppetto.model.datasources import Query, SimpleQuery
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils import model_traversal
-
 from pygeppetto.visitors import Switch
-from pyecore.utils import dispatch
 from pygeppetto.model.exceptions import GeppettoDataSourceException, GeppettoVisitingException, \
     GeppettoInitializationException
 from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, DataSource
 from pygeppetto.model.utils.datasource import query_check
-
 from pygeppetto.model.utils import template
 from pygeppetto.utils import stream_requests
 

@@ -49,7 +49,7 @@ class QueryProcessor(metaclass=ServiceCreator):
         raise NotImplemented
 
     def get_processing_output_map(self):
-        return None
+        return {}
 
 
 class DataSourceService(metaclass=ServiceCreator):

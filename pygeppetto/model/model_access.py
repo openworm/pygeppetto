@@ -51,4 +51,6 @@ class GeppettoModelAccess:
 
     def add_variable(self, variable):
         #TODO Implement with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
+
         self.geppetto_model.variables.append(variable)
+        self.geppetto_model.synched = False

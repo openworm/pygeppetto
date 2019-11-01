@@ -58,8 +58,14 @@ class DataSourceService(metaclass=ServiceCreator):
         self.configuration = configuration
         self.model_access = model_access
 
-    def fetch_variable(self):
-        raise NotImplemented
+    def fetch_variable(self, variable_id):
+        variable = Variable(id=variable_id)
+        var_query = self.configuration.fetchVariableQuery
+        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access)
+        execute_query_visitor.do_switch(var_query)
+        if variable.anonymousTypes or variable.types:
+            self.model_access.add_variable(variable)
+
 
     def execute(self, queries, count_only=False):
         return self.get_results(

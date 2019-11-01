@@ -79,7 +79,7 @@ def test_create_sphere(model_factory):
 
 
 def test_create_state_variable(model_factory):
-    var = model_factory.createStateVariable(id='aname', initialValue=Quantity(value=10.0))
+    var = model_factory.create_state_variable(id='aname', initialValue=Quantity(value=10.0))
     assert var.id == 'aname'
     assert var.initialValues[0].value.value == 10
     assert type(var.types[0]) == StateVariableType

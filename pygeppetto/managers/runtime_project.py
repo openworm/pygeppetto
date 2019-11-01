@@ -121,6 +121,18 @@ class RuntimeProject(object):
     def populate_new_experiment(self, experiment):
         raise NotImplemented
 
+    def fetch_variable(self, data_source_id, variable_ids):
+        """
+        Fetch a variable on the geppetto model.
+        :return:
+        """
+        data_source_service = self.get_data_source_service_by_id(data_source_id)
+
+        for variable_id in variable_ids:
+            if not variable_id in set(v.id for v in self.model.variables):
+                data_source_service.fetch_variable(variable_id)
+        return self.model
+
     def run_query(self, queries):
         query = model_utility.get_query(queries[0].queryPath, self.model)
         if isinstance(query, CompoundRefQuery):
@@ -132,3 +144,12 @@ class RuntimeProject(object):
             assert data_source is not None, 'Bad data source definition'
         data_source_service = self.get_data_source_service(data_source)
         return data_source_service.execute(queries)
+
+    def get_data_source_service_by_id(self, data_source_id):
+        if not data_source_id in self.data_source_services:
+            try:
+                ds = next(ds for ds in self.model.dataSources if ds.id == data_source_id)
+            except StopIteration:
+                raise GeppettoModelException("The datasource service for " + data_source_id + " was not found")
+            return self.get_data_source_service(ds)
+        return self.data_source_services[data_source_id]

@@ -41,7 +41,8 @@ in_out_msg_lookup = {
     InboundMessages.RESOLVE_IMPORT_TYPE: OutboundMessages.IMPORT_TYPE_RESOLVED,
     InboundMessages.RESOLVE_IMPORT_VALUE: OutboundMessages.IMPORT_VALUE_RESOLVED,
     InboundMessages.RUN_QUERY: OutboundMessages.RETURN_QUERY,
-    InboundMessages.RUN_QUERY_COUNT: OutboundMessages.RETURN_QUERY_COUNT
+    InboundMessages.RUN_QUERY_COUNT: OutboundMessages.RETURN_QUERY_COUNT,
+    InboundMessages.FETCH_VARIABLE: OutboundMessages.VARIABLE_FETCHED
 }
 
 
@@ -116,13 +117,13 @@ class GeppettoMessageHandler:
             elif msg_type == InboundMessages.LOAD_PROJECT_FROM_CONTENT:
                 self.loadProjectFromContent(requestID, gmsg['data'])
             elif msg_type == InboundMessages.LOAD_PROJECT_FROM_URL:
-                msg_data = self.loadProjectFromUrl(requestID, gmsg['data'])
+                self.loadProjectFromUrl(requestID, gmsg['data'])
             elif msg_type == InboundMessages.RUN_QUERY:
-                received_object = json.loads(gmsg['data'])
-                geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
-                runnable_queries = self.convertRunnableQueriesDataTransferModel(received_object['runnableQueries'])
-                results = self.geppettoManager.run_query(runnable_queries, geppetto_project)
-                msg_data = GeppettoSerializer.serialize(results, True)
+                msg_data = self.run_query(gmsg)
+
+            elif msg_type == InboundMessages.FETCH_VARIABLE:
+                msg_data = self.fetch_variable(gmsg)
+
             # TODO From here on, implementation is not complete: just bare porting from Java
             elif msg_type == InboundMessages.USER_PRIVILEGES:
                 msg_data = self.checkUserPrivileges(requestID)
@@ -271,11 +272,7 @@ class GeppettoMessageHandler:
                 msg_data = self.downloadResults(requestID, aspectPath, projectId, experimentId, format)
             elif msg_type == InboundMessages.EXPERIMENT_STATUS:
                 msg_data = self.checkExperimentStatus(requestID, gmsg['data'])
-            elif msg_type == InboundMessages.FETCH_VARIABLE:
-                received_object = gmsg['data']
-                msg_data = self.fetchVariable(requestID, received_object.projectId,
-                                              received_object.dataSourceId,
-                                              received_object.variableId)
+
 
 
             elif msg_type == InboundMessages.RUN_QUERY_COUNT:
@@ -294,10 +291,29 @@ class GeppettoMessageHandler:
             logging.error('Unexpected error occurred during message {} handling'.format(msg_type), exc_info=True)
             self.send_message(requestID, OutboundMessages.ERROR, {"error": str(e)})
 
-
         if msg_data is not None:
             return_msg_type = lookup_return_msg_type(msg_type)
             self.send_message(requestID, return_msg_type, msg_data)
+
+    def run_query(self, gmsg):
+        received_object = json.loads(gmsg['data'])
+        geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
+        runnable_queries = self.convertRunnableQueriesDataTransferModel(received_object['runnableQueries'])
+        results = self.geppettoManager.run_query(runnable_queries, geppetto_project)
+        msg_data = GeppettoSerializer.serialize(results, True)
+        return msg_data
+
+    def fetch_variable(self, gmsg):
+        received_object = json.loads(gmsg['data'])
+        try:
+
+            geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
+            results = self.geppettoManager.fetch_variable(received_object['dataSourceId'],
+                                                          received_object['variableId'],
+                                                          geppetto_project)
+            return GeppettoSerializer.serialize(results, True)
+        except Exception as e:
+            self.error(e, "Error fetching variable " + str(received_object['variableId']))
 
     def send_message(self, requestID, return_msg_type, msg_data):
         msg_data = TransportMessageFactory.getTransportMessage(requestID=requestID, type_=return_msg_type,
@@ -433,10 +449,8 @@ class GeppettoMessageHandler:
         import pkg_resources  # part of setuptools
         return pkg_resources.require("pygeppetto")[0].version
 
-
     def convertRunnableQueriesDataTransferModel(self, runnableQueries):
         """ generated source for method convertRunnableQueriesDataTransferModel """
         from pygeppetto.model.datasources.datasources import RunnableQuery
 
         return [RunnableQuery(**dt) for dt in runnableQueries]
-

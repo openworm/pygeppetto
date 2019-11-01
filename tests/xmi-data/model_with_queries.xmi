@@ -30,7 +30,7 @@
           name="Get default nodes base"
           description="Mock simple query"
           runForCount="false"
-          query="SELECT FROM MYTABLE"
+          query="THIS COULD BE ANYTHING"
           countQuery="3"/>
       <queryChain
           xsi:type="gep_ds:ProcessQuery"
@@ -38,5 +38,22 @@
           runForCount="false"
           queryProcessorId="MockQueryProcessor"/>
     </queries>
+
+      <fetchVariableQuery
+        xsi:type="gep_ds:CompoundQuery"
+        name="The compound query for augmenting a type"
+        description="">
+      <queryChain
+          xsi:type="gep_ds:SimpleQuery"
+          name="mock_fetch"
+          description="Fetch my variable."
+          query="THIS COULD BE ANYTHING"
+          countQuery="-"/>
+      <queryChain
+          xsi:type="gep_ds:ProcessQuery"
+          name="Process variable fecth"
+          description="Process variable fecth"
+          queryProcessorId="MockFetchQueryProcessor"/>
+    </fetchVariableQuery>
   </dataSources>
 </gep:GeppettoModel>

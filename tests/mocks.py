@@ -6,6 +6,7 @@ from pygeppetto.model.datasources import QueryResult
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.model_factory import GeppettoModelFactory
 from pygeppetto.model.types import ImportType
+from pygeppetto.model.values import ImportValue
 from pygeppetto.services.data_source_service import QueryProcessor
 from pygeppetto.services.model_interpreter import ModelInterpreter
 
@@ -41,7 +42,7 @@ class MockModelInterpreter(ModelInterpreter):
         model.variables.append(v2)
         model.variables.append(v3)
 
-        v31 = self.factory.createStateVariable(id='v31', initialValue=self.factory.createImportValue())
+        v31 = self.factory.create_state_variable(id='v31', initialValue=ImportValue())
         v32 = self.factory.create_time_series_variable(id='v32', values=[1, 2, 3], unit='s')
 
         ct = CompositeType(name='ct1', id='ct1', variables=[v31, v32])
@@ -63,7 +64,7 @@ class MockModelInterpreter(ModelInterpreter):
         return model
 
     def importValue(self, importValue):
-        return self.factory.createTimeSeries(values=[4, 5, 6], unit='s')
+        return self.factory.create_time_series(values=[4, 5, 6], unit='s')
 
     def importType(self, url, typeName, library, common_library_access: GeppettoModelAccess):
         assert url is not None
@@ -94,6 +95,17 @@ class MockQueryProcessor(QueryProcessor):
     def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
                 model_access: GeppettoModelAccess) -> QueryResults:
         print("Processing query {}".format(query.id))
+        return results
+
+class MockFetchQueryProcessor(QueryProcessor):
+
+    variable_name = "set by MockFetchQueryProcessor"
+
+    def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
+                model_access: GeppettoModelAccess) -> QueryResults:
+        print("Processing query {}".format(query.id))
+        variable.name = self.variable_name
+        variable.types.append(model_access.geppetto_common_library.types[0])
         return results
 
 

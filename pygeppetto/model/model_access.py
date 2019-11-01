@@ -3,6 +3,7 @@ from pygeppetto.model.exceptions import GeppettoModelException
 from pygeppetto.model.model_factory import SharedLibraryManager
 from pygeppetto.model.types import ImportType
 from pygeppetto.model.utils import pointer_utility
+from pyecore.commands import CommandStack, Add, EditingDomain
 
 
 class GeppettoModelAccess:
@@ -47,3 +48,7 @@ class GeppettoModelAccess:
 
     def get_query(self, query_path):
         return model_utility.get_query(model=self.geppetto_model, query_path=query_path)
+
+    def add_variable(self, variable):
+        #TODO Implement with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
+        self.geppetto_model.variables.append(variable)

@@ -7,4 +7,3 @@ def process_template(template, **properties):
     if '$' in target and result != template:
         return process_template(result, **properties)
     return result
-

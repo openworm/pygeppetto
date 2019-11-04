@@ -6,12 +6,19 @@
     xmlns:gep="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore"
     xmlns:gep_types="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types"
     xmlns:gep_ds="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources">
+    <variables
+      id="dentateGyrus"
+      name="dentateGyrus"
+      types="//@libraries.1/@types.0"/>
   <libraries
       id="mgvlibrary"
       name="CUSTOM">
     <types xsi:type="gep_types:SimpleType"
         id="BrainRegion"
         name="BrainRegion"/>
+  </libraries>
+  <libraries>
+    <types xsi:type="gep_types:VisualType" id="Visual" name="Visual"/>
   </libraries>
   <dataSources
       id="mockDataSource"
@@ -30,7 +37,7 @@
           name="Get default nodes base"
           description="Mock simple query"
           runForCount="false"
-          query="THIS COULD BE ANYTHING"
+          query="THIS COULD BE ANYTHING - TARGET_VARIABLE: $ID"
           countQuery="3"/>
       <queryChain
           xsi:type="gep_ds:ProcessQuery"

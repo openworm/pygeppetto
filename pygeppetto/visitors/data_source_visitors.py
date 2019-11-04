@@ -7,7 +7,7 @@ from pygeppetto.model.utils import model_traversal
 from pygeppetto.visitors import Switch
 from pygeppetto.model.exceptions import GeppettoDataSourceException, GeppettoVisitingException, \
     GeppettoInitializationException
-from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, DataSource
+from pygeppetto.model.datasources.datasources import QueryResults, DataSource
 from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.model.utils import template
 from pygeppetto.utils import stream_requests
@@ -29,7 +29,7 @@ class ExecuteQueryVisitor(Switch):
 
     @dispatch
     def do_switch(self, query):
-        raise NotImplemented
+        raise NotImplementedError
 
     @do_switch.register(CompoundQuery)
     def case_compound_query(self, query: CompoundQuery):
@@ -49,54 +49,60 @@ class ExecuteQueryVisitor(Switch):
 
         from pygeppetto.services.data_source_service import ServiceCreator
         try:
-            qp = ServiceCreator.get_new_service_instance(query.queryProcessorId)
+            query_processor = ServiceCreator.get_new_service_instance(query.queryProcessorId)
 
-            self.results = qp.process(query, self.get_datasource(query=query), self.variable, self.results,
-                                      self.geppetto_model_access)
-            self.processing_output_map = qp.get_processing_output_map()
-        except GeppettoDataSourceException as e:
-            raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e
-        except GeppettoInitializationException as e:
-            raise GeppettoVisitingException(f"Initialization exception while running query {query.id}") from e
+            self.results = query_processor.process(query, self.get_datasource(query=query), 
+                                                   self.variable, self.results,
+                                                   self.geppetto_model_access)
+            self.processing_output_map = query_processor.get_processing_output_map()
+        except GeppettoDataSourceException as exception:
+            raise GeppettoVisitingException(f"Data source exception \
+                                            while running query {query.id}") from exception
+        except GeppettoInitializationException as exception:
+            raise GeppettoVisitingException(f"Initialization exception \
+                                            while running query {query.id}") from exception
 
     @do_switch.register(CompoundRefQuery)
     def case_compound_query_ref(self, query: CompoundRefQuery):
-        raise NotImplemented
+        raise NotImplementedError
 
     @do_switch.register(SimpleQuery)
     def case_simple_query(self, query: SimpleQuery):
-        """ Ported from https://github.com/openworm/org.geppetto.datasources/blob/development/src/main/java/org/geppetto/datasources/ExecuteQueryVisitor.java """
+        """ Ported from https://github.com/openworm/org.geppetto.datasources/blob/development\
+                        /src/main/java/org/geppetto/datasources/ExecuteQueryVisitor.java """
         if not self.count or (self.count and query.runForCount):
             try:
                 if query_check(query, self.variable):
                     # had to import here to avoid circular import error
                     from pygeppetto.services.data_source_service import ServiceCreator
-                    ds = self.get_datasource(query=query)
-                    dss = ServiceCreator.get_new_datasource_service_instance(data_source=ds,
+                    datasource = self.get_datasource(query=query)
+                    dss = ServiceCreator.get_new_datasource_service_instance(data_source=datasource,
                                                                              model_access=self.geppetto_model_access)
 
-                    query_string = query.countQuery if self.count else query.query
+                    query_str = query.countQuery if self.count else query.query
 
-                    processed_query_string = template.process_template(dss.get_template(),
-                                                                       ID=self.variable.id if self.variable else '',
-                                                                       QUERY=query_string,
-                                                                       **self.processing_output_map)
+                    processed_query_str = template.process_template(dss.get_template(),
+                                                                    ID=self.variable.id if self.variable else '',
+                                                                    QUERY=query_str,
+                                                                    **self.processing_output_map)
 
-                    method = dss.get_connection_type()
-
-                    response = stream_requests(url=ds.url, params=json.loads(processed_query_string), method=method)
+                    response = stream_requests(url=datasource.url,
+                                               params=json.loads(processed_query_str),
+                                               method=dss.get_connection_type())
 
                     self.results = dss.process_response(response=response)
 
-            except GeppettoDataSourceException as e:
-                raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e
-            except GeppettoInitializationException as e:
-                raise GeppettoVisitingException(f"Initialization exception while running query {query.id}") from e
+            except GeppettoDataSourceException as exception:
+                raise GeppettoVisitingException(f"Data source exception while running query \
+                                                {query.id}") from exception
+            except GeppettoInitializationException as exception:
+                raise GeppettoVisitingException(f"Initialization exception while running query \
+                                                {query.id}") from exception
 
     def merge_results(self, processed_results: QueryResults):
         #  if this arrives from a first query results should be empty, so we automatically assign
         #  processedResults to results
-        if self.results != None:
+        if self.results is not None:
             if not ID in self.results.header or not ID in processed_results.header:
                 raise GeppettoDataSourceException("Cannot merge without an ID in the results")
 

@@ -1,14 +1,16 @@
-from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult, Variable, SimpleQuery, ProcessQuery
+from pygeppetto.model import DataSource, QueryResults, Variable, ProcessQuery
 from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
-from pygeppetto.model.utils.datasource import query_check, set_custom_query_result_hash, unset_custom_query_result_hash
+from pygeppetto.model.utils.datasource import query_check, set_custom_query_result_hash
+from pygeppetto.model.utils.datasource import unset_custom_query_result_hash
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 
 ID = "ID"
 
 
-class GeppettoDataSourceException(Exception): pass
+class GeppettoDataSourceException(Exception): 
+    pass
 
 
 class ServiceCreator(type):
@@ -46,7 +48,7 @@ class QueryProcessor(metaclass=ServiceCreator):
 
     def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
                 model_access: GeppettoModelAccess) -> QueryResults:
-        raise NotImplemented
+        raise NotImplementedError
 
     def get_processing_output_map(self):
         return {}
@@ -68,12 +70,10 @@ class DataSourceService(metaclass=ServiceCreator):
 
 
     def execute(self, queries, count_only=False):
-        return self.get_results(
-            {
-                self.execute_runnable_query(runnable_query, count_only): runnable_query.booleanOperator
-                for runnable_query in queries
-            }
-        )
+        return self.get_results({
+            self.execute_runnable_query(runnable_query, count_only): runnable_query.booleanOperator
+            for runnable_query in queries
+        })
 
     def get_number_of_results(self, queries):
         return len(self.execute(queries, count_only=True).results)
@@ -83,7 +83,8 @@ class DataSourceService(metaclass=ServiceCreator):
 
     def execute_runnable_query(self, runnable_query: RunnableQuery, count_only=False):
         """
-        Moved from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java
+        Moved from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/\
+                   org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java
         Implementation is simplified without caching
         :param runnable_query:
         :return:
@@ -92,13 +93,15 @@ class DataSourceService(metaclass=ServiceCreator):
         if runnable_query.targetVariablePath:
             variable = self.model_access.get_variable(runnable_query.targetVariablePath)
         query = self.model_access.get_query(runnable_query.queryPath)
-        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access, count_only=count_only)
+        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access,
+                                                    count_only=count_only)
         execute_query_visitor.do_switch(query)
         return execute_query_visitor.results
 
     def get_results(self, results: dict) -> QueryResults:
         """
-            Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
+            Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/\
+                        java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
         if not results:
             return QueryResults()
@@ -109,7 +112,7 @@ class DataSourceService(metaclass=ServiceCreator):
         set_custom_query_result_hash(id_index)
 
         for result, operator in results.items():
-            if final_results.header != result.header:  # TODO test it: may not be supported
+            if final_results.header != result.header:
                 raise GeppettoDataSourceException(
                     "Multiple queries were executed but they returned incompatible headers"
                 )
@@ -134,11 +137,11 @@ class DataSourceService(metaclass=ServiceCreator):
         return final_results
 
     def get_connection_type(self):
-        raise NotImplementedError("Method get_connection_type must be defined in every DataSourceService"
-                                  "and return either `GET` or `POST`.")
+        raise NotImplementedError("Method get_connection_type must be defined in every"
+                                  "DataSourceService and return either `GET` or `POST`.")
 
     def get_template(self):
-        raise NotImplemented
+        raise NotImplementedError
 
     def process_response(self, response) -> QueryResults:
         """
@@ -146,4 +149,4 @@ class DataSourceService(metaclass=ServiceCreator):
         :param response_dict:
         :return:
         """
-        raise NotImplemented
+        raise NotImplementedError

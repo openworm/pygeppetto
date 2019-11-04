@@ -47,6 +47,7 @@ def visitor():
                                count_only=False,
                                processing_output_map=None)
 
+
 def test_visitor_merge_results(visitor):
     header = ["ID", "content"]
 
@@ -76,6 +77,7 @@ def test_visitor_merge_results(visitor):
     assert len(visitor.results.results) == 5
     assert visitor.results.results[0].values[2] == 'Result number 0 modified'
 
+
 @responses.activate
 def test_simple_query_case(visitor):
 
@@ -83,7 +85,7 @@ def test_simple_query_case(visitor):
 
     v_type = VisualType()
     match_crit = QueryMatchingCriteria(type=(v_type,))
-    query = SimpleQuery(query="\"statement\": \"MATCH(n) RETURN id(n) as ID, n;\"",
+    query = SimpleQuery(query="\"statement\": \"MATCH(n) WHERE id(n)=$ID RETURN id(n) as ID, n;\"",
                         matchingCriteria=(match_crit,))
 
     DataSource(url=URL, queries=(query,), dataSourceService=Neo4jDataSourceService.__name__)
@@ -112,6 +114,8 @@ def test_compound_query_case(visitor):
 
     assert len(visitor.results.results) == 2
     assert visitor.results.results[0].values == ['0', '{"title": "The Matrix", "released": 1999}']
+
+
 @responses.activate
 def test_process_query_case(visitor):
     responses.add(responses.POST, URL, json=mock_neo4j_response(), status=200, stream=True)
@@ -134,6 +138,7 @@ def test_process_query_case(visitor):
 
     assert len(visitor.results.results) == 1
     assert visitor.results.results[0].values == ['1', '{"released": 1964, "title": "Keanu Reeves"}']
+
 
 def test_query_check():
     vtype = VisualType()

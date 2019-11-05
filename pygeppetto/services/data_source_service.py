@@ -1,5 +1,5 @@
-from pygeppetto.model import Query, DataSource, QueryResults, AQueryResult, Variable, SimpleQuery, ProcessQuery
-from pygeppetto.model.datasources import RunnableQuery, BooleanOperator
+from pygeppetto.model import Variable
+from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils.datasource import query_check, set_custom_query_result_hash, unset_custom_query_result_hash
@@ -66,7 +66,6 @@ class DataSourceService(metaclass=ServiceCreator):
         if variable.anonymousTypes or variable.types:
             self.model_access.add_variable(variable)
 
-
     def execute(self, queries, count_only=False):
         return self.get_results(
             {self.execute_runnable_query(runnable_query): runnable_query.booleanOperator for runnable_query in queries}
@@ -97,7 +96,7 @@ class DataSourceService(metaclass=ServiceCreator):
         """
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
-        if not results: 
+        if not results:
             return QueryResults()
         final_results = QueryResults(header=next(iter(results.keys())).header)
         first = True

@@ -17,11 +17,11 @@ NEO4J_ERRORS_KEY = "errors"
 NEO4J_RESULTS_KEY = "results"
 NEO4J_COLUMNS_KEY = "columns"
 
-TEMPLATE = '''{  
-  "statements":[  
-    {  
+TEMPLATE = '''{
+  "statements":[
+    {
       $QUERY,
-      "resultDataContents":[  
+      "resultDataContents":[
         "row"
       ],
       "includeStats":false
@@ -67,6 +67,7 @@ class Neo4jDataSourceService(DataSourceService):
                     logging.error(NEO4J_ERROR_MISSING_ERROR_KEY_IN_RESPONSE)
                 else:
                     for error in chunk[NEO4J_ERRORS_KEY]:
-                        logging.error(f'Neo4j: error_code {error["code"]}, error_message: {error["message"]}.')
+                        logging.error('Neo4j: error_code %s, error_message: %s.', 
+                                      error["code"], error["message"])
 
         return query_results

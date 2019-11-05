@@ -37,11 +37,11 @@ class MockDataSourceService(DataSourceService):
 
     def process_response(self, response):
         response = json.loads(response[0])['results'][0]
-        qr = QueryResults()
-        qr.header.extend(response['columns'])
-        qr.results.extend(QueryResult(values=r) for r in response['data'])
+        query_results = QueryResults()
+        query_results.header.extend(response['columns'])
+        query_results.results.extend(QueryResult(values=r) for r in response['data'])
 
-        return qr
+        return query_results
 
 
 class MockDataManager(GeppettoDataManager):
@@ -53,32 +53,6 @@ class MockDataManager(GeppettoDataManager):
 
 
 DataManagerHelper.setDataManager(MockDataManager())
-
-
-@responses.activate
-def test_run_query(message_handler):
-    runtime_project, messages = load_project(message_handler)
-
-    URL = "http://mg-neo4j/db/data/transaction"
-
-    responses.add(responses.POST, URL, json=neo4j_response(), status=200)
-    msg_data = json.dumps({
-        "projectId": 'mock',
-        "runnableQueries": [
-            {
-                "queryPath": "mockDataSource.mock_query"
-            }
-        ]
-    })
-    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.RUN_QUERY,
-                     "data": msg_data}
-    message_handler.handle_message(run_query_msg)
-
-    assert message_handler.send_message_data.call_count == 3
-
-    result = json.loads(messages[2]['data'])
-    model = json.loads(result['return_query'])
-    assert model['eClass'] == QueryResults.__name__
 
 
 def load_project(message_handler):
@@ -102,8 +76,35 @@ def load_project(message_handler):
     configured_data_source_service = runtime_project.model.dataSources[0].dataSourceService
     assert configured_data_source_service == MockDataSourceService.__name__
     assert ServiceCreator.get_new_datasource_service_instance(runtime_project.model.dataSources[0],
-                                                              None).__class__ == MockDataSourceService
+                                                              None).__class__==MockDataSourceService
     return runtime_project, messages
+
+
+@responses.activate
+def test_run_query(message_handler):
+    runtime_project, messages = load_project(message_handler)
+
+    URL = "http://mg-neo4j/db/data/transaction"
+
+    responses.add(responses.POST, URL, json=neo4j_response(), status=200)
+    msg_data = json.dumps({
+        "projectId": 'mock',
+        "runnableQueries": [
+            {
+                "queryPath": "mockDataSource.mock_query",
+                "targetVariablePath": "dentateGyrus"
+            }
+        ]
+    })
+    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.RUN_QUERY,
+                     "data": msg_data}
+    message_handler.handle_message(run_query_msg)
+
+    assert message_handler.send_message_data.call_count == 3
+
+    result = json.loads(messages[2]['data'])
+    model = json.loads(result['return_query'])
+    assert model['eClass'] == QueryResults.__name__
 
 
 @responses.activate

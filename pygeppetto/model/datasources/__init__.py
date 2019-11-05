@@ -4,12 +4,11 @@ from .datasources import DataSource, DataSourceLibraryConfiguration, Query, Proc
 from . import datasources
 from .. import model
 
-__all__ = ['DataSource', 'DataSourceLibraryConfiguration', 'Query', 'ProcessQuery', 'SimpleQuery', 'CompoundQuery',
-           'CompoundRefQuery', 'QueryResults', 'RunnableQuery', 'AQueryResult', 'QueryResult',
-           'SerializableQueryResult', 'QueryMatchingCriteria', 'BooleanOperator']
+__all__ = ['DataSource', 'DataSourceLibraryConfiguration', 'Query', 'ProcessQuery', 'SimpleQuery', 'CompoundQuery', 'CompoundRefQuery', 'QueryResults', 'RunnableQuery', 'AQueryResult', 'QueryResult', 'SerializableQueryResult', 'QueryMatchingCriteria', 'BooleanOperator']
 
 eSubpackages = []
 eSuperPackage = model
+
 
 # Manage all other EClassifiers (EEnum, EDatatypes...)
 otherClassifiers = [BooleanOperator]

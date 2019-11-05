@@ -1,18 +1,19 @@
-"""Definition of meta model 'variables'."""
 from functools import partial
-
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from pygeppetto.model.model import Node
+from ..model import ISynchable
+from ..model import Node
 
 name = 'variables'
-nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//variables'
+nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//variables'
 nsPrefix = 'gep'
 
 eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
+
+
 
 
 class TypeToValueMap(EObject, metaclass=MetaEClass):

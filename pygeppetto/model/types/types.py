@@ -5,13 +5,15 @@ from pyecore.ecore import *
 from ..model import Node
 
 name = 'types'
-nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//types'
+nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types'
 nsPrefix = 'gep'
 
 eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
+
+
 
 
 @abstract
@@ -34,10 +36,8 @@ class Type(Node):
             self.referencedVariables.extend(referencedVariables)
         if domainModel is not None:
             self.domainModel = domainModel
-
     def getDefaultValue(self):
         raise NotImplementedError('Operation getDefaultValue(...) is not yet implemented')
-
     def extendsType(self, type):
         raise NotImplementedError('Operation extendsType(...) is not yet implemented')
 

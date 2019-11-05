@@ -1,24 +1,21 @@
-"""Definition of meta model 'values'."""
 from functools import partial
-
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
 
-from ..model import ISynchable
-from ..model import Node
+from ..model import Node, ISynchable
 
 name = 'values'
-nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//values'
+nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values'
 nsPrefix = 'gep'
 
 eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
 
 eClassifiers = {}
 getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
-Connectivity = EEnum('Connectivity', literals=['DIRECTIONAL', 'BIDIRECTIONAL', 'NON_DIRECTIONAL'])  # noqa
 
-ImageFormat = EEnum('ImageFormat', literals=[
-                    'PNG', 'JPEG', 'IIP', 'DCM', 'NIFTI', 'TIFF', 'DZI', 'GOOGLE_MAP'])
+
+Connectivity = EEnum('Connectivity', literals=['DIRECTIONAL', 'BIDIRECTIONAL', 'NON_DIRECTIONAL'])  # noqa
+ImageFormat = EEnum('ImageFormat', literals=['PNG', 'JPEG', 'IIP', 'DCM', 'NIFTI', 'TIFF', 'DZI', 'GOOGLE_MAP'])  # noqa
 
 
 class StringToValueMap(EObject, metaclass=MetaEClass):
@@ -161,7 +158,7 @@ class TimeSeries(Value):
 
 
 class MDTimeSeries(Value):
-    value = EReference(containment=True, upper=-1)
+    value = EReference(upper=-1, containment=True)
 
     def __init__(self, value=None, **kwargs):
         super().__init__(**kwargs)
@@ -191,6 +188,9 @@ class Pointer(Value):
             self.path = path
         else:
             self.path = self.get_instance_path()
+
+    def getInstancePath(self):
+        return self.get_instance_path()
 
     def get_instance_path(self):
         """ generated source for method getInstancePath """

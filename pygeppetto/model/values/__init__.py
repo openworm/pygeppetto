@@ -1,19 +1,10 @@
 from .values import getEClassifier, eClassifiers
 from .values import name, nsURI, nsPrefix, eClass
-from .values import Value, Composite, StringToValueMap, Quantity, PhysicalQuantity, Unit, TimeSeries, MDTimeSeries, \
-    MetadataValue, Text, URL, HTML, Pointer, PointerElement, Point, Dynamics, FunctionPlot, Function, Argument, \
-    Expression, VisualValue, Collada, OBJ, Sphere, Cylinder, Particles, SkeletonAnimation, SkeletonTransformation, \
-    VisualGroupElement, VisualGroup, Connection, Connectivity, ArrayElement, ArrayValue, Image, ImageFormat, \
-    ImportValue, Metadata, JSON, GenericArray, StringArray, IntArray, DoubleArray, AArrayValue
+from .values import Value, Composite, StringToValueMap, Quantity, PhysicalQuantity, Unit, TimeSeries, MDTimeSeries, MetadataValue, Text, URL, HTML, Pointer, PointerElement, Point, Dynamics, FunctionPlot, Function, Argument, Expression, VisualValue, Collada, OBJ, Sphere, Cylinder, Particles, SkeletonAnimation, SkeletonTransformation, VisualGroupElement, VisualGroup, Connection, Connectivity, ArrayElement, ArrayValue, Image, ImageFormat, ImportValue, Metadata, JSON, GenericArray, StringArray, IntArray, DoubleArray, AArrayValue
 from . import values
 from .. import model
 
-__all__ = ['Value', 'Composite', 'StringToValueMap', 'Quantity', 'PhysicalQuantity', 'Unit', 'TimeSeries',
-           'MDTimeSeries', 'MetadataValue', 'Text', 'URL', 'HTML', 'Pointer', 'PointerElement', 'Point', 'Dynamics',
-           'FunctionPlot', 'Function', 'Argument', 'Expression', 'VisualValue', 'Collada', 'OBJ', 'Sphere', 'Cylinder',
-           'Particles', 'SkeletonAnimation', 'SkeletonTransformation', 'VisualGroupElement', 'VisualGroup',
-           'Connection', 'Connectivity', 'ArrayElement', 'ArrayValue', 'Image', 'ImageFormat', 'ImportValue',
-           'Metadata', 'JSON', 'GenericArray', 'StringArray', 'IntArray', 'DoubleArray', 'AArrayValue']
+__all__ = ['Value', 'Composite', 'StringToValueMap', 'Quantity', 'PhysicalQuantity', 'Unit', 'TimeSeries', 'MDTimeSeries', 'MetadataValue', 'Text', 'URL', 'HTML', 'Pointer', 'PointerElement', 'Point', 'Dynamics', 'FunctionPlot', 'Function', 'Argument', 'Expression', 'VisualValue', 'Collada', 'OBJ', 'Sphere', 'Cylinder', 'Particles', 'SkeletonAnimation', 'SkeletonTransformation', 'VisualGroupElement', 'VisualGroup', 'Connection', 'Connectivity', 'ArrayElement', 'ArrayValue', 'Image', 'ImageFormat', 'ImportValue', 'Metadata', 'JSON', 'GenericArray', 'StringArray', 'IntArray', 'DoubleArray', 'AArrayValue']
 
 eSubpackages = []
 eSuperPackage = model

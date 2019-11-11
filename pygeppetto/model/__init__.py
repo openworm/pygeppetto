@@ -113,8 +113,8 @@ Instance.type.eType = Type
 Instance.value.eType = Value
 SimpleInstance.visualValue.eType = VisualValue
 SimpleInstance.position.eType = Point
-SimpleConnectionInstance.a.eType = SimpleInstance
-SimpleConnectionInstance.b.eType = SimpleInstance
+SimpleConnectionInstance.a.eType = Instance
+SimpleConnectionInstance.b.eType = Instance
 
 # opposite EReferences
 Type.referencedVariables.eType = Variable

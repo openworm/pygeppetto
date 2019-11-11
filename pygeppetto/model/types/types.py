@@ -56,7 +56,7 @@ class ImportType(Type):
     url = EAttribute(eType=EString)
     referenceURL = EAttribute(eType=EString)
     modelInterpreterId = EAttribute(eType=EString)
-    autoresolve = EAttribute(eType=EBoolean, default_value=True)
+    autoresolve = EAttribute(eType=EBoolean)
 
     def __init__(self, url=None, referenceURL=None, modelInterpreterId=None, autoresolve=None, **kwargs):
         super().__init__(**kwargs)

@@ -31,7 +31,7 @@ class Instance(Node):
 
 
 class SimpleInstance(Instance):
-    visualValue = EReference()
+    visualValue = EReference(containment=True)
     position = EReference(containment=True)
 
     def __init__(self, visualValue=None, position=None, **kwargs):

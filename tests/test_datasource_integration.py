@@ -19,7 +19,7 @@ from .mocks import neo4j_response, MockFetchQueryProcessor
 
 def model() -> GeppettoModel:
     rset = ResourceSet()
-    resource = rset.get_resource(URI(filepath('model_with_queries.xmi')))
+    resource = rset.get_resource(URI(filepath('instances_test.xmi')))
     return resource.contents[0]
 
 
@@ -134,3 +134,33 @@ def test_fetch_variable(message_handler):
     assert not variable_container.synched
     assert "myvar" in messages[2]['data']
 
+
+@responses.activate
+def test_fetch(message_handler):
+    runtime_project, messages = load_project(message_handler)
+
+    URL = "http://my-neo4j/db/data/transaction"
+
+    responses.add(responses.POST, URL, json=neo4j_response(), status=200)
+    msg_data = json.dumps({
+        "projectId": 'mock',
+        "dataSourceId": "mockDataSource",
+        "variableId": ["myvar"],
+        "instanceId": ["myinst"],
+        "worldId": "w"
+    })
+
+    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.FETCH_VARIABLE,
+                     "data": msg_data}
+    message_handler.handle_message(run_query_msg)
+
+    assert message_handler.send_message_data.call_count == 3
+
+    variable = next(var for var in runtime_project.model.worlds[0].variables if var.id == 'myvar')
+
+    assert variable.name == MockFetchQueryProcessor.variable_name
+
+    variable_container = variable.eContainer()
+    assert not variable_container.synched
+    assert "myvar" in messages[2]['data']
+    assert "myinst" in messages[2]['data']

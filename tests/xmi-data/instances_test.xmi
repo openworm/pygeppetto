@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="ASCII"?>
+<gep:GeppettoModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:gep="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore"
+    xmlns:gep_1="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//instances"
+    xmlns:gep_2="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values"
+    xmlns:gep_3="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types"
+    xmlns:gep_4="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources">
+  <variables
+      id="v"
+      name="V"
+      types="//@libraries.0/@types.2"/>
+  <worlds name="w">
+    <variables
+        id="wv"
+        name="WV"
+        types="//@libraries.0/@types.2"/>
+    <instances
+        xsi:type="gep_1:SimpleInstance"
+        id="a"
+        name="A"
+        type="//@libraries.0/@types.1">
+      <value
+          xsi:type="gep_2:JSON"
+          json="{&quot;l&quot;: [&quot;x&quot;, &quot;y&quot;]}"/>
+      <position
+          x="1.0"
+          y="1.0"
+          z="1.0"/>
+    </instances>
+    <instances
+        xsi:type="gep_1:SimpleConnectionInstance"
+        id="a2b"
+        name="A to B"
+        tags="//@tags.0"
+        type="//@libraries.1/@types.13"
+        a="//@worlds.0/@instances.0"
+        b="//@worlds.0/@instances.2">
+      <value
+          xsi:type="gep_2:StringArray">
+        <elements>s1</elements>
+        <elements>s2</elements>
+      </value>
+    </instances>
+    <instances
+        xsi:type="gep_1:SimpleInstance"
+        id="b"
+        name="B"
+        type="//@libraries.0/@types.1">
+      <value
+          xsi:type="gep_2:Expression"
+          expression="exp"/>
+      <position
+          y="50.0"/>
+    </instances>
+    <instances
+        xsi:type="gep_1:SimpleInstance"
+        id="E"
+        name="E"
+        type="//@libraries.1/@types.14">
+      <value
+          xsi:type="gep_2:TimeSeries">
+        <value>1.0</value>
+        <value>2.0</value>
+        <value>3.0</value>
+      </value>
+    </instances>
+    <instances
+        xsi:type="gep_1:SimpleInstance"
+        id="c"
+        name="C"
+        type="//@libraries.0/@types.1">
+      <value
+          xsi:type="gep_2:Composite">
+        <value
+            key="x">
+          <value
+              xsi:type="gep_2:Metadata">
+            <value
+                key="y">
+              <value
+                  xsi:type="gep_2:Image"
+                  data="imageData"/>
+            </value>
+          </value>
+        </value>
+      </value>
+      <position
+          z="100.0"/>
+    </instances>
+    <instances
+        xsi:type="gep_1:SimpleConnectionInstance"
+        id="b2c"
+        name="B to C"
+        tags="//@tags.0"
+        type="//@libraries.1/@types.13"
+        a="//@worlds.0/@instances.2"
+        b="//@worlds.0/@instances.4">
+      <value
+          xsi:type="gep_2:JSON"
+          json="{&quot;events&quot;: [&quot;speech&quot;]}"/>
+    </instances>
+    <instances
+        xsi:type="gep_1:SimpleInstance"
+        id="d"
+        name="D"
+        type="//@libraries.1/@types.14">
+      <value
+          xsi:type="gep_2:Metadata">
+        <value
+            key="a">
+          <value
+              xsi:type="gep_2:Text"
+              text="Test"/>
+        </value>
+        <value
+            key="b">
+          <value
+              xsi:type="gep_2:URL"
+              url="http://aaa.com"/>
+        </value>
+        <value
+            key="c">
+          <value
+              xsi:type="gep_2:JSON"
+              json="{&quot;x&quot;: 1}"/>
+        </value>
+      </value>
+    </instances>
+  </worlds>
+  <libraries
+      id="mylib"
+      name="My library">
+    <types xsi:type="gep_3:SimpleType"
+        id="t"
+        name="T"
+        superType="//@libraries.0/@types.1"/>
+    <types xsi:type="gep_3:SimpleType"
+        id="s"
+        name="S"
+        superType="//@libraries.1/@types.14"/>
+    <types xsi:type="gep_3:CompositeType"
+        id="ct"
+        name="CT">
+      <variables
+          id="ctv"
+          name="CTV"
+          types="//@libraries.1/@types.5">
+        <initialValues
+            key="//@libraries.0/@types.2">
+          <value
+              xsi:type="gep_2:Text"
+              text="aaa"/>
+        </initialValues>
+      </variables>
+    </types>
+  </libraries>
+  <libraries
+      id="common"
+      name="Geppetto Common Library">
+    <types xsi:type="gep_3:ParameterType"
+        id="Parameter"
+        name="Parameter"/>
+    <types xsi:type="gep_3:DynamicsType"
+        id="Dynamics"
+        name="Dynamics"/>
+    <types xsi:type="gep_3:StateVariableType"
+        id="StateVariable"
+        name="State Variable"/>
+    <types xsi:type="gep_3:HTMLType"
+        id="HTML"
+        name="HTML"/>
+    <types xsi:type="gep_3:URLType"
+        id="URL"
+        name="URL"/>
+    <types xsi:type="gep_3:TextType"
+        id="Text"
+        name="Text"/>
+    <types xsi:type="gep_3:PointType"
+        id="Point"
+        name="Point"/>
+    <types xsi:type="gep_3:ExpressionType"
+        id="Expression"
+        name="Expression"/>
+    <types xsi:type="gep_3:VisualType"
+        id="Visual"
+        name="Visual"/>
+    <types xsi:type="gep_3:PointerType"
+        id="Pointer"
+        name="Pointer"/>
+    <types xsi:type="gep_3:ImageType"
+        id="Image"
+        name="Image"/>
+    <types xsi:type="gep_3:ConnectionType"
+        id="connection"
+        name="Connection"/>
+    <types xsi:type="gep_3:VisualType"
+        id="particles"
+        name="Particles"/>
+    <types xsi:type="gep_3:ConnectionType"
+        id="edge"
+        name="Edge"/>
+    <types xsi:type="gep_3:SimpleType"
+        id="node"
+        name="Node"/>
+  </libraries>
+  <tags name="ATag"/>
+  <dataSources
+      id="mockDataSource"
+      name="mock Data Source"
+      dataSourceService="MockDataSourceService"
+      url="http://my-neo4j/db/data/transaction"
+      targetLibrary="//@libraries.0">
+           <queries
+        xsi:type="gep_4:CompoundQuery"
+        id="mock_query"
+        name="A mock compound query"
+        description=""
+        runForCount="false">
+      <queryChain
+          xsi:type="gep_4:SimpleQuery"
+          name="Get default nodes base"
+          description="Mock simple query"
+          runForCount="false"
+          query="THIS COULD BE ANYTHING - TARGET_VARIABLE: $ID"
+          countQuery="3"/>
+      <queryChain
+          xsi:type="gep_4:ProcessQuery"
+          name="Mock processor"
+          runForCount="false"
+          queryProcessorId="MockQueryProcessor"/>
+    </queries>
+
+      <fetchVariableQuery
+        xsi:type="gep_4:CompoundQuery"
+        name="The compound query for augmenting a type"
+        description="">
+      <queryChain
+          xsi:type="gep_4:SimpleQuery"
+          name="mock_fetch"
+          description="Fetch my variable."
+          query="THIS COULD BE ANYTHING"
+          countQuery="-"/>
+      <queryChain
+          xsi:type="gep_4:ProcessQuery"
+          name="Process variable fecth"
+          description="Process variable fecth"
+          queryProcessorId="MockFetchQueryProcessor"/>
+    </fetchVariableQuery>
+  </dataSources>
+</gep:GeppettoModel>

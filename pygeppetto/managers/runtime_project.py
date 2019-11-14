@@ -8,7 +8,7 @@ from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 
 from pygeppetto.model.exceptions import GeppettoExecutionException, GeppettoModelException
-from pygeppetto.services.data_source_service import ServiceCreator
+from pygeppetto.services.data_source_service import ServiceCreator, DataSourceService
 
 
 class RuntimeProject(object):
@@ -121,7 +121,7 @@ class RuntimeProject(object):
     def populate_new_experiment(self, experiment):
         raise NotImplemented
 
-    def fetch_variable(self, data_source_id, variable_ids):
+    def fetch_variable(self, data_source_id, variable_ids, world_name=None):
         """
         Fetch a variable on the geppetto model.
         :return:
@@ -130,8 +130,23 @@ class RuntimeProject(object):
 
         for variable_id in variable_ids:
             if not variable_id in set(v.id for v in self.model.variables):
-                data_source_service.fetch_variable(variable_id)
+                data_source_service.fetch_variable(variable_id, legacy=world_name is None)
         return self.model
+
+    def fetch(self, data_source_id, variable_ids, instance_ids, world_name):
+        """
+        Fetch variables and instances on the geppetto model.
+        :return:
+        """
+        data_source_service = self.get_data_source_service_by_id(data_source_id)
+
+        for variable_id in variable_ids:
+            if not variable_id in set(v.id for v in self.geppetto_model_access.get_variables(world_name)):
+                data_source_service.fetch_variable(variable_id, world_name=world_name, legacy=False)
+
+        for instance_id in instance_ids:
+            if not instance_id in set(v.id for v in self.geppetto_model_access.get_instances(world_name)):
+                data_source_service.fetch_instance(instance_id, world_name=world_name)
 
     def run_query(self, queries):
         query = model_utility.get_query(queries[0].queryPath, self.model)
@@ -145,7 +160,7 @@ class RuntimeProject(object):
         data_source_service = self.get_data_source_service(data_source)
         return data_source_service.execute(queries)
 
-    def get_data_source_service_by_id(self, data_source_id):
+    def get_data_source_service_by_id(self, data_source_id) -> DataSourceService:
         if not data_source_id in self.data_source_services:
             try:
                 ds = next(ds for ds in self.model.dataSources if ds.id == data_source_id)
@@ -153,3 +168,5 @@ class RuntimeProject(object):
                 raise GeppettoModelException("The datasource service for " + data_source_id + " was not found")
             return self.get_data_source_service(ds)
         return self.data_source_services[data_source_id]
+
+

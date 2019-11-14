@@ -6,12 +6,13 @@
     xmlns:gep="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore"
     xmlns:gep_types="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types"
     xmlns:gep_values="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values"
-    xmlns:gep_ds="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources">
+    xmlns:gep_ds="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources"
+    xmlns:gep_is="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//instances"
+>
     <variables
       id="v"
       name="v"
       types="//@libraries.1/@types.0"/>
-
   <libraries
       id="mylibrary"
       name="CUSTOM">

@@ -1,4 +1,4 @@
-from pygeppetto.model import GeppettoModel, model_utility
+from pygeppetto.model import GeppettoModel, model_utility, World
 from pygeppetto.model.exceptions import GeppettoModelException
 from pygeppetto.model.model_factory import SharedLibraryManager
 from pygeppetto.model.types import ImportType
@@ -35,6 +35,7 @@ class GeppettoModelAccess:
             variable.types.append(newtype)
 
     def get_variable(self, variable_path):
+        #TODO support worlds in get_variable
         return pointer_utility.find_variable_from_path(self.geppetto_model, variable_path)
 
     def get_type(self, type_path):
@@ -49,8 +50,43 @@ class GeppettoModelAccess:
     def get_query(self, query_path):
         return model_utility.get_query(model=self.geppetto_model, query_path=query_path)
 
-    def add_variable(self, variable):
+    def add_variable_legacy(self, variable):
         #TODO Implement with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
 
         self.geppetto_model.variables.append(variable)
         self.geppetto_model.synched = False
+
+    def add_variable(self, variable, world_name=None, legacy=False):
+        #TODO Implement add_variable with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
+        if legacy:
+            return self.add_variable_legacy(variable)
+        world = self.get_world(world_name)
+        world.variables.append(variable)
+        self.geppetto_model.synched = False
+
+
+
+    def get_world(self, world_name) -> World:
+        if len(self.geppetto_model.worlds) < 1:
+            raise GeppettoModelException(f"No world was defined in the geppetto model")
+        if len(self.geppetto_model.worlds) > 1:
+            raise NotImplementedError("Multiple worlds are not yet supported")
+        # TODO support multiple worlds
+        if world_name is None:
+            return self.geppetto_model.worlds[0]
+        try:
+            return next(world for world in self.geppetto_model.worlds if world.name == world_name)
+        except StopIteration:
+            raise GeppettoModelException(f"World not fount in model: {world_name}")
+
+    def add_instance(self, instance, world_name):
+        # TODO Implement add_instance with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
+        world = self.get_world(world_name)
+        world.instances.append(instance)
+        self.geppetto_model.synched = False
+
+    def get_variables(self, world_name):
+        return self.get_world(world_name).variables
+
+    def get_instances(self, world_name):
+        return self.get_world(world_name).instances

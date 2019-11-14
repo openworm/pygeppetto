@@ -123,6 +123,8 @@ class GeppettoMessageHandler:
 
             elif msg_type == InboundMessages.FETCH_VARIABLE:
                 msg_data = self.fetch_variable(gmsg)
+            elif msg_type == InboundMessages.FETCH:
+                msg_data = self.fetch(gmsg)
 
             # TODO From here on, implementation is not complete: just bare porting from Java
             elif msg_type == InboundMessages.USER_PRIVILEGES:
@@ -310,6 +312,21 @@ class GeppettoMessageHandler:
             geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
             results = self.geppettoManager.fetch_variable(received_object['dataSourceId'],
                                                           received_object['variableId'],
+                                                          geppetto_project)
+            return GeppettoSerializer.serialize(results, True)
+        except Exception as e:
+            self.error(e, "Error fetching variable " + str(received_object['variableId']))
+
+
+    def fetch(self, gmsg):
+        received_object = json.loads(gmsg['data'])
+        try:
+
+            geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
+            results = self.geppettoManager.fetch(received_object['dataSourceId'],
+                                                          received_object['variableId'],
+                                                 received_object['instances'],
+                                                 received_object['worldId'] if 'worldId' in received_object else None,
                                                           geppetto_project)
             return GeppettoSerializer.serialize(results, True)
         except Exception as e:

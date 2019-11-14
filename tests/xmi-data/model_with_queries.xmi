@@ -5,13 +5,15 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:gep="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore"
     xmlns:gep_types="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types"
+    xmlns:gep_values="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values"
     xmlns:gep_ds="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources">
     <variables
-      id="dentateGyrus"
-      name="dentateGyrus"
+      id="v"
+      name="v"
       types="//@libraries.1/@types.0"/>
+
   <libraries
-      id="mgvlibrary"
+      id="mylibrary"
       name="CUSTOM">
     <types xsi:type="gep_types:SimpleType"
         id="BrainRegion"
@@ -24,7 +26,7 @@
       id="mockDataSource"
       name="mock Data Source"
       dataSourceService="MockDataSourceService"
-      url="http://mg-neo4j/db/data/transaction"
+      url="http://my-neo4j/db/data/transaction"
       targetLibrary="//@libraries.0">
     <queries
         xsi:type="gep_ds:CompoundQuery"

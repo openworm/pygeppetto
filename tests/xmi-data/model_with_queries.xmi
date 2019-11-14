@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="ASCII"?>
+<gep:GeppettoModel
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:gep="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore"
+    xmlns:gep_types="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//types"
+    xmlns:gep_values="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//values"
+    xmlns:gep_ds="https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//datasources">
+    <variables
+      id="v"
+      name="v"
+      types="//@libraries.1/@types.0"/>
+
+  <libraries
+      id="mylibrary"
+      name="CUSTOM">
+    <types xsi:type="gep_types:SimpleType"
+        id="BrainRegion"
+        name="BrainRegion"/>
+  </libraries>
+  <libraries>
+    <types xsi:type="gep_types:VisualType" id="Visual" name="Visual"/>
+  </libraries>
+  <dataSources
+      id="mockDataSource"
+      name="mock Data Source"
+      dataSourceService="MockDataSourceService"
+      url="http://my-neo4j/db/data/transaction"
+      targetLibrary="//@libraries.0">
+    <queries
+        xsi:type="gep_ds:CompoundQuery"
+        id="mock_query"
+        name="A mock compound query"
+        description=""
+        runForCount="false">
+      <queryChain
+          xsi:type="gep_ds:SimpleQuery"
+          name="Get default nodes base"
+          description="Mock simple query"
+          runForCount="false"
+          query="THIS COULD BE ANYTHING - TARGET_VARIABLE: $ID"
+          countQuery="3"/>
+      <queryChain
+          xsi:type="gep_ds:ProcessQuery"
+          name="Mock processor"
+          runForCount="false"
+          queryProcessorId="MockQueryProcessor"/>
+    </queries>
+
+      <fetchVariableQuery
+        xsi:type="gep_ds:CompoundQuery"
+        name="The compound query for augmenting a type"
+        description="">
+      <queryChain
+          xsi:type="gep_ds:SimpleQuery"
+          name="mock_fetch"
+          description="Fetch my variable."
+          query="THIS COULD BE ANYTHING"
+          countQuery="-"/>
+      <queryChain
+          xsi:type="gep_ds:ProcessQuery"
+          name="Process variable fecth"
+          description="Process variable fecth"
+          queryProcessorId="MockFetchQueryProcessor"/>
+    </fetchVariableQuery>
+  </dataSources>
+</gep:GeppettoModel>

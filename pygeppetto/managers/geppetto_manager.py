@@ -161,3 +161,9 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
     # @ensure(rights=[UserPrivileges.WRITE_PROJECT], message='import type')
     def resolve_import_type(self, type_paths, geppetto_project):
         return self.get_runtime_project(geppetto_project).resolve_import_type(type_paths)
+
+    def run_query(self, runnable_queries, geppetto_project):
+        return self.get_runtime_project(geppetto_project).run_query(runnable_queries)
+
+    def fetch_variable(self, data_source_id, variable_ids, geppetto_project):
+        return self.get_runtime_project(geppetto_project).fetch_variable(data_source_id, variable_ids)

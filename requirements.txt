@@ -1,0 +1,5 @@
+airspeed==0.5.13
+Deprecated==1.2.6
+multimethod==1.1
+pyecore==0.11.0
+requests==2.22.0

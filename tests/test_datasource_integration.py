@@ -84,7 +84,7 @@ def load_project(message_handler):
 def test_run_query(message_handler):
     runtime_project, messages = load_project(message_handler)
 
-    URL = "http://mg-neo4j/db/data/transaction"
+    URL = "http://my-neo4j/db/data/transaction"
 
     responses.add(responses.POST, URL, json=neo4j_response(), status=200)
     msg_data = json.dumps({
@@ -92,7 +92,7 @@ def test_run_query(message_handler):
         "runnableQueries": [
             {
                 "queryPath": "mockDataSource.mock_query",
-                "targetVariablePath": "dentateGyrus"
+                "targetVariablePath": "v"
             }
         ]
     })
@@ -111,7 +111,7 @@ def test_run_query(message_handler):
 def test_fetch_variable(message_handler):
     runtime_project, messages = load_project(message_handler)
 
-    URL = "http://mg-neo4j/db/data/transaction"
+    URL = "http://my-neo4j/db/data/transaction"
 
     responses.add(responses.POST, URL, json=neo4j_response(), status=200)
     msg_data = json.dumps({
@@ -133,3 +133,4 @@ def test_fetch_variable(message_handler):
     variable_container = variable.eContainer()
     assert not variable_container.synched
     assert "myvar" in messages[2]['data']
+

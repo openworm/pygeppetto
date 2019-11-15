@@ -3,7 +3,7 @@ import json
 from pyecore.resources import ResourceSet, URI
 from pygeppetto.data_model import GeppettoProject
 from pygeppetto.model import GeppettoModel, GeppettoLibrary, CompositeType, Variable, ProcessQuery, DataSource, \
-    QueryResults
+    QueryResults, SimpleInstance
 from pygeppetto.model.datasources import QueryResult
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.model_factory import GeppettoModelFactory
@@ -111,14 +111,21 @@ class MockQueryProcessor(QueryProcessor):
 class MockFetchQueryProcessor(QueryProcessor):
     variable_name = "set by MockFetchQueryProcessor"
 
-    def process(self, query: ProcessQuery, data_source: DataSource, variable_or_instance, results: QueryResults,
+    def process(self, query: ProcessQuery, data_source: DataSource, query_param, results: QueryResults,
                 model_access: GeppettoModelAccess) -> QueryResults:
         print("Processing query {}".format(query.id))
-        variable_or_instance.name = self.variable_name
-        if isinstance(variable_or_instance, Variable):
-            variable_or_instance.types.append(model_access.geppetto_common_library.types[0])
+
+        if "var" in query_param:
+            variable = Variable(id=query_param)
+            variable.name = self.variable_name
+            variable.types.append(model_access.geppetto_common_library.types[0])
+            model_access.add_variable(variable)
+
         else:
-            variable_or_instance.type = model_access.geppetto_common_library.types[0]
+            instance = SimpleInstance(id=query_param)
+            instance.type = model_access.geppetto_common_library.types[0]
+            instance.name = self.variable_name
+            model_access.add_instance(instance)
         return results
 
 

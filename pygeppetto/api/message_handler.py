@@ -325,7 +325,6 @@ class GeppettoMessageHandler:
             results = self.geppettoManager.fetch(received_object['dataSourceId'],
                                                  received_object['variables'] if 'variables' in received_object else [],
                                                  received_object['instances'] if 'instances' in received_object else [],
-                                                 received_object['worldId'] if 'worldId' in received_object else None,
                                                  geppetto_project)
             return GeppettoSerializer.serialize(results, True)
         except Exception as e:

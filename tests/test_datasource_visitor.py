@@ -42,7 +42,7 @@ def model_access():
 
 @pytest.fixture
 def visitor():
-    return ExecuteQueryVisitor(model_node=Variable(id="visitor", types=(CompositeVisualType(),)),
+    return ExecuteQueryVisitor(node_id="visitor", types=(CompositeVisualType(),),
                                geppetto_model_access=model_access(),
                                count_only=False,
                                processing_output_map=None)
@@ -144,8 +144,6 @@ def test_query_check():
     vtype = VisualType()
     comp_vtype = CompositeVisualType()
 
-    var1 = Variable(id="var2", types=(vtype,))
-    var2 = Variable(id="var3", anonymousTypes=(comp_vtype,))
 
     mc1 = QueryMatchingCriteria(type=(vtype,))
     mc2 = QueryMatchingCriteria(type=(comp_vtype,))
@@ -153,6 +151,6 @@ def test_query_check():
     query1 = SimpleQuery(query="dummy query;", matchingCriteria=(mc1,))
     query2 = SimpleQuery(query="dummy query;", matchingCriteria=(mc2,))
 
-    assert not query_check(query=query1, variable=var1)
-    assert query_check(query=query1, variable=var2)
-    assert not query_check(query=query2, variable=var1)
+    assert not query_check(query=query1, types=(vtype,))
+    assert query_check(query=query1, types=(comp_vtype,))
+    assert not query_check(query=query2, types=(vtype,))

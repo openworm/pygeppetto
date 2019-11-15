@@ -121,7 +121,7 @@ class RuntimeProject(object):
     def populate_new_experiment(self, experiment):
         raise NotImplemented
 
-    def fetch_variable(self, data_source_id, variable_ids, world_name=None):
+    def fetch_variable(self, data_source_id, variable_ids):
         """
         Fetch a variable on the geppetto model.
         :return:
@@ -130,10 +130,10 @@ class RuntimeProject(object):
 
         for variable_id in variable_ids:
             if not variable_id in set(v.id for v in self.model.variables):
-                data_source_service.fetch_variable(variable_id, legacy=world_name is None)
+                data_source_service.fetch_variable(variable_id)
         return self.model
 
-    def fetch(self, data_source_id, variable_ids, instance_ids, world_name):
+    def fetch(self, data_source_id, variable_ids, instance_ids):
         """
         Fetch variables and instances on the geppetto model.
         :return:
@@ -141,12 +141,12 @@ class RuntimeProject(object):
         data_source_service = self.get_data_source_service_by_id(data_source_id)
 
         for variable_id in variable_ids:
-            if not variable_id in set(v.id for v in self.geppetto_model_access.get_variables(world_name)):
-                data_source_service.fetch_variable(variable_id, world_name=world_name, legacy=False)
+            if not variable_id in set(v.id for v in self.geppetto_model_access.get_variables()):
+                data_source_service.fetch_variable(variable_id)
 
         for instance_id in instance_ids:
-            if not instance_id in set(v.id for v in self.geppetto_model_access.get_instances(world_name)):
-                data_source_service.fetch_instance(instance_id, world_name=world_name)
+            if not instance_id in set(v.id for v in self.geppetto_model_access.get_instances()):
+                data_source_service.fetch_instance(instance_id)
         return self.model
 
     def run_query(self, queries):

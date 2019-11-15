@@ -102,7 +102,7 @@ def test_fetch_variable(message_handler):
 
     assert message_handler.send_message_data.call_count == 3
 
-    variable = next(var for var in runtime_project.model.variables if var.id == 'myvar')
+    variable = next(var for var in runtime_project.model.worlds[0].variables if var.id == 'myvar')
 
     assert variable.name == MockFetchQueryProcessor.variable_name
 

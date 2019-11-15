@@ -168,5 +168,5 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
     def fetch_variable(self, data_source_id, variable_ids, geppetto_project):
         return self.get_runtime_project(geppetto_project).fetch_variable(data_source_id, variable_ids)
 
-    def fetch(self, data_source_id, variable_ids, instance_ids, world_name, geppetto_project):
-        return self.get_runtime_project(geppetto_project).fetch(data_source_id, variable_ids, instance_ids, world_name)
+    def fetch(self, data_source_id, variable_ids, instance_ids, geppetto_project):
+        return self.get_runtime_project(geppetto_project).fetch(data_source_id, variable_ids, instance_ids)

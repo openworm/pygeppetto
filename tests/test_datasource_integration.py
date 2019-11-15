@@ -107,7 +107,8 @@ def test_fetch_variable(message_handler):
     assert variable.name == MockFetchQueryProcessor.variable_name
 
     variable_container = variable.eContainer()
-    assert not variable_container.synched
+    assert variable_container.id
+    assert variable.id
     assert "myvar" in messages[2]['data']
 
 
@@ -137,6 +138,10 @@ def test_fetch(message_handler):
     assert variable.name == MockFetchQueryProcessor.variable_name
 
     variable_container = variable.eContainer()
-    assert not variable_container.synched
+    assert variable_container.id
+    assert variable.id
     assert "myvar" in messages[2]['data']
+
+    instance = next(inst for inst in runtime_project.model.worlds[0].instances if inst.id == 'myinst')
+    assert instance.name == MockFetchQueryProcessor.variable_name
     assert "myinst" in messages[2]['data']

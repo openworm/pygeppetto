@@ -12,7 +12,7 @@
       id="v"
       name="V"
       types="//@libraries.0/@types.2"/>
-  <worlds name="w">
+  <worlds name="w" id="w">
     <variables
         id="wv"
         name="WV"

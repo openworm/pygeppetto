@@ -56,26 +56,27 @@ class GeppettoModelAccess:
         self.geppetto_model.variables.append(variable)
         self.geppetto_model.synched = False
 
-    def add_variable(self, variable, world_name=None, legacy=False):
+    def add_variable(self, variable, world_id=None, legacy=False):
         # TODO Implement add_variable with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
         if legacy:
             return self.add_variable_legacy(variable)
-        world = self.get_world(world_name)
+        world = self.get_world(world_id)
         world.variables.append(variable)
+        world.synched = False
         self.geppetto_model.synched = False
 
-    def get_world(self, world_name=None) -> World:
+    def get_world(self, world_id=None) -> World:
         if len(self.geppetto_model.worlds) < 1:
             raise GeppettoModelException(f"No world was defined in the geppetto model")
         if len(self.geppetto_model.worlds) > 1:
             raise NotImplementedError("Multiple worlds are not yet supported")
         # TODO support multiple worlds
-        if world_name is None:
+        if world_id is None:
             return self.geppetto_model.worlds[0]
         try:
-            return next(world for world in self.geppetto_model.worlds if world.name == world_name)
+            return next(world for world in self.geppetto_model.worlds if world.id == world_id)
         except StopIteration:
-            raise GeppettoModelException(f"World not fount in model: {world_name}")
+            raise GeppettoModelException(f"World not fount in model: {world_id}")
 
     def add_instance(self, instance, world_name=None):
         # TODO Implement add_instance with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands

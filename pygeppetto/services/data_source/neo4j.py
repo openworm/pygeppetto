@@ -29,6 +29,7 @@ TEMPLATE = '''{
   ]
 }'''
 
+
 class Neo4jDataSourceService(DataSourceService):
 
     def get_connection_type(self):
@@ -67,7 +68,7 @@ class Neo4jDataSourceService(DataSourceService):
                     logging.error(NEO4J_ERROR_MISSING_ERROR_KEY_IN_RESPONSE)
                 else:
                     for error in chunk[NEO4J_ERRORS_KEY]:
-                        logging.error('Neo4j: error_code %s, error_message: %s.', 
+                        logging.error('Neo4j: error_code %s, error_message: %s.',
                                       error["code"], error["message"])
 
         return query_results

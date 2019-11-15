@@ -14,13 +14,10 @@ from pygeppetto.services.data_manager import GeppettoDataManager, DataManagerHel
 from pygeppetto.services.data_source_service import DataSourceService, ServiceCreator
 
 from .test_xmi import filepath
-from .mocks import neo4j_response, MockFetchQueryProcessor
+from .mocks import neo4j_response, MockFetchQueryProcessor, MockDataManager, MockDataSourceService
 
 
-def model() -> GeppettoModel:
-    rset = ResourceSet()
-    resource = rset.get_resource(URI(filepath('model_with_queries.xmi')))
-    return resource.contents[0]
+
 
 
 @pytest.fixture
@@ -28,28 +25,7 @@ def message_handler():
     return GeppettoMessageHandler()
 
 
-class MockDataSourceService(DataSourceService):
-    def get_template(self):
-        return '{"statement":"$QUERY"}'
 
-    def get_connection_type(self):
-        return 'POST'
-
-    def process_response(self, response):
-        response = json.loads(response[0])['results'][0]
-        query_results = QueryResults()
-        query_results.header.extend(response['columns'])
-        query_results.results.extend(QueryResult(values=r) for r in response['data'])
-
-        return query_results
-
-
-class MockDataManager(GeppettoDataManager):
-
-    def get_project_from_url(self, url=None):
-        project = GeppettoProject(id='mock', name='mock', geppetto_model=model())
-        self.projects[project.id] = project
-        return project
 
 
 DataManagerHelper.setDataManager(MockDataManager())
@@ -126,11 +102,46 @@ def test_fetch_variable(message_handler):
 
     assert message_handler.send_message_data.call_count == 3
 
-    variable = next(var for var in runtime_project.model.variables if var.id == 'myvar')
+    variable = next(var for var in runtime_project.model.worlds[0].variables if var.id == 'myvar')
 
     assert variable.name == MockFetchQueryProcessor.variable_name
 
     variable_container = variable.eContainer()
-    assert not variable_container.synched
+    assert variable_container.id
+    assert variable.id
     assert "myvar" in messages[2]['data']
 
+
+@responses.activate
+def test_fetch(message_handler):
+    runtime_project, messages = load_project(message_handler)
+
+    URL = "http://my-neo4j/db/data/transaction"
+
+    responses.add(responses.POST, URL, json=neo4j_response(), status=200)
+    msg_data = json.dumps({
+        "projectId": 'mock',
+        "dataSourceId": "mockDataSource",
+        "variables": ["myvar"],
+        "instances": ["myinst"],
+        "worldId": "w"
+    })
+
+    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.FETCH,
+                     "data": msg_data}
+    message_handler.handle_message(run_query_msg)
+
+    assert message_handler.send_message_data.call_count == 3
+
+    variable = next(var for var in runtime_project.model.worlds[0].variables if var.id == 'myvar')
+
+    assert variable.name == MockFetchQueryProcessor.variable_name
+
+    variable_container = variable.eContainer()
+    assert variable_container.id
+    assert variable.id
+    assert "myvar" in messages[2]['data']
+
+    instance = next(inst for inst in runtime_project.model.worlds[0].instances if inst.id == 'myinst')
+    assert instance.name == MockFetchQueryProcessor.variable_name
+    assert "myinst" in messages[2]['data']

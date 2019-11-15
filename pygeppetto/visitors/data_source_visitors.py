@@ -1,6 +1,6 @@
 import json
 from pyecore.utils import dispatch
-from pygeppetto.model import Variable, CompoundQuery, ProcessQuery, CompoundRefQuery
+from pygeppetto.model import Node, CompoundQuery, ProcessQuery, CompoundRefQuery, Variable, Instance
 from pygeppetto.model.datasources import Query, SimpleQuery
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils import model_traversal
@@ -17,11 +17,14 @@ ID = "ID"
 
 class ExecuteQueryVisitor(Switch):
 
-    def __init__(self, variable: Variable,
+    def __init__(self,
                  geppetto_model_access: GeppettoModelAccess,
+                 node_id=None,
+                 types=(),
                  count_only=False,
                  processing_output_map=None):
-        self.variable = variable
+        self.node_id = node_id
+        self.types = types
         self.geppetto_model_access = geppetto_model_access
         self.count = count_only
         self.results = None
@@ -35,7 +38,7 @@ class ExecuteQueryVisitor(Switch):
     def case_compound_query(self, query: CompoundQuery):
         if self.count and not query.runForCount:
             return None
-        run_query_visitor = ExecuteQueryVisitor(self.variable, self.geppetto_model_access,
+        run_query_visitor = ExecuteQueryVisitor(self.geppetto_model_access, self.node_id, self.types,
                                                 processing_output_map=self.processing_output_map)
         model_traversal.apply_direct_children_only(query, run_query_visitor)
         self.merge_results(run_query_visitor.results)
@@ -44,14 +47,14 @@ class ExecuteQueryVisitor(Switch):
     def case_process_query(self, query: ProcessQuery):
         if self.count and not query.runForCount:
             return None
-        if not query_check(query, self.variable):
+        if not query_check(query, self.types):
             return None
 
         from pygeppetto.services.data_source_service import ServiceCreator
         try:
             qp = ServiceCreator.get_new_service_instance(query.queryProcessorId)
 
-            self.results = qp.process(query, self.get_datasource(query=query), self.variable, self.results,
+            self.results = qp.process(query, self.get_datasource(query=query), self.node_id, self.results,
                                       self.geppetto_model_access)
             self.processing_output_map = qp.get_processing_output_map()
         except GeppettoDataSourceException as e:
@@ -65,10 +68,12 @@ class ExecuteQueryVisitor(Switch):
 
     @do_switch.register(SimpleQuery)
     def case_simple_query(self, query: SimpleQuery):
-        """ Ported from https://github.com/openworm/org.geppetto.datasources/blob/development/src/main/java/org/geppetto/datasources/ExecuteQueryVisitor.java """
+        """ Ported from
+        https://github.com/openworm/org.geppetto.datasources/blob/development/src/main/java/org/geppetto/datasources/ExecuteQueryVisitor.java
+        """
         if not self.count or (self.count and query.runForCount):
             try:
-                if query_check(query, self.variable):
+                if query_check(query, self.types):
                     # had to import here to avoid circular import error
                     from pygeppetto.services.data_source_service import ServiceCreator
                     ds = self.get_datasource(query=query)
@@ -78,7 +83,7 @@ class ExecuteQueryVisitor(Switch):
                     query_string = query.countQuery if self.count else query.query
 
                     processed_query_string = template.process_template(dss.get_template(),
-                                                                       ID=self.variable.id if self.variable else '',
+                                                                       ID=self.node_id if self.node_id else '',
                                                                        QUERY=query_string,
                                                                        **self.processing_output_map)
 

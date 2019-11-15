@@ -1,6 +1,7 @@
 from pyecore.resources import global_registry
 from .model import nsURI, eSubpackages
 
+from .model import overrides
 # Manually register all the URI and master URI in the global registry
 # This registering is performed outside the previous 'for' to ease future
 # code merging (in case of new metamodel versions)

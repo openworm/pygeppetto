@@ -1,4 +1,4 @@
-from pygeppetto.model import Variable
+from pygeppetto.model import Variable, SimpleInstance
 from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
@@ -59,12 +59,14 @@ class DataSourceService(metaclass=ServiceCreator):
         self.model_access = model_access
 
     def fetch_variable(self, variable_id):
-        variable = Variable(id=variable_id)
         var_query = self.configuration.fetchVariableQuery
-        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access)
+        execute_query_visitor = ExecuteQueryVisitor(node_id=variable_id, geppetto_model_access=self.model_access)
         execute_query_visitor.do_switch(var_query)
-        if variable.anonymousTypes or variable.types:
-            self.model_access.add_variable(variable)
+
+    def fetch_instance(self, instance_id):
+        var_query = self.configuration.fetchVariableQuery
+        execute_query_visitor = ExecuteQueryVisitor(self.model_access, node_id=instance_id)
+        execute_query_visitor.do_switch(var_query)
 
     def execute(self, queries, count_only=False):
         return self.get_results(

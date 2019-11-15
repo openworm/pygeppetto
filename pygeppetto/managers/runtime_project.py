@@ -8,7 +8,7 @@ from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 
 from pygeppetto.model.exceptions import GeppettoExecutionException, GeppettoModelException
-from pygeppetto.services.data_source_service import ServiceCreator
+from pygeppetto.services.data_source_service import ServiceCreator, DataSourceService
 
 
 class RuntimeProject(object):
@@ -133,6 +133,22 @@ class RuntimeProject(object):
                 data_source_service.fetch_variable(variable_id)
         return self.model
 
+    def fetch(self, data_source_id, variable_ids, instance_ids):
+        """
+        Fetch variables and instances on the geppetto model.
+        :return:
+        """
+        data_source_service = self.get_data_source_service_by_id(data_source_id)
+
+        for variable_id in variable_ids:
+            if not variable_id in set(v.id for v in self.geppetto_model_access.get_variables()):
+                data_source_service.fetch_variable(variable_id)
+
+        for instance_id in instance_ids:
+            if not instance_id in set(v.id for v in self.geppetto_model_access.get_instances()):
+                data_source_service.fetch_instance(instance_id)
+        return self.model
+
     def run_query(self, queries):
         query = model_utility.get_query(queries[0].queryPath, self.model)
         if isinstance(query, CompoundRefQuery):
@@ -145,7 +161,7 @@ class RuntimeProject(object):
         data_source_service = self.get_data_source_service(data_source)
         return data_source_service.execute(queries)
 
-    def get_data_source_service_by_id(self, data_source_id):
+    def get_data_source_service_by_id(self, data_source_id) -> DataSourceService:
         if not data_source_id in self.data_source_services:
             try:
                 ds = next(ds for ds in self.model.dataSources if ds.id == data_source_id)
@@ -153,3 +169,5 @@ class RuntimeProject(object):
                 raise GeppettoModelException("The datasource service for " + data_source_id + " was not found")
             return self.get_data_source_service(ds)
         return self.data_source_services[data_source_id]
+
+

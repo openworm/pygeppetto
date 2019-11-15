@@ -147,6 +147,7 @@ class RuntimeProject(object):
         for instance_id in instance_ids:
             if not instance_id in set(v.id for v in self.geppetto_model_access.get_instances(world_name)):
                 data_source_service.fetch_instance(instance_id, world_name=world_name)
+        return self.model
 
     def run_query(self, queries):
         query = model_utility.get_query(queries[0].queryPath, self.model)

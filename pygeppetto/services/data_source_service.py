@@ -71,8 +71,8 @@ class DataSourceService(metaclass=ServiceCreator):
         var_query = self.configuration.fetchVariableQuery
         execute_query_visitor = ExecuteQueryVisitor(instance, self.model_access)
         execute_query_visitor.do_switch(var_query)
-        if instance.anonymousTypes or instance.types:
-            self.model_access.add_instance(instance, world_name)
+
+        self.model_access.add_instance(instance, world_name)
 
     def execute(self, queries, count_only=False):
         return self.get_results(

@@ -14,13 +14,10 @@ from pygeppetto.services.data_manager import GeppettoDataManager, DataManagerHel
 from pygeppetto.services.data_source_service import DataSourceService, ServiceCreator
 
 from .test_xmi import filepath
-from .mocks import neo4j_response, MockFetchQueryProcessor
+from .mocks import neo4j_response, MockFetchQueryProcessor, MockDataManager, MockDataSourceService
 
 
-def model() -> GeppettoModel:
-    rset = ResourceSet()
-    resource = rset.get_resource(URI(filepath('instances_test.xmi')))
-    return resource.contents[0]
+
 
 
 @pytest.fixture
@@ -28,28 +25,7 @@ def message_handler():
     return GeppettoMessageHandler()
 
 
-class MockDataSourceService(DataSourceService):
-    def get_template(self):
-        return '{"statement":"$QUERY"}'
 
-    def get_connection_type(self):
-        return 'POST'
-
-    def process_response(self, response):
-        response = json.loads(response[0])['results'][0]
-        query_results = QueryResults()
-        query_results.header.extend(response['columns'])
-        query_results.results.extend(QueryResult(values=r) for r in response['data'])
-
-        return query_results
-
-
-class MockDataManager(GeppettoDataManager):
-
-    def get_project_from_url(self, url=None):
-        project = GeppettoProject(id='mock', name='mock', geppetto_model=model())
-        self.projects[project.id] = project
-        return project
 
 
 DataManagerHelper.setDataManager(MockDataManager())
@@ -145,12 +121,12 @@ def test_fetch(message_handler):
     msg_data = json.dumps({
         "projectId": 'mock',
         "dataSourceId": "mockDataSource",
-        "variableId": ["myvar"],
-        "instanceId": ["myinst"],
+        "variables": ["myvar"],
+        "instances": ["myinst"],
         "worldId": "w"
     })
 
-    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.FETCH_VARIABLE,
+    run_query_msg = {"requestID": "Connection23-5", "type": InboundMessages.FETCH,
                      "data": msg_data}
     message_handler.handle_message(run_query_msg)
 

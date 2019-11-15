@@ -1,5 +1,7 @@
 import json
 
+from pyecore.resources import ResourceSet, URI
+from pygeppetto.data_model import GeppettoProject
 from pygeppetto.model import GeppettoModel, GeppettoLibrary, CompositeType, Variable, ProcessQuery, DataSource, \
     QueryResults
 from pygeppetto.model.datasources import QueryResult
@@ -7,8 +9,10 @@ from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.model_factory import GeppettoModelFactory
 from pygeppetto.model.types import ImportType
 from pygeppetto.model.values import ImportValue
-from pygeppetto.services.data_source_service import QueryProcessor
+from pygeppetto.services.data_manager import GeppettoDataManager
+from pygeppetto.services.data_source_service import QueryProcessor, DataSourceService
 from pygeppetto.services.model_interpreter import ModelInterpreter
+from tests.test_xmi import filepath
 
 
 class MockModelInterpreter(ModelInterpreter):
@@ -90,6 +94,12 @@ class MockModelInterpreter(ModelInterpreter):
         pass
 
 
+def model_with_instances_datasource() -> GeppettoModel:
+    rset = ResourceSet()
+    resource = rset.get_resource(URI(filepath('instances_test.xmi')))
+    return resource.contents[0]
+
+
 class MockQueryProcessor(QueryProcessor):
 
     def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
@@ -97,17 +107,43 @@ class MockQueryProcessor(QueryProcessor):
         print("Processing query {}".format(query.id))
         return results
 
-class MockFetchQueryProcessor(QueryProcessor):
 
+class MockFetchQueryProcessor(QueryProcessor):
     variable_name = "set by MockFetchQueryProcessor"
 
-    def process(self, query: ProcessQuery, data_source: DataSource, variable, results: QueryResults,
+    def process(self, query: ProcessQuery, data_source: DataSource, variable_or_instance, results: QueryResults,
                 model_access: GeppettoModelAccess) -> QueryResults:
         print("Processing query {}".format(query.id))
-        variable.name = self.variable_name
-        variable.types.append(model_access.geppetto_common_library.types[0])
+        variable_or_instance.name = self.variable_name
+        if isinstance(variable_or_instance, Variable):
+            variable_or_instance.types.append(model_access.geppetto_common_library.types[0])
+        else:
+            variable_or_instance.type = model_access.geppetto_common_library.types[0]
         return results
 
+
+class MockDataSourceService(DataSourceService):
+    def get_template(self):
+        return '{"statement":"$QUERY"}'
+
+    def get_connection_type(self):
+        return 'POST'
+
+    def process_response(self, response):
+        response = json.loads(response[0])['results'][0]
+        query_results = QueryResults()
+        query_results.header.extend(response['columns'])
+        query_results.results.extend(QueryResult(values=r) for r in response['data'])
+
+        return query_results
+
+
+class MockDataManager(GeppettoDataManager):
+
+    def get_project_from_url(self, url=None):
+        project = GeppettoProject(id='mock', name='mock', geppetto_model=model_with_instances_datasource())
+        self.projects[project.id] = project
+        return project
 
 
 def neo4j_response():

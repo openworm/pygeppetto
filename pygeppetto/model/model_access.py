@@ -83,6 +83,7 @@ class GeppettoModelAccess:
         # TODO Implement add_instance with commands: see https://pyecore.readthedocs.io/en/latest/user/advanced.html#modifying-elements-using-commands
         world = self.get_world(world_name)
         world.instances.append(instance)
+        world.synched = False
         self.geppetto_model.synched = False
 
     def get_variables(self, world_name):

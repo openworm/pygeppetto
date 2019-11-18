@@ -42,7 +42,7 @@ def model_access():
 
 @pytest.fixture
 def visitor():
-    return ExecuteQueryVisitor(node_id="visitor", types=(CompositeVisualType(),),
+    return ExecuteQueryVisitor(node_path="visitor", types=(CompositeVisualType(),),
                                geppetto_model_access=model_access(),
                                count_only=False,
                                processing_output_map=None)

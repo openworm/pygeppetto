@@ -19,11 +19,11 @@ class ExecuteQueryVisitor(Switch):
 
     def __init__(self,
                  geppetto_model_access: GeppettoModelAccess,
-                 node_id=None,
+                 node_path=None,
                  types=(),
                  count_only=False,
                  processing_output_map=None):
-        self.node_id = node_id
+        self.node_id = node_path
         self.types = types
         self.geppetto_model_access = geppetto_model_access
         self.count = count_only
@@ -97,6 +97,8 @@ class ExecuteQueryVisitor(Switch):
                 raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e
             except GeppettoInitializationException as e:
                 raise GeppettoVisitingException(f"Initialization exception while running query {query.id}") from e
+            except Exception as e:
+                raise GeppettoVisitingException(f"Unexpected error while running query {query.id}") from e
 
     def merge_results(self, processed_results: QueryResults):
         #  if this arrives from a first query results should be empty, so we automatically assign

@@ -60,12 +60,12 @@ class DataSourceService(metaclass=ServiceCreator):
 
     def fetch_variable(self, variable_id):
         var_query = self.configuration.fetchVariableQuery
-        execute_query_visitor = ExecuteQueryVisitor(node_id=variable_id, geppetto_model_access=self.model_access)
+        execute_query_visitor = ExecuteQueryVisitor(node_path=variable_id, geppetto_model_access=self.model_access)
         execute_query_visitor.do_switch(var_query)
 
     def fetch_instance(self, instance_id):
         var_query = self.configuration.fetchVariableQuery
-        execute_query_visitor = ExecuteQueryVisitor(self.model_access, node_id=instance_id)
+        execute_query_visitor = ExecuteQueryVisitor(self.model_access, node_path=instance_id)
         execute_query_visitor.do_switch(var_query)
 
     def execute(self, queries, count_only=False):
@@ -86,11 +86,8 @@ class DataSourceService(metaclass=ServiceCreator):
         :param runnable_query:
         :return:
         """
-        variable = None
-        if runnable_query.targetVariablePath:
-            variable = self.model_access.get_variable(runnable_query.targetVariablePath)
         query = self.model_access.get_query(runnable_query.queryPath)
-        execute_query_visitor = ExecuteQueryVisitor(variable, self.model_access, count_only=count_only)
+        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath, geppetto_model_access=self.model_access, count_only=count_only)
         execute_query_visitor.do_switch(query)
         return execute_query_visitor.results
 

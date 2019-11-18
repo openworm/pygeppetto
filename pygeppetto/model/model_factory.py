@@ -72,7 +72,7 @@ class GeppettoModelFactory:
         variable.initialValues.append(TypeToValueMap(_type, raw_initial_value))
         return variable
 
-    def create_simple_instance(self, id, cl_type, value):
+    def create_simple_instance(self, id, cl_type, value=None):
         _type = self.geppetto_common_library.types[cl_type] if isinstance(cl_type, int) else cl_type
         return SimpleInstance(id=id, name=id, type=_type, value=value)
 

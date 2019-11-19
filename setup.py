@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 __version__ = "0.6.0"
 
 required_packages = [
-    'pyecore>=0.10.2',
+    'pyecore==0.11.1',
     'multimethod',
     'deprecated',
     'airspeed',

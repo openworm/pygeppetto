@@ -447,7 +447,7 @@ class GeppettoMessageHandler:
         error = Error(GeppettoErrorCodes.EXCEPTION, errorMessage, exceptionMessage, 0)
         logging.error(errorMessage, exception)
 
-        raise GeppettoHandlerTypedException(OutboundMessages.ERROR, error)
+        raise GeppettoHandlerTypedException(OutboundMessages.ERROR, errorMessage) from exception
 
     def info(self, requestID, message):
         """ generated source for method info """

@@ -64,6 +64,9 @@ class TransportMessageFactory(object):
         elif type_ == VARIABLE_FETCHED:
             payload.update(
                 {OutboundMessages.VARIABLE_FETCHED: update if (update != None) else cls.EMPTY_STRING})
+        elif type_ == FETCHED:
+            payload.update(
+                {OutboundMessages.FETCHED: update if (update != None) else cls.EMPTY_STRING})
         elif type_ == IMPORT_TYPE_RESOLVED:
             payload.update(
                 {OutboundMessages.IMPORT_TYPE_RESOLVED: update if (update != None) else cls.EMPTY_STRING})

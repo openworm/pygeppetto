@@ -118,8 +118,8 @@ class ExecuteQueryVisitor(Switch):
                 else:
                     index = current_record_ids.index(record.values[proc_id_pos])
 
-                    values = set(self.results.results[index].values)
-                    values.update(record.values)
+                    values = set(record.values)
+                    values.update(self.results.results[index].values)
                     self.results.results[index].values.clear()
                     self.results.results[index].values.extend(values)
         else:

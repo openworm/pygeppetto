@@ -19,7 +19,7 @@ BooleanOperator = EEnum('BooleanOperator', literals=['AND', 'NAND', 'OR'])
 class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
 
     modelInterpreterId = EAttribute(eType=EString, derived=False, changeable=True)
-    format = EAttribute(eType=EString, derived=False, changeable=True)
+    format = EAttribute(eType=EString, unique=True, derived=False, changeable=True)
     library = EReference(ordered=True, unique=True, containment=False)
 
     def __init__(self, library=None, modelInterpreterId=None, format=None, **kwargs):
@@ -40,8 +40,8 @@ class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
 
 class QueryResults(EObject, metaclass=MetaEClass):
 
-    id = EAttribute(eType=EString, derived=False, changeable=True)
-    header = EAttribute(eType=EString, derived=False, changeable=True, upper=-1)
+    id = EAttribute(eType=EString, unique=True, derived=False, changeable=True)
+    header = EAttribute(eType=EString, unique=True, derived=False, changeable=True, upper=-1)
     results = EReference(ordered=True, unique=True, containment=True, upper=-1)
 
     def __init__(self, id=None, header=None, results=None, **kwargs):
@@ -113,7 +113,7 @@ class QueryMatchingCriteria(EObject, metaclass=MetaEClass):
 
 class QueryResult(AQueryResult):
 
-    values = EAttribute(eType=EJavaObject, derived=False, changeable=True, upper=-1)
+    values = EAttribute(eType=EJavaObject, unique=False, derived=False, changeable=True, upper=-1)
 
     def __init__(self, values=None, **kwargs):
 
@@ -125,7 +125,7 @@ class QueryResult(AQueryResult):
 
 class SerializableQueryResult(AQueryResult):
 
-    values = EAttribute(eType=EString, derived=False, changeable=True, upper=-1)
+    values = EAttribute(eType=EString, unique=False, derived=False, changeable=True, upper=-1)
 
     def __init__(self, values=None, **kwargs):
 

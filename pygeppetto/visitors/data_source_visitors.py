@@ -117,7 +117,11 @@ class ExecuteQueryVisitor(Switch):
                     self.results.results.add(record)
                 else:
                     index = current_record_ids.index(record.values[proc_id_pos])
-                    self.results.results[index].values.update(record.values)
+
+                    values = set(self.results.results[index].values)
+                    values.update(record.values)
+                    self.results.results[index].values.clear()
+                    self.results.results[index].values.extend(values)
         else:
             self.results = processed_results
 

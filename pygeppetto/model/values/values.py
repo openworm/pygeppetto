@@ -158,7 +158,7 @@ class Unit(Value):
 class TimeSeries(Value):
 
     scalingFactor = EAttribute(eType=EInt, derived=False, changeable=True)
-    value = EAttribute(eType=EDouble, derived=False, changeable=True, upper=-1)
+    value = EAttribute(eType=EDouble, unique=False, derived=False, changeable=True, upper=-1)
     unit = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, unit=None, scalingFactor=None, value=None, **kwargs):
@@ -623,7 +623,7 @@ class GenericArray(AArrayValue):
 
 class StringArray(AArrayValue):
 
-    elements = EAttribute(eType=EString, derived=False, changeable=True, upper=-1)
+    elements = EAttribute(eType=EString, unique=False, derived=False, changeable=True, upper=-1)
 
     def __init__(self, elements=None, **kwargs):
 
@@ -635,7 +635,7 @@ class StringArray(AArrayValue):
 
 class IntArray(AArrayValue):
 
-    elements = EAttribute(eType=EInt, derived=False, changeable=True, upper=-1)
+    elements = EAttribute(eType=EInt, unique=False, derived=False, changeable=True, upper=-1)
 
     def __init__(self, elements=None, **kwargs):
 
@@ -647,7 +647,7 @@ class IntArray(AArrayValue):
 
 class DoubleArray(AArrayValue):
 
-    elements = EAttribute(eType=EDouble, derived=False, changeable=True, upper=-1)
+    elements = EAttribute(eType=EDouble, unique=False, derived=False, changeable=True, upper=-1)
 
     def __init__(self, elements=None, **kwargs):
 

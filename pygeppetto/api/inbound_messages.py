@@ -79,3 +79,5 @@ RESOLVE_IMPORT_VALUE = "resolve_import_value"
 RUN_QUERY = "run_query"
 
 RUN_QUERY_COUNT = "run_query_count"
+
+FETCH = 'fetch'

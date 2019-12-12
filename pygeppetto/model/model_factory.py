@@ -4,7 +4,8 @@ import os.path
 from deprecated import deprecated
 
 from pyecore.resources import ResourceSet, URI
-from pygeppetto.model import MDTimeSeries, Value, VisualValue, AArrayValue
+from pygeppetto.model import MDTimeSeries, Value, VisualValue, AArrayValue, SimpleInstance, SimpleConnectionInstance
+from pygeppetto.model.values import Connectivity
 from pygeppetto.utils import clone
 
 from .model import GeppettoModel
@@ -30,6 +31,9 @@ class GeppettoCommonLibrary:
     TYPE_JSON = 13
     TYPE_SIMPLE_ARRAY = 14
     TYPE_METADATA = 15
+    TYPE_EDGE = 16
+    TYPE_NODE = 17
+
     rset = ResourceSet()
     # Build the model URI
     model_uri = URI(os.path.join(os.path.dirname(__file__), '..',
@@ -40,6 +44,7 @@ class GeppettoCommonLibrary:
     @classmethod
     def instance_copy(cls):
         return clone(cls.instance)
+
 
 
 class SharedLibraryManager:
@@ -62,9 +67,18 @@ class GeppettoModelFactory:
 
     def create_variable(self, id, cl_type, raw_initial_value):
         variable = Variable(id=id, name=id)
+        _type = self.geppetto_common_library.types[cl_type] if isinstance(cl_type, int) else cl_type
         variable.types.append(self.geppetto_common_library.types[cl_type])
-        variable.initialValues.append(TypeToValueMap(self.geppetto_common_library.types[cl_type], raw_initial_value))
+        variable.initialValues.append(TypeToValueMap(_type, raw_initial_value))
         return variable
+
+    def create_simple_instance(self, id, cl_type, value=None):
+        _type = self.geppetto_common_library.types[cl_type] if isinstance(cl_type, int) else cl_type
+        return SimpleInstance(id=id, name=id, type=_type, value=value)
+
+    def create_connection_instance(self, id, cl_type, a, b, connectivity: Connectivity, value=None):
+        _type = self.geppetto_common_library.types[cl_type] if isinstance(cl_type, int) else cl_type
+        return SimpleConnectionInstance(id=id, name=id, type=_type, a=a, b=b, connectivity=connectivity, value=value)
 
     @deprecated(version='0.6', reason='Use the snake case version')
     def createCylinder(self, id, bottomRadius=1.0, topRadius=1.0,
@@ -189,3 +203,9 @@ class GeppettoModelFactory:
 
     def create_metadata_variable(self, id, initialValue: Metadata):
         return self.create_variable(id, GeppettoCommonLibrary.TYPE_METADATA, initialValue)
+
+    def create_node_instance(self, id, value):
+        return self.create_simple_instance(id, GeppettoCommonLibrary.TYPE_NODE, value)
+
+    def create_edge_instance(self, id, a, b, connectivity: Connection, value=None):
+        return self.create_connection_instance(id, GeppettoCommonLibrary.TYPE_EDGE, a=a, b=b, connectivity=connectivity, value=value)

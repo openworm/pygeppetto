@@ -19,3 +19,5 @@ class GeppettoInitializationException(Exception): pass
 
 
 class ModelInterpreterException(Exception): pass
+
+class GeppettoDataSourceException(Exception): pass

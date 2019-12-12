@@ -55,4 +55,10 @@
   <types xsi:type="gep_1:MetadataType"
       id="metadata"
       name="Metadata"/>
+  <types xsi:type="gep_1:ConnectionType"
+      id="edge"
+      name="Edge"/>
+  <types xsi:type="gep_1:SimpleType"
+      id="node"
+      name="Node"/>
 </gep:GeppettoLibrary>

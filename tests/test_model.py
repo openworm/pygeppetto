@@ -42,9 +42,6 @@ def test_array_nested_type(model_factory):
     v.initialValues.append(TypeToValueMap(referencing_type, array_value))
 
 
-
-
-
 def test_create_cylinder(model_factory):
     var = model_factory.create_cylinder('c1')
 
@@ -79,7 +76,7 @@ def test_create_sphere(model_factory):
 
 
 def test_create_state_variable(model_factory):
-    var = model_factory.createStateVariable(id='aname', initialValue=Quantity(value=10.0))
+    var = model_factory.create_state_variable(id='aname', initialValue=Quantity(value=10.0))
     assert var.id == 'aname'
     assert var.initialValues[0].value.value == 10
     assert type(var.types[0]) == StateVariableType
@@ -231,3 +228,23 @@ def test_create_metadata_variable(model_factory):
     assert type(var.types[0]) == MetadataType
     value = var.initialValues[0].value
     assert type(value) == Metadata
+
+
+def test_create_node_instance(model_factory):
+    value = JSON('{"a": 1}')
+    instance = model_factory.create_node_instance(id='inst', value=value)
+    assert json.loads(instance.value.json)['a'] == 1
+
+
+def test_create_edge_instance(model_factory):
+    a = model_factory.create_node_instance(id='a', value=JSON('{"a": 1}'))
+    b = model_factory.create_node_instance(id='b', value=JSON('{"b": 1}'))
+    edge = model_factory.create_edge_instance('ab', a, b, Connectivity.from_string('DIRECTIONAL'),
+                                              value=Metadata([StringToValueMap('akey', Text('avalue')),
+                                                              StringToValueMap('anotherkey', Text('anothervalue'))]
+                                                             )
+                                              )
+    assert json.loads(edge.a.value.json)['a'] == 1
+    assert json.loads(edge.b.value.json)['b'] == 1
+    assert str(edge.connectivity) == 'DIRECTIONAL'
+    assert type(edge.value) == Metadata

@@ -1,22 +1,22 @@
 from pyecore.resources import global_registry
-from .variables import getEClassifier, eClassifiers
-from .variables import name, nsURI, nsPrefix, eClass
-from .variables import Variable, TypeToValueMap
+from .instances import getEClassifier, eClassifiers
+from .instances import name, nsURI, nsPrefix, eClass
+from .instances import Instance, SimpleInstance, SimpleConnectionInstance
 
-from ..values import Point, Value
+from ..values import VisualValue, Point, Value
 from ..types import Type
 from ..model import Tag
 
-from . import variables
+from . import instances
 from .. import model
 
 
-__all__ = ['Variable', 'TypeToValueMap']
+__all__ = ['Instance', 'SimpleInstance', 'SimpleConnectionInstance']
 
 eSubpackages = []
 eSuperPackage = model
-variables.eSubpackages = eSubpackages
-variables.eSuperPackage = eSuperPackage
+instances.eSubpackages = eSubpackages
+instances.eSuperPackage = eSuperPackage
 
 
 otherClassifiers = []
@@ -31,6 +31,6 @@ for classif in eClassifiers.values():
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
 
-register_packages = [variables] + eSubpackages
+register_packages = [instances] + eSubpackages
 for pack in register_packages:
     global_registry[pack.nsURI] = pack

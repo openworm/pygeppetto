@@ -1,24 +1,36 @@
+from pyecore.resources import global_registry
 from .datasources import getEClassifier, eClassifiers
 from .datasources import name, nsURI, nsPrefix, eClass
 from .datasources import DataSource, DataSourceLibraryConfiguration, Query, ProcessQuery, SimpleQuery, CompoundQuery, CompoundRefQuery, QueryResults, RunnableQuery, AQueryResult, QueryResult, SerializableQueryResult, QueryMatchingCriteria, BooleanOperator
+
+from ..types import Type
+from ..model import StringToStringMap, Tag, GeppettoLibrary
+
 from . import datasources
 from .. import model
 
-__all__ = ['DataSource', 'DataSourceLibraryConfiguration', 'Query', 'ProcessQuery', 'SimpleQuery', 'CompoundQuery',
-           'CompoundRefQuery', 'QueryResults', 'RunnableQuery', 'AQueryResult', 'QueryResult',
-           'SerializableQueryResult', 'QueryMatchingCriteria', 'BooleanOperator']
+
+__all__ = ['DataSource', 'DataSourceLibraryConfiguration', 'Query', 'ProcessQuery', 'SimpleQuery', 'CompoundQuery', 'CompoundRefQuery',
+           'QueryResults', 'RunnableQuery', 'AQueryResult', 'QueryResult', 'SerializableQueryResult', 'QueryMatchingCriteria', 'BooleanOperator']
 
 eSubpackages = []
 eSuperPackage = model
+datasources.eSubpackages = eSubpackages
+datasources.eSuperPackage = eSuperPackage
 
-# Manage all other EClassifiers (EEnum, EDatatypes...)
+
 otherClassifiers = [BooleanOperator]
+
 for classif in otherClassifiers:
     eClassifiers[classif.name] = classif
-    classif._container = datasources
+    classif.ePackage = eClass
 
 for classif in eClassifiers.values():
     eClass.eClassifiers.append(classif.eClass)
 
 for subpack in eSubpackages:
     eClass.eSubpackages.append(subpack.eClass)
+
+register_packages = [datasources] + eSubpackages
+for pack in register_packages:
+    global_registry[pack.nsURI] = pack

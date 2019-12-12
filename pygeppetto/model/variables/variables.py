@@ -1,12 +1,12 @@
 """Definition of meta model 'variables'."""
 from functools import partial
-
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from pygeppetto.model.model import Node
+from ..model import Node, ISynchable
+
 
 name = 'variables'
-nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/development/src/main/resources/geppettoModel.ecore#//variables'
+nsURI = 'https://raw.githubusercontent.com/openworm/org.geppetto.model/master/src/main/resources/geppettoModel.ecore#//variables'
 nsPrefix = 'gep'
 
 eClass = EPackage(name=name, nsURI=nsURI, nsPrefix=nsPrefix)
@@ -16,36 +16,46 @@ getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 
 
 class TypeToValueMap(EObject, metaclass=MetaEClass):
-    key = EReference()
-    value = EReference(containment=True)
+
+    key = EReference(ordered=True, unique=True, containment=False)
+    value = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, key=None, value=None, **kwargs):
         if kwargs:
             raise AttributeError('unexpected arguments: {}'.format(kwargs))
 
         super().__init__()
+
         if key is not None:
             self.key = key
+
         if value is not None:
             self.value = value
 
 
 class Variable(Node):
-    static = EAttribute(eType=EBoolean)
-    anonymousTypes = EReference(upper=-1, containment=True)
-    types = EReference(upper=-1)
-    initialValues = EReference(upper=-1, containment=True)
-    position = EReference(containment=True)
+
+    static = EAttribute(eType=EBoolean, derived=False, changeable=True)
+    anonymousTypes = EReference(ordered=True, unique=True, containment=True, upper=-1)
+    types = EReference(ordered=True, unique=True, containment=False, upper=-1)
+    initialValues = EReference(ordered=True, unique=True, containment=True, upper=-1)
+    position = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, anonymousTypes=None, types=None, initialValues=None, static=None, position=None, **kwargs):
+
         super().__init__(**kwargs)
+
         if static is not None:
             self.static = static
+
         if anonymousTypes:
             self.anonymousTypes.extend(anonymousTypes)
+
         if types:
             self.types.extend(types)
+
         if initialValues:
             self.initialValues.extend(initialValues)
+
         if position is not None:
             self.position = position

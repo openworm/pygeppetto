@@ -64,12 +64,12 @@ def test_references():
 
     factory = GeppettoModelFactory(common_library_1)
 
-    variable = factory.createStateVariable('0')
+    variable = factory.create_state_variable('0')
     model1.variables.append(variable)
     model1.libraries.append(factory.geppetto_common_library)
 
     factory2 = GeppettoModelFactory(common_library_2)
-    variable = factory2.createStateVariable('0')
+    variable = factory2.create_state_variable('0')
     model2.variables.append(variable)
 
     serialized1 = json.loads(GeppettoSerializer.serialize(model1, False))

@@ -1,12 +1,14 @@
 from pygeppetto.data_model import GeppettoProject
 from pygeppetto.managers.runtime_experiment import RuntimeExperiment
+from pygeppetto.model import GeppettoModel, model_utility, CompoundRefQuery, DataSource
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.types import ImportType
 from pygeppetto.model.utils import model_traversal
 from pygeppetto.model.utils import url_reader
 from pygeppetto.services import model_interpreter
 
-from pygeppetto.model.exceptions import GeppettoExecutionException
+from pygeppetto.model.exceptions import GeppettoExecutionException, GeppettoModelException
+from pygeppetto.services.data_source_service import ServiceCreator, DataSourceService
 
 
 class RuntimeProject(object):
@@ -20,9 +22,16 @@ class RuntimeProject(object):
         self.project = project
         self.experiments = {}
         self.active_experiment = None
-        self.model = project.geppettoModel
+        if isinstance(project.geppettoModel, GeppettoModel):
+            self.model = project.geppettoModel
+        elif hasattr(project.geppettoModel, 'url'):
+            raise NotImplementedError('PersistedData in project is not supported: cannot load model')
+        else:
+            raise GeppettoModelException('Bad formed project: model is not correctly specified')
+
         self.geppetto_model_access = GeppettoModelAccess(self.model)
         self.import_autoresolve_types(self.model)
+        self.data_source_services = {}
 
         # TODO handle views
         # TODO handle experiments
@@ -31,8 +40,8 @@ class RuntimeProject(object):
         pass
 
     def import_autoresolve_types(self, model):
-        model_traversal.apply(model, self.import_type,
-                              lambda node: type(node) == ImportType and node.autoresolve)
+        model_traversal.apply_single(model, self.import_type,
+                                     lambda node: type(node) == ImportType and node.autoresolve)
 
     def import_type(self, itype: ImportType):
         library = itype.eContainer()
@@ -65,7 +74,7 @@ class RuntimeProject(object):
 
         source_library = variable_container.eContainer()
 
-        # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitor call, we don't need that here anyway, unless we're missing something important
+        # here we are simplifying the logic to retrieve the model interpreter. In Java geppetto here we have a switch-visitors call, we don't need that here anyway, unless we're missing something important
         actual_model_interpreter = model_interpreter.get_model_interpreter_from_library(source_library)
 
         var_to_import = self.geppetto_model_access.get_variable(path)
@@ -101,5 +110,64 @@ class RuntimeProject(object):
 
         return self.model
 
+    def get_data_source_service(self, data_source: DataSource):
+        if not data_source.id in self.data_source_services:
+            ds_service = ServiceCreator.get_new_datasource_service_instance(data_source,
+                                                                            self.geppetto_model_access)
+            self.data_source_services[data_source.id] = ds_service
+
+        return self.data_source_services[data_source.id]
+
     def populate_new_experiment(self, experiment):
         raise NotImplemented
+
+    def fetch_variable(self, data_source_id, variable_ids):
+        """
+        Fetch a variable on the geppetto model.
+        :return:
+        """
+        data_source_service = self.get_data_source_service_by_id(data_source_id)
+
+        for variable_id in variable_ids:
+            if not variable_id in set(v.id for v in self.model.variables):
+                data_source_service.fetch_variable(variable_id)
+        return self.model
+
+    def fetch(self, data_source_id, variable_ids, instance_ids):
+        """
+        Fetch variables and instances on the geppetto model.
+        :return:
+        """
+        data_source_service = self.get_data_source_service_by_id(data_source_id)
+
+        for variable_id in variable_ids:
+            if not variable_id in set(v.id for v in self.geppetto_model_access.get_variables()):
+                data_source_service.fetch_variable(variable_id)
+
+        for instance_id in instance_ids:
+            if not instance_id in set(v.id for v in self.geppetto_model_access.get_instances()):
+                data_source_service.fetch_instance(instance_id)
+        return self.model
+
+    def run_query(self, queries):
+        query = model_utility.get_query(queries[0].queryPath, self.model)
+        if isinstance(query, CompoundRefQuery):
+            # Use the first query of the chain to have the datasource we want to start from
+            query = queries[0].queryPath
+        data_source = query.eContainer()
+        while not isinstance(data_source, DataSource):
+            data_source = data_source.eContainer()
+            assert data_source is not None, 'Bad data source definition'
+        data_source_service = self.get_data_source_service(data_source)
+        return data_source_service.execute(queries)
+
+    def get_data_source_service_by_id(self, data_source_id) -> DataSourceService:
+        if not data_source_id in self.data_source_services:
+            try:
+                ds = next(ds for ds in self.model.dataSources if ds.id == data_source_id)
+            except StopIteration:
+                raise GeppettoModelException("The datasource service for " + data_source_id + " was not found")
+            return self.get_data_source_service(ds)
+        return self.data_source_services[data_source_id]
+
+

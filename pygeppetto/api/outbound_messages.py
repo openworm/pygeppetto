@@ -115,3 +115,5 @@ RETURN_QUERY = "return_query"
 RETURN_QUERY_COUNT = "return_query_count"
 
 RETURN_QUERY_RESULTS = "return_query_results"
+
+FETCHED = 'fetched'

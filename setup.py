@@ -4,7 +4,13 @@ from setuptools import setup, find_packages
 
 __version__ = "0.6.0"
 
-required_packages = ['pyecore>=0.10.2', 'multimethod', 'deprecated']
+required_packages = [
+    'pyecore==0.11.0',
+    'multimethod',
+    'deprecated',
+    'airspeed',
+    'requests>=2.0.0'
+]
 
 
 setup(
@@ -21,15 +27,12 @@ setup(
     package_data={'': ['README.md']},
     include_package_data=True,
     install_requires=required_packages,
-    extras_require={'testing': ['pytest']},
+    extras_require={'testing': ['pytest', 'responses']},
     classifiers=[
         "Programming Language :: Python",
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",
         "Topic :: Software Development",

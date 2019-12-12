@@ -33,7 +33,7 @@ def test_serializer():
 
     assert not geppetto_model.variables[0].synched
 
-    stringify_sync_model = '{"eClass":"GeppettoModel","id":"","name":"","variables":[{"synched":true}],"libraries":[{"synched":true}]}'
+    stringify_sync_model = '{"eClass":"GeppettoModel","id":"","name":"","variables":[{"synched":true}],"libraries":[{"synched":true}], "tags": [{"synched": true}]}'
     expected_json_synched = json.loads(stringify_sync_model)
 
     # Second serialization: we activate the sync but we expect the same result.

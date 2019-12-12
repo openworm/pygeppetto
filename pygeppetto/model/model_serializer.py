@@ -34,12 +34,13 @@ class IgnoreSyncMapper(DefaultObjectMapper):
 
     def to_dict_from_obj(self, obj, options, use_uuid, resource):
         if hasattr(obj, 'synched') and obj.synched:
-            obj.synched = False
-            d = super().to_dict_from_obj(obj, options, use_uuid, resource)
+            res = super().to_dict_from_obj(obj, options, use_uuid, resource)
             obj.synched = True
-            return d
         else:
-            return super().to_dict_from_obj(obj, options, use_uuid, resource)
+            res = super().to_dict_from_obj(obj, options, use_uuid, resource)
+        if 'synched' in res:
+            del res['synched']
+        return res
 
 
 def serialize(geppetto_model, onlySerialiseDelta=False):

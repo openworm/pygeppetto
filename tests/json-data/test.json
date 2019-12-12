@@ -33,5 +33,6 @@
         }
       ]
     }
-  ]
+  ],
+  "tags": [{"eClass": "Tag", "name": "atag"}]
 }

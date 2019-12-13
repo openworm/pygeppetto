@@ -103,8 +103,6 @@ The `.ecore` is a copy of the `geppettoModel.ecore` from
 [org.geppetto.model](https://github.com/openworm/org.geppetto.model/blob/development/src/main/resources/geppettoModel.ecore)
 (`development` branch). 
 
-
-
 #### Generate the code with pyecoregen (suggested)
 
 Install pyecoregen
@@ -136,8 +134,14 @@ The `ecore2pyecore.mtl` script can be directly used in Eclipse as a
 1. run `ecore2pyecore.mtl` as an acceleo project. The run configuration will popup: specify the `geppettoModel.ecore` 
 file to use and the generation path. Generate the code in a path different from pygeppetto and merge the code
 
-#### Merge manual modifications
-Manual modifications have been introduced in the version of the static
+#### Patches and Overrides
+The model generated from the ecore file contains some code stubs that are implemented manually on Python.
+The place to make those implementations is not the files themselves though but the `overrides.py` file.
+Writing the overrides there keeps the regeneration process easier as the written code does not actually
+need to be merged.
+
+#### Merge conflicts
+Manual modifications may have been introduced in the version of the static
 Geppetto metamodel (_e.g_: implementation of some methods or technical method
 additions). The generated version must be manually merged with the new generated one
 (_e.g_: using meld or other tool).
@@ -160,6 +164,8 @@ git remote add origin https://github.com/openworm/pygeppetto.git
 git merge --allow-unrelated-histories origin/development
 ```
 5 - Resolve conflicts: use incoming changes for clear overrides and implemented methods
+
+
 
 ### Run the Tests
 

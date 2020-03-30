@@ -82,7 +82,7 @@ class ExecuteQueryVisitor(Switch):
 
                     query_string = query.countQuery if self.count else query.query
 
-                    processed_query_string = template.process_template(dss.get_template(),
+                    processed_query_string = template.process_template(dss.get_create_template(),
                                                                        ID=self.node_id if self.node_id else '',
                                                                        QUERY=query_string,
                                                                        **self.processing_output_map)

@@ -87,7 +87,8 @@ class DataSourceService(metaclass=ServiceCreator):
         :return:
         """
         query = self.model_access.get_query(runnable_query.queryPath)
-        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath, geppetto_model_access=self.model_access, count_only=count_only)
+        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath,
+                                                    geppetto_model_access=self.model_access, count_only=count_only)
         execute_query_visitor.do_switch(query)
         return execute_query_visitor.results
 

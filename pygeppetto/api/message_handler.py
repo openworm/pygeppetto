@@ -57,8 +57,6 @@ class GeppettoMessageHandler:
     '''
     Generic message handler: can be subclassed to implement with websocket or other bidirectional means.
     '''
-    connection_id = 0
-    CLIENT_ID = 'Connection1'
 
     PRIVILEGES = json.dumps({
         "userName": "Python User",
@@ -70,14 +68,15 @@ class GeppettoMessageHandler:
     simulationServerConfig = None
 
     def __init__(self):
-        self.geppettoManager = GeppettoManager()
-        self.geppettoProject = None
+        scope_id = id(self)
+        self.scope_id = scope_id
+        self.geppettoManager = GeppettoManager.get_instance(scope_id)
 
     def sendPrivileges(self):
         self.send_message(None, OutboundMessages.USER_PRIVILEGES, self.PRIVILEGES)
 
     def sendClientId(self):
-        self.send_message(None, OutboundMessages.CLIENT_ID, self.CLIENT_ID)
+        self.send_message(None, OutboundMessages.CLIENT_ID, self.scope_id)
 
     def send_message_data(self, msg_data):
         raise NotImplemented
@@ -100,7 +99,7 @@ class GeppettoMessageHandler:
         msg_data = None
         #  switch on messages type
         #  NOTE: each messages handler knows how to interpret the GeppettoMessage data field
-        msg_type = gmsg['type'].lower()
+        msg_type = self.get_message_type(gmsg)
         try:
             if msg_type == InboundMessages.GEPPETTO_VERSION:
                 msg_data = self.getVersionNumber(requestID)
@@ -128,6 +127,7 @@ class GeppettoMessageHandler:
             elif msg_type == InboundMessages.FETCH:
                 received_object = json.loads(gmsg['data'])
                 msg_data = self.fetch(received_object)
+
 
             # TODO Complete API. From here on, implementation is not complete: just bare porting from Java
             elif msg_type == InboundMessages.USER_PRIVILEGES:
@@ -300,6 +300,10 @@ class GeppettoMessageHandler:
             return_msg_type = lookup_return_msg_type(msg_type)
             self.send_message(requestID, return_msg_type, msg_data)
 
+    @staticmethod
+    def get_message_type(gmsg):
+        return gmsg['type'].lower()
+
     def run_query(self, received_object):
 
         geppetto_project = self.retrieveGeppettoProject(received_object['projectId'])
@@ -334,6 +338,7 @@ class GeppettoMessageHandler:
         msg_data = TransportMessageFactory.getTransportMessage(requestID=requestID, type_=return_msg_type,
                                                                update=msg_data).__dict__
         self.send_message_data(msg_data)
+        logging.debug('Send message: %s', return_msg_type)
 
     def loadProjectFromUrl(self, requestID, urlString):
         data_manager = DataManagerHelper.getDataManager()
@@ -392,11 +397,11 @@ class GeppettoMessageHandler:
         dataManager = DataManagerHelper.getDataManager()
         try:
             geppettoProject = dataManager.getGeppettoProjectById(projectId)
-            if self.geppettoProject == None:
+            if geppettoProject == None:
                 raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT,
                                                     "Project not found")
             else:
-                self.loadGeppettoProject(requestID, self.geppettoProject, experimentId)
+                self.loadGeppettoProject(requestID, geppettoProject, experimentId)
         except Exception as e:
             raise GeppettoHandlerTypedException(OutboundMessages.ERROR_LOADING_PROJECT, str(e), e)
 

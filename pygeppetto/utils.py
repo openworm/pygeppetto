@@ -5,7 +5,6 @@ import requests
 
 from pyecore.ecore import EObject, EClass, EReference
 
-
 class Singleton(type):
     _instances = {}
 

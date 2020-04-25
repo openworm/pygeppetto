@@ -61,21 +61,13 @@ def test_visitor_merge_results(visitor):
     assert all([result.values[1] == f"Result number {index}" \
                                 for index, result in enumerate(visitor.results.results)])
 
-    new_results = [create_query_result(i+2) for i in range(3)]
+    new_results = [create_query_result(i) for i in range(2, 5)]
     query_results = QueryResults(id="new", header=header, results=new_results)
     visitor.merge_results(query_results)
 
     assert len(visitor.results.results) == 5
     assert all([result.values[1] == f"Result number {index}" \
                                 for index, result in enumerate(visitor.results.results)])
-
-    modified_results = [QueryResult(values=(0, "Result number 0 modified"))]
-    query_results = QueryResults(id="modified", header=header, results=modified_results)
-
-    visitor.merge_results(query_results)
-
-    assert len(visitor.results.results) == 5
-    assert visitor.results.results[0].values[2] == 'Result number 0 modified'
 
 
 @responses.activate

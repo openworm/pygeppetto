@@ -81,3 +81,5 @@ RUN_QUERY = "run_query"
 RUN_QUERY_COUNT = "run_query_count"
 
 FETCH = 'fetch'
+
+RECONNECT = 'reconnect'

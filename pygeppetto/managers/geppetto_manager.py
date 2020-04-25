@@ -5,7 +5,7 @@ from enum import Enum, unique
 from pygeppetto.constants import UserPrivileges, ExperimentStatus
 from pygeppetto.managers.runtime_project import RuntimeProject
 
-from pygeppetto.utils import Singleton
+
 
 from .experiment_run_manager import ExperimentRunManager
 
@@ -20,8 +20,6 @@ import logging
 class Scope(Enum):
     RUN = 0
     CONNECTION = 1
-
-
 
 
 def ensure(rights=None, not_scope=None, message="perform the required action"):
@@ -40,12 +38,35 @@ def ensure(rights=None, not_scope=None, message="perform the required action"):
     return inner_user_needs_rights
 
 
-class GeppettoManager(object, metaclass=Singleton):
-    def __init__(self, manager=None):
+class GeppettoManager(object):
+
+    __instances = {}
+
+    @classmethod
+    def has_instance(cls, scope_id):
+        return scope_id in cls.__instances
+
+    @classmethod
+    def replace_instance(cls, old_scope_id, new_scope_id):
+        cls.__instances[new_scope_id] = cls.__instances[old_scope_id]
+        cls.cleanup_instance(old_scope_id)
+
+    @classmethod
+    def cleanup_instance(cls, client_id):
+        if client_id in cls.__instances:
+            del cls.__instances[client_id]
+
+    @classmethod
+    def get_instance(cls, scope_id, scope=Scope.CONNECTION):
+        if scope_id not in cls.__instances:
+            cls.__instances[scope_id] = GeppettoManager(scope=scope)
+        return cls.__instances[scope_id]
+
+    def __init__(self, manager=None, scope=Scope.CONNECTION):
         self.opened_projects = {}
         if manager:
             self.opened_projects.update(manager.opened_projects)
-        self.scope = Scope.CONNECTION
+        self.scope = scope
         self._user = None
 
     def is_project_open(self, project):
@@ -170,3 +191,7 @@ Current user: {}, attempted new user: {}""".format(self._user.name, value.name)
 
     def fetch(self, data_source_id, variable_ids, instance_ids, geppetto_project):
         return self.get_runtime_project(geppetto_project).fetch(data_source_id, variable_ids, instance_ids)
+
+
+
+

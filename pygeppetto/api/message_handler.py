@@ -57,7 +57,9 @@ class GeppettoMessageHandler:
     '''
     Generic message handler: can be subclassed to implement with websocket or other bidirectional means.
     '''
+    CLIENT_ID = 'Connection1'
 
+    managers = {}
     PRIVILEGES = json.dumps({
         "userName": "Python User",
         "loggedIn": True,
@@ -66,6 +68,22 @@ class GeppettoMessageHandler:
     })
 
     simulationServerConfig = None
+
+    pre_send_message_listeners = {}
+    received_message_listeners = {}
+
+    @classmethod
+    def add_pre_send_message_listener(cls, msg_type, callback):
+        if msg_type not in cls.pre_send_message_listeners:
+            cls.pre_send_message_listeners[msg_type] = []
+        cls.pre_send_message_listeners[msg_type].append(callback)
+
+
+    @classmethod
+    def add_message_received_listener(cls, msg_type, callback):
+        if msg_type not in cls.received_message_listeners:
+            cls.received_message_listeners[msg_type] = []
+        cls.received_message_listeners[msg_type].append(callback)
 
     def __init__(self):
         scope_id = id(self)
@@ -100,6 +118,12 @@ class GeppettoMessageHandler:
         #  switch on messages type
         #  NOTE: each messages handler knows how to interpret the GeppettoMessage data field
         msg_type = self.get_message_type(gmsg)
+
+        #Apply listeners
+        if msg_type in self.received_message_listeners:
+            for listener in self.received_message_listeners[msg_type]:
+                listener(payload)
+
         try:
             if msg_type == InboundMessages.GEPPETTO_VERSION:
                 msg_data = self.getVersionNumber(requestID)
@@ -335,10 +359,14 @@ class GeppettoMessageHandler:
             self.error(e, "Error fetching" + str(received_object))
 
     def send_message(self, requestID, return_msg_type, msg_data):
+        #Apply listeners
+        if msg_type in self.received_message_listeners:
+            for listener in self.received_message_listeners[msg_type]:
+                listener(payload)
         msg_data = TransportMessageFactory.getTransportMessage(requestID=requestID, type_=return_msg_type,
                                                                update=msg_data).__dict__
         self.send_message_data(msg_data)
-        logging.debug('Send message: %s', return_msg_type)
+        logging.info('Send message: %s', return_msg_type)
 
     def loadProjectFromUrl(self, requestID, urlString):
         data_manager = DataManagerHelper.getDataManager()

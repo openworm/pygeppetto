@@ -33,37 +33,39 @@ def data_source_service():
 def test_datasource_service_get_results(data_source_service):
     header = ["ID", "content"]
 
-    results = {}
-    assert len(data_source_service.get_results(results).results) == 0
+    query_result_dict = {}
+    assert len(data_source_service.get_results(query_result_dict).results) == 0
 
     # OR [0, 1]  == [0, 1]
     query_results = [ create_query_result(i) for i in range(2) ]
     query_results = QueryResults(id="1", header=header, results=query_results)
-    results[query_results] = BooleanOperator.OR
+    query_result_dict[query_results] = BooleanOperator.OR
 
-    assert len(data_source_service.get_results(results).results) == 2
+    get_results = data_source_service.get_results(query_result_dict)
+    assert len(get_results.results) == 2
 
     # OR [1, 2, 3] == [0, 1, 2, 3]
-    query_results = [ create_query_result(i+1) for i in range(3) ]
+    query_results = [create_query_result(i) for i in range(1, 4) ]
     query_results = QueryResults(id="2", header=header, results=query_results)
-    results[query_results] = BooleanOperator.OR
+    query_result_dict[query_results] = BooleanOperator.OR
 
-    assert len(data_source_service.get_results(results).results) == 4
+    merged_results = data_source_service.get_results(query_result_dict).results
+    assert len(merged_results) == 4
 
     # AND [0, 1]  ==  [0, 1]
     query_results = [ create_query_result(i) for i in range(2) ]
     query_results = QueryResults(id="3", header=header, results=query_results)
-    results[query_results] = BooleanOperator.AND
+    query_result_dict[query_results] = BooleanOperator.AND
 
-    assert len(data_source_service.get_results(results).results) == 2
+    assert len(data_source_service.get_results(query_result_dict).results) == 2
 
     # NAND [0] == [1]
     query_results = [ create_query_result(0) ]
     query_results = QueryResults(id="4", header=header, results=query_results)
-    results[query_results] = BooleanOperator.NAND
+    query_result_dict[query_results] = BooleanOperator.NAND
 
-    assert len(data_source_service.get_results(results).results) == 1
-    assert data_source_service.get_results(results).results[0].values[1] == "Result number 1"
+    assert len(data_source_service.get_results(query_result_dict).results) == 1
+    assert data_source_service.get_results(query_result_dict).results[0].values[1] == "Result number 1"
 
 def test_neo4j_datasource_service():
     neo4j_response = json.dumps(mock_neo4j_response())

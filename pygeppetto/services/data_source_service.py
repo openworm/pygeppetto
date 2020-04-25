@@ -1,8 +1,12 @@
+from collections import OrderedDict
+
+from ordered_set import OrderedSet
 from pygeppetto.model import Variable, SimpleInstance
-from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator
+from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator, \
+    QueryResult
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
-from pygeppetto.model.utils.datasource import query_check, set_custom_query_result_hash, unset_custom_query_result_hash
+from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 
 ID = "ID"
@@ -98,35 +102,36 @@ class DataSourceService(metaclass=ServiceCreator):
         """
         if not results:
             return QueryResults()
-        final_results = QueryResults(header=next(iter(results.keys())).header)
+
         first = True
+        first_result = next(iter(results.keys()))
+        id_index = first_result.header.index(ID)
+        # set_custom_query_result_hash(id_index)
 
-        id_index = final_results.header.index(ID)
-        set_custom_query_result_hash(id_index)
-
+        result_set = OrderedDict()
         for result, operator in results.items():
-            if final_results.header != result.header:  # TODO test it: may not be supported
+            if first_result.header != result.header:  # TODO test it: may not be supported
                 raise GeppettoDataSourceException(
                     "Multiple queries were executed but they returned incompatible headers"
                 )
 
+            # Beware: creating new QueryResult objects due to https://github.com/pyecore/pyecore/issues/86
             if first or operator == BooleanOperator.OR:
-                method = final_results.results.update
+                result_set.update({r.values[id_index]:QueryResult(values=r.values) for r in result.results})
 
             elif operator == BooleanOperator.AND:
-                method = final_results.results.intersection_update
+                result_set = {r.values[id_index]: QueryResult(values=r.values) for r in result.results if r.values[id_index] in result_set}
 
             elif operator == BooleanOperator.NAND:
-                method = final_results.results.difference_update
+                new_set = {r.values[id_index]: QueryResult(values=r.values) for r in result.results}
+                result_set = {k:result_set[k] for k in result_set if k not in new_set}
             else:
                 raise GeppettoDataSourceException(f"Missing operator for query result {result}")
 
-            method(r for r in result.results)
-
             first = False
 
-        unset_custom_query_result_hash()
 
+        final_results = QueryResults(header=first_result.header, results=result_set.values())
         return final_results
 
     def get_connection_type(self):

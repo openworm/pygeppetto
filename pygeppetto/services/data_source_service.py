@@ -91,44 +91,44 @@ class DataSourceService(metaclass=ServiceCreator):
         :return:
         """
         query = self.model_access.get_query(runnable_query.queryPath)
-        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath, geppetto_model_access=self.model_access, count_only=count_only)
+        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath,
+                                                    geppetto_model_access=self.model_access, count_only=count_only)
         execute_query_visitor.do_switch(query)
         return execute_query_visitor.results
 
-    def get_results(self, results: dict) -> QueryResults:
+    def get_results(self, results_dict: dict) -> QueryResults:
         """
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
-        if not results:
+        if not results_dict:
             return QueryResults()
 
         first = True
-        first_result = next(iter(results.keys()))
+        first_result = next(iter(results_dict.keys()))
         id_index = first_result.header.index(ID)
         # set_custom_query_result_hash(id_index)
 
         result_set = OrderedDict()
-        for result, operator in results.items():
+        for result, operator in results_dict.items():
             if first_result.header != result.header:  # TODO test it: may not be supported
                 raise GeppettoDataSourceException(
                     "Multiple queries were executed but they returned incompatible headers"
                 )
 
-            # Beware: creating new QueryResult objects due to https://github.com/pyecore/pyecore/issues/86
             if first or operator == BooleanOperator.OR:
-                result_set.update({r.values[id_index]:QueryResult(values=r.values) for r in result.results})
+                result_set.update({r.values[id_index]: r for r in result.results})
 
             elif operator == BooleanOperator.AND:
-                result_set = {r.values[id_index]: QueryResult(values=r.values) for r in result.results if r.values[id_index] in result_set}
+                result_set = {r.values[id_index]: r for r in result.results if
+                              r.values[id_index] in result_set}
 
             elif operator == BooleanOperator.NAND:
-                new_set = {r.values[id_index]: QueryResult(values=r.values) for r in result.results}
-                result_set = {k:result_set[k] for k in result_set if k not in new_set}
+                new_set = {r.values[id_index]: r for r in result.results}
+                result_set = {k: result_set[k] for k in result_set if k not in new_set}
             else:
                 raise GeppettoDataSourceException(f"Missing operator for query result {result}")
 
             first = False
-
 
         final_results = QueryResults(header=first_result.header, results=result_set.values())
         return final_results

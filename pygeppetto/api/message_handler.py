@@ -360,9 +360,9 @@ class GeppettoMessageHandler:
 
     def send_message(self, requestID, return_msg_type, msg_data):
         #Apply listeners
-        if msg_type in self.received_message_listeners:
-            for listener in self.received_message_listeners[msg_type]:
-                listener(payload)
+        if return_msg_type in self.received_message_listeners:
+            for listener in self.received_message_listeners[return_msg_type]:
+                listener(msg_data)
         msg_data = TransportMessageFactory.getTransportMessage(requestID=requestID, type_=return_msg_type,
                                                                update=msg_data).__dict__
         self.send_message_data(msg_data)

@@ -145,3 +145,18 @@ def test__geppettomanager_load_experiment(manager, mock__model):
     state = manager.load_experiment(experiment)
 
     assert state is not None
+
+def test_geppettomanager_scopes():
+
+    assert GeppettoManager.get_instance(1) is GeppettoManager.get_instance(1), 'Expected same instance for same scope'
+
+    m3 = GeppettoManager.get_instance(3)
+    assert GeppettoManager.get_instance(1) is not m3, 'Expected different instances for different scopes'
+    m1 = GeppettoManager.get_instance(1)
+    GeppettoManager.cleanup_instance(1)
+    m1_new = GeppettoManager.get_instance(1)
+    assert m1 is not m1_new, 'After cleanup, a new instance should be provided for the scope'
+    GeppettoManager.replace_instance(old_scope_id=1, new_scope_id=3)
+    assert GeppettoManager.get_instance(3) is m1_new, 'After replace, the scoped instances should me merged into one'
+    assert GeppettoManager.get_instance(1) is not m1_new, 'After replace, the old scope should be deleted, then replaced'
+

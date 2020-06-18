@@ -108,20 +108,12 @@ class ExecuteQueryVisitor(Switch):
                 raise GeppettoDataSourceException("Cannot merge without an ID in the results")
 
             id_pos = self.results.header.index(ID)
-            proc_id_pos = processed_results.header.index(ID)
 
-            current_record_ids = [record.values[id_pos] for record in self.results.results]
+            current_records = {record.values[id_pos]: record for record in self.results.results}
             self.results.header.update(processed_results.header)
-            for record in processed_results.results:
-                if not record.values[proc_id_pos] in current_record_ids:
-                    self.results.results.add(record)
-                else:
-                    index = current_record_ids.index(record.values[proc_id_pos])
-
-                    values = set(record.values)
-                    values.update(self.results.results[index].values)
-                    self.results.results[index].values.clear()
-                    self.results.results[index].values.extend(values)
+            current_records.update({record.values[id_pos]: record for record in processed_results.results
+                                    if record.values[id_pos] not in current_records})
+            self.results = QueryResults(header=self.results.header, results=current_records.values())
         else:
             self.results = processed_results
 

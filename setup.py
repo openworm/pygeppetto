@@ -2,10 +2,10 @@
 
 from setuptools import setup, find_packages
 
-__version__ = "0.7.0"
+__version__ = "0.8.0"
 
 required_packages = [
-    'pyecore==0.11.0',
+    'pyecore>=0.11.5',
     'multimethod',
     'deprecated',
     'airspeed',
@@ -31,7 +31,6 @@ setup(
     classifiers=[
         "Programming Language :: Python",
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         "Operating System :: OS Independent",
         "Intended Audience :: Developers",

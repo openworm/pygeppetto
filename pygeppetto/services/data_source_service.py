@@ -1,8 +1,12 @@
+from collections import OrderedDict
+
+from ordered_set import OrderedSet
 from pygeppetto.model import Variable, SimpleInstance
-from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator
+from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator, \
+    QueryResult
 from pygeppetto.model.exceptions import GeppettoInitializationException
 from pygeppetto.model.model_access import GeppettoModelAccess
-from pygeppetto.model.utils.datasource import query_check, set_custom_query_result_hash, unset_custom_query_result_hash
+from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
 
 ID = "ID"
@@ -87,45 +91,46 @@ class DataSourceService(metaclass=ServiceCreator):
         :return:
         """
         query = self.model_access.get_query(runnable_query.queryPath)
-        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath, geppetto_model_access=self.model_access, count_only=count_only)
+        execute_query_visitor = ExecuteQueryVisitor(node_path=runnable_query.targetVariablePath,
+                                                    geppetto_model_access=self.model_access, count_only=count_only)
         execute_query_visitor.do_switch(query)
         return execute_query_visitor.results
 
-    def get_results(self, results: dict) -> QueryResults:
+    def get_results(self, results_dict: dict) -> QueryResults:
         """
             Ported from https://github.com/openworm/org.geppetto.datasources/blob/master/src/main/java/org/geppetto/datasources/ExecuteMultipleQueriesVisitor.java#getResults
         """
-        if not results:
+        if not results_dict:
             return QueryResults()
-        final_results = QueryResults(header=next(iter(results.keys())).header)
+
         first = True
+        first_result = next(iter(results_dict.keys()))
+        id_index = first_result.header.index(ID)
+        # set_custom_query_result_hash(id_index)
 
-        id_index = final_results.header.index(ID)
-        set_custom_query_result_hash(id_index)
-
-        for result, operator in results.items():
-            if final_results.header != result.header:  # TODO test it: may not be supported
+        result_set = OrderedDict()
+        for result, operator in results_dict.items():
+            if first_result.header != result.header:  # TODO test it: may not be supported
                 raise GeppettoDataSourceException(
                     "Multiple queries were executed but they returned incompatible headers"
                 )
 
             if first or operator == BooleanOperator.OR:
-                method = final_results.results.update
+                result_set.update({r.values[id_index]: r for r in result.results})
 
             elif operator == BooleanOperator.AND:
-                method = final_results.results.intersection_update
+                result_set = {r.values[id_index]: r for r in result.results if
+                              r.values[id_index] in result_set}
 
             elif operator == BooleanOperator.NAND:
-                method = final_results.results.difference_update
+                new_set = {r.values[id_index]: r for r in result.results}
+                result_set = {k: result_set[k] for k in result_set if k not in new_set}
             else:
                 raise GeppettoDataSourceException(f"Missing operator for query result {result}")
 
-            method(r for r in result.results)
-
             first = False
 
-        unset_custom_query_result_hash()
-
+        final_results = QueryResults(header=first_result.header, results=result_set.values())
         return final_results
 
     def get_connection_type(self):

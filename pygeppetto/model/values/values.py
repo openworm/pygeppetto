@@ -2,7 +2,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import Node, ISynchable
+from pygeppetto.model import Node, ISynchable
+from pyecore.type import Int, String, Double, IntObject
 
 
 name = 'values'
@@ -21,7 +22,7 @@ ImageFormat = EEnum('ImageFormat', literals=[
 
 class StringToValueMap(EObject, metaclass=MetaEClass):
 
-    key = EAttribute(eType=EString, derived=False, changeable=True)
+    key = EAttribute(eType=String, derived=False, changeable=True)
     value = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, key=None, value=None, **kwargs):
@@ -39,7 +40,7 @@ class StringToValueMap(EObject, metaclass=MetaEClass):
 
 class PointerElement(EObject, metaclass=MetaEClass):
 
-    index = EAttribute(eType=EInt, derived=False, changeable=True, default_value=-1)
+    index = EAttribute(eType=IntObject, derived=False, changeable=True, default_value=-1)
     variable = EReference(ordered=True, unique=True, containment=False)
     type = EReference(ordered=True, unique=True, containment=False)
 
@@ -61,12 +62,12 @@ class PointerElement(EObject, metaclass=MetaEClass):
 
 class FunctionPlot(EObject, metaclass=MetaEClass):
 
-    title = EAttribute(eType=EString, derived=False, changeable=True)
-    xAxisLabel = EAttribute(eType=EString, derived=False, changeable=True)
-    yAxisLabel = EAttribute(eType=EString, derived=False, changeable=True)
-    initialValue = EAttribute(eType=EDouble, derived=False, changeable=True)
-    finalValue = EAttribute(eType=EDouble, derived=False, changeable=True)
-    stepValue = EAttribute(eType=EDouble, derived=False, changeable=True)
+    title = EAttribute(eType=String, derived=False, changeable=True)
+    xAxisLabel = EAttribute(eType=String, derived=False, changeable=True)
+    yAxisLabel = EAttribute(eType=String, derived=False, changeable=True)
+    initialValue = EAttribute(eType=Double, derived=False, changeable=True)
+    finalValue = EAttribute(eType=Double, derived=False, changeable=True)
+    stepValue = EAttribute(eType=Double, derived=False, changeable=True)
 
     def __init__(self, title=None, xAxisLabel=None, yAxisLabel=None, initialValue=None, finalValue=None, stepValue=None, **kwargs):
         if kwargs:
@@ -95,7 +96,7 @@ class FunctionPlot(EObject, metaclass=MetaEClass):
 
 class SkeletonTransformation(EObject, metaclass=MetaEClass):
 
-    skeletonTransformation = EAttribute(eType=EDouble, derived=False, changeable=True, upper=-1)
+    skeletonTransformation = EAttribute(eType=Double, derived=False, changeable=True, upper=-1)
 
     def __init__(self, skeletonTransformation=None, **kwargs):
         if kwargs:
@@ -129,8 +130,8 @@ class Composite(Value):
 
 class Quantity(Value):
 
-    scalingFactor = EAttribute(eType=EInt, derived=False, changeable=True)
-    value = EAttribute(eType=EDouble, derived=False, changeable=True)
+    scalingFactor = EAttribute(eType=Int, derived=False, changeable=True)
+    value = EAttribute(eType=Double, derived=False, changeable=True)
 
     def __init__(self, scalingFactor=None, value=None, **kwargs):
 
@@ -145,7 +146,7 @@ class Quantity(Value):
 
 class Unit(Value):
 
-    unit = EAttribute(eType=EString, derived=False, changeable=True)
+    unit = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, unit=None, **kwargs):
 
@@ -157,8 +158,8 @@ class Unit(Value):
 
 class TimeSeries(Value):
 
-    scalingFactor = EAttribute(eType=EInt, derived=False, changeable=True)
-    value = EAttribute(eType=EDouble, unique=False, derived=False, changeable=True, upper=-1)
+    scalingFactor = EAttribute(eType=Int, derived=False, changeable=True)
+    value = EAttribute(eType=Double, derived=False, changeable=True, upper=-1)
     unit = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, unit=None, scalingFactor=None, value=None, **kwargs):
@@ -197,7 +198,7 @@ class MetadataValue(Value):
 
 class Pointer(Value):
 
-    path = EAttribute(eType=EString, derived=False, changeable=True)
+    path = EAttribute(eType=String, derived=False, changeable=True)
     elements = EReference(ordered=True, unique=True, containment=True, upper=-1)
     point = EReference(ordered=True, unique=True, containment=True)
 
@@ -221,9 +222,9 @@ class Pointer(Value):
 
 class Point(Value):
 
-    x = EAttribute(eType=EDouble, derived=False, changeable=True)
-    y = EAttribute(eType=EDouble, derived=False, changeable=True)
-    z = EAttribute(eType=EDouble, derived=False, changeable=True)
+    x = EAttribute(eType=Double, derived=False, changeable=True)
+    y = EAttribute(eType=Double, derived=False, changeable=True)
+    z = EAttribute(eType=Double, derived=False, changeable=True)
 
     def __init__(self, x=None, y=None, z=None, **kwargs):
 
@@ -277,7 +278,7 @@ class Function(Value):
 
 class Argument(Value):
 
-    argument = EAttribute(eType=EString, derived=False, changeable=True)
+    argument = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, argument=None, **kwargs):
 
@@ -289,7 +290,7 @@ class Argument(Value):
 
 class Expression(Value):
 
-    expression = EAttribute(eType=EString, derived=False, changeable=True)
+    expression = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, expression=None, **kwargs):
 
@@ -330,7 +331,7 @@ class Particles(Value):
 
 class VisualGroupElement(Node):
 
-    defaultColor = EAttribute(eType=EString, derived=False, changeable=True)
+    defaultColor = EAttribute(eType=String, derived=False, changeable=True)
     parameter = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, defaultColor=None, parameter=None, **kwargs):
@@ -346,9 +347,9 @@ class VisualGroupElement(Node):
 
 class VisualGroup(Node):
 
-    lowSpectrumColor = EAttribute(eType=EString, derived=False, changeable=True)
-    highSpectrumColor = EAttribute(eType=EString, derived=False, changeable=True)
-    type = EAttribute(eType=EString, derived=False, changeable=True)
+    lowSpectrumColor = EAttribute(eType=String, derived=False, changeable=True)
+    highSpectrumColor = EAttribute(eType=String, derived=False, changeable=True)
+    type = EAttribute(eType=String, derived=False, changeable=True)
     visualGroupElements = EReference(ordered=True, unique=True, containment=True, upper=-1)
 
     def __init__(self, lowSpectrumColor=None, highSpectrumColor=None, type=None, visualGroupElements=None, **kwargs):
@@ -390,7 +391,7 @@ class Connection(Value):
 
 class ArrayElement(Value):
 
-    index = EAttribute(eType=EInt, derived=False, changeable=True)
+    index = EAttribute(eType=Int, derived=False, changeable=True)
     position = EReference(ordered=True, unique=True, containment=True)
     initialValue = EReference(ordered=True, unique=True, containment=True)
 
@@ -422,9 +423,9 @@ class ArrayValue(Value):
 
 class Image(Value):
 
-    data = EAttribute(eType=EString, derived=False, changeable=True)
-    name = EAttribute(eType=EString, derived=False, changeable=True)
-    reference = EAttribute(eType=EString, derived=False, changeable=True)
+    data = EAttribute(eType=String, derived=False, changeable=True)
+    name = EAttribute(eType=String, derived=False, changeable=True)
+    reference = EAttribute(eType=String, derived=False, changeable=True)
     format = EAttribute(eType=ImageFormat, derived=False, changeable=True)
 
     def __init__(self, data=None, name=None, reference=None, format=None, **kwargs):
@@ -446,7 +447,7 @@ class Image(Value):
 
 class ImportValue(Value):
 
-    modelInterpreterId = EAttribute(eType=EString, derived=False, changeable=True)
+    modelInterpreterId = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, modelInterpreterId=None, **kwargs):
 
@@ -478,7 +479,7 @@ class PhysicalQuantity(Quantity):
 
 class Text(MetadataValue):
 
-    text = EAttribute(eType=EString, derived=False, changeable=True)
+    text = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, text=None, **kwargs):
 
@@ -490,7 +491,7 @@ class Text(MetadataValue):
 
 class URL(MetadataValue):
 
-    url = EAttribute(eType=EString, derived=False, changeable=True)
+    url = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, url=None, **kwargs):
 
@@ -502,7 +503,7 @@ class URL(MetadataValue):
 
 class HTML(MetadataValue):
 
-    html = EAttribute(eType=EString, derived=False, changeable=True)
+    html = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, html=None, **kwargs):
 
@@ -514,7 +515,7 @@ class HTML(MetadataValue):
 
 class Collada(VisualValue):
 
-    collada = EAttribute(eType=EString, derived=False, changeable=True)
+    collada = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, collada=None, **kwargs):
 
@@ -526,7 +527,7 @@ class Collada(VisualValue):
 
 class OBJ(VisualValue):
 
-    obj = EAttribute(eType=EString, derived=False, changeable=True)
+    obj = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, obj=None, **kwargs):
 
@@ -538,7 +539,7 @@ class OBJ(VisualValue):
 
 class Sphere(VisualValue):
 
-    radius = EAttribute(eType=EDouble, derived=False, changeable=True)
+    radius = EAttribute(eType=Double, derived=False, changeable=True)
 
     def __init__(self, radius=None, **kwargs):
 
@@ -550,9 +551,9 @@ class Sphere(VisualValue):
 
 class Cylinder(VisualValue):
 
-    bottomRadius = EAttribute(eType=EDouble, derived=False, changeable=True)
-    topRadius = EAttribute(eType=EDouble, derived=False, changeable=True)
-    height = EAttribute(eType=EDouble, derived=False, changeable=True)
+    bottomRadius = EAttribute(eType=Double, derived=False, changeable=True)
+    topRadius = EAttribute(eType=Double, derived=False, changeable=True)
+    height = EAttribute(eType=Double, derived=False, changeable=True)
     distal = EReference(ordered=True, unique=True, containment=True)
 
     def __init__(self, bottomRadius=None, topRadius=None, height=None, distal=None, **kwargs):
@@ -599,7 +600,7 @@ class Metadata(MetadataValue):
 
 class JSON(MetadataValue):
 
-    json = EAttribute(eType=EString, derived=False, changeable=True)
+    json = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, json=None, **kwargs):
 
@@ -623,7 +624,7 @@ class GenericArray(AArrayValue):
 
 class StringArray(AArrayValue):
 
-    elements = EAttribute(eType=EString, unique=False, derived=False, changeable=True, upper=-1)
+    elements = EAttribute(eType=String, derived=False, changeable=True, upper=-1)
 
     def __init__(self, elements=None, **kwargs):
 
@@ -635,7 +636,7 @@ class StringArray(AArrayValue):
 
 class IntArray(AArrayValue):
 
-    elements = EAttribute(eType=EInt, unique=False, derived=False, changeable=True, upper=-1)
+    elements = EAttribute(eType=Int, derived=False, changeable=True, upper=-1)
 
     def __init__(self, elements=None, **kwargs):
 
@@ -647,7 +648,7 @@ class IntArray(AArrayValue):
 
 class DoubleArray(AArrayValue):
 
-    elements = EAttribute(eType=EDouble, unique=False, derived=False, changeable=True, upper=-1)
+    elements = EAttribute(eType=Double, derived=False, changeable=True, upper=-1)
 
     def __init__(self, elements=None, **kwargs):
 

@@ -45,6 +45,7 @@ class Neo4jDataSourceService(DataSourceService):
             try:
                 chunk = json.loads(chunk)
             except:
+                logging.error(chunk)
                 raise Exception(NEO4J_ERROR_PARSING_RESPONSE)
 
             if NEO4J_ERRORS_KEY in chunk and not chunk[NEO4J_ERRORS_KEY]:

@@ -2,8 +2,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import Node, ISynchable
-from ..values import Connectivity
+from pygeppetto.model import Node, ISynchable
+from pygeppetto.model.values import Connectivity
 
 
 name = 'instances'

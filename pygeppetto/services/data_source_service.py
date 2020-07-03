@@ -4,7 +4,7 @@ from ordered_set import OrderedSet
 from pygeppetto.model import Variable, SimpleInstance
 from pygeppetto.model.datasources import DataSource, QueryResults, ProcessQuery, RunnableQuery, BooleanOperator, \
     QueryResult
-from pygeppetto.model.exceptions import GeppettoInitializationException
+from pygeppetto.model.exceptions import GeppettoInitializationException, GeppettoDataSourceAuthException
 from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.visitors.data_source_visitors import ExecuteQueryVisitor
@@ -147,3 +147,13 @@ class DataSourceService(metaclass=ServiceCreator):
         :return:
         """
         raise NotImplemented
+
+    def get_credentials(self):
+        if self.configuration.auth is None or self.configuration.auth == '':
+            return None
+
+        auth = tuple(self.configuration.auth.split(":"))
+        if len(auth) != 2:
+            raise GeppettoDataSourceAuthException("Wrong credentials format")
+
+        return auth

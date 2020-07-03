@@ -6,7 +6,7 @@ from pygeppetto.model.model_access import GeppettoModelAccess
 from pygeppetto.model.utils import model_traversal
 from pygeppetto.visitors import Switch
 from pygeppetto.model.exceptions import GeppettoDataSourceException, GeppettoVisitingException, \
-    GeppettoInitializationException
+    GeppettoInitializationException, GeppettoDataSourceAuthException
 from pygeppetto.model.datasources.datasources import QueryResults, QueryResult, DataSource
 from pygeppetto.model.utils.datasource import query_check
 from pygeppetto.model.utils import template
@@ -88,8 +88,9 @@ class ExecuteQueryVisitor(Switch):
                                                                        **self.processing_output_map)
 
                     method = dss.get_connection_type()
+                    auth = dss.get_credentials()
 
-                    response = stream_requests(url=ds.url, params=json.loads(processed_query_string), method=method)
+                    response = stream_requests(url=ds.url, params=json.loads(processed_query_string), auth=auth, method=method)
 
                     self.results = dss.process_response(response=response)
 
@@ -97,6 +98,8 @@ class ExecuteQueryVisitor(Switch):
                 raise GeppettoVisitingException(f"Data source exception while running query {query.id}") from e
             except GeppettoInitializationException as e:
                 raise GeppettoVisitingException(f"Initialization exception while running query {query.id}") from e
+            except GeppettoDataSourceAuthException as e:
+                raise GeppettoVisitingException(f"Credential's format error while running query {query.id}") from e
             except Exception as e:
                 raise GeppettoVisitingException(f"Unexpected error while running query {query.id}") from e
 

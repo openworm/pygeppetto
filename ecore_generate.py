@@ -27,7 +27,7 @@ EcoreGenerator(auto_register_package=True).generate(mm_root, outfolder=model_pat
 
 def replaces(line):
 
-    if 'from type import' in line:
+    if 'from pygeppetto.type import' in line:
         line = ''
     elif '=Boolean,' in line:
         line = line.replace('Boolean', 'EBoolean')

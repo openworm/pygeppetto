@@ -496,6 +496,7 @@
           eType="#//GeppettoLibrary"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="fetchVariableQuery" eType="#//datasources/Query"
           containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="auth" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//String"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="DataSourceLibraryConfiguration">
       <eStructuralFeatures xsi:type="ecore:EReference" name="library" lowerBound="1"

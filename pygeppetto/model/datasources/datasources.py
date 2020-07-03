@@ -2,7 +2,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import Node, ISynchable
+from pygeppetto.model import Node, ISynchable
+from pyecore.type import String, Boolean
 
 
 name = 'datasources'
@@ -18,8 +19,8 @@ BooleanOperator = EEnum('BooleanOperator', literals=['AND', 'NAND', 'OR'])
 
 class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
 
-    modelInterpreterId = EAttribute(eType=EString, derived=False, changeable=True)
-    format = EAttribute(eType=EString, unique=True, derived=False, changeable=True)
+    modelInterpreterId = EAttribute(eType=String, derived=False, changeable=True)
+    format = EAttribute(eType=String, derived=False, changeable=True)
     library = EReference(ordered=True, unique=True, containment=False)
 
     def __init__(self, library=None, modelInterpreterId=None, format=None, **kwargs):
@@ -40,8 +41,8 @@ class DataSourceLibraryConfiguration(EObject, metaclass=MetaEClass):
 
 class QueryResults(EObject, metaclass=MetaEClass):
 
-    id = EAttribute(eType=EString, unique=True, derived=False, changeable=True)
-    header = EAttribute(eType=EString, unique=True, derived=False, changeable=True, upper=-1)
+    id = EAttribute(eType=String, derived=False, changeable=True)
+    header = EAttribute(eType=String, derived=False, changeable=True, upper=-1)
     results = EReference(ordered=True, unique=True, containment=True, upper=-1)
 
     def __init__(self, id=None, header=None, results=None, **kwargs):
@@ -66,8 +67,8 @@ class QueryResults(EObject, metaclass=MetaEClass):
 
 class RunnableQuery(EObject, metaclass=MetaEClass):
 
-    targetVariablePath = EAttribute(eType=EString, derived=False, changeable=True)
-    queryPath = EAttribute(eType=EString, derived=False, changeable=True)
+    targetVariablePath = EAttribute(eType=String, derived=False, changeable=True)
+    queryPath = EAttribute(eType=String, derived=False, changeable=True)
     booleanOperator = EAttribute(eType=BooleanOperator, derived=False,
                                  changeable=True, default_value=BooleanOperator.AND)
 
@@ -113,7 +114,7 @@ class QueryMatchingCriteria(EObject, metaclass=MetaEClass):
 
 class QueryResult(AQueryResult):
 
-    values = EAttribute(eType=EJavaObject, unique=False, derived=False, changeable=True, upper=-1)
+    values = EAttribute(eType=EJavaObject, derived=False, changeable=True, upper=-1)
 
     def __init__(self, values=None, **kwargs):
 
@@ -125,7 +126,7 @@ class QueryResult(AQueryResult):
 
 class SerializableQueryResult(AQueryResult):
 
-    values = EAttribute(eType=EString, unique=False, derived=False, changeable=True, upper=-1)
+    values = EAttribute(eType=String, derived=False, changeable=True, upper=-1)
 
     def __init__(self, values=None, **kwargs):
 
@@ -137,15 +138,16 @@ class SerializableQueryResult(AQueryResult):
 
 class DataSource(Node):
 
-    dataSourceService = EAttribute(eType=EString, derived=False, changeable=True)
-    url = EAttribute(eType=EString, derived=False, changeable=True)
+    dataSourceService = EAttribute(eType=String, derived=False, changeable=True)
+    url = EAttribute(eType=String, derived=False, changeable=True)
+    auth = EAttribute(eType=String, derived=False, changeable=True)
     libraryConfigurations = EReference(ordered=True, unique=True, containment=True, upper=-1)
     queries = EReference(ordered=True, unique=True, containment=True, upper=-1)
     dependenciesLibrary = EReference(ordered=True, unique=True, containment=False, upper=-1)
     targetLibrary = EReference(ordered=True, unique=True, containment=False)
     fetchVariableQuery = EReference(ordered=True, unique=True, containment=True)
 
-    def __init__(self, dataSourceService=None, libraryConfigurations=None, url=None, queries=None, dependenciesLibrary=None, targetLibrary=None, fetchVariableQuery=None, **kwargs):
+    def __init__(self, dataSourceService=None, libraryConfigurations=None, url=None, queries=None, dependenciesLibrary=None, targetLibrary=None, fetchVariableQuery=None, auth=None, **kwargs):
 
         super().__init__(**kwargs)
 
@@ -154,6 +156,9 @@ class DataSource(Node):
 
         if url is not None:
             self.url = url
+
+        if auth is not None:
+            self.auth = auth
 
         if libraryConfigurations:
             self.libraryConfigurations.extend(libraryConfigurations)
@@ -174,8 +179,8 @@ class DataSource(Node):
 @abstract
 class Query(Node):
 
-    description = EAttribute(eType=EString, derived=False, changeable=True)
-    runForCount = EAttribute(eType=EBoolean, derived=False, changeable=True, default_value=True)
+    description = EAttribute(eType=String, derived=False, changeable=True)
+    runForCount = EAttribute(eType=Boolean, derived=False, changeable=True, default_value=True)
     matchingCriteria = EReference(ordered=True, unique=True, containment=True, upper=-1)
     returnType = EReference(ordered=True, unique=True, containment=False)
 
@@ -198,7 +203,7 @@ class Query(Node):
 
 class ProcessQuery(Query):
 
-    queryProcessorId = EAttribute(eType=EString, derived=False, changeable=True)
+    queryProcessorId = EAttribute(eType=String, derived=False, changeable=True)
     parameters = EReference(ordered=True, unique=True, containment=True, upper=-1)
 
     def __init__(self, parameters=None, queryProcessorId=None, **kwargs):
@@ -214,8 +219,8 @@ class ProcessQuery(Query):
 
 class SimpleQuery(Query):
 
-    query = EAttribute(eType=EString, derived=False, changeable=True)
-    countQuery = EAttribute(eType=EString, derived=False, changeable=True)
+    query = EAttribute(eType=String, derived=False, changeable=True)
+    countQuery = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, query=None, countQuery=None, **kwargs):
 

@@ -3,9 +3,9 @@ from .types import getEClassifier, eClassifiers
 from .types import name, nsURI, nsPrefix, eClass
 from .types import Type, VisualType, ImportType, CompositeType, PointerType, QuantityType, ParameterType, StateVariableType, DynamicsType, ArgumentType, ExpressionType, HTMLType, JSONType, TextType, URLType, PointType, ArrayType, CompositeVisualType, ConnectionType, SimpleType, ImageType, SimpleArrayType, MetadataType
 
-from ..values import VisualValue, Argument, ArrayValue, Image, Point, VisualGroup, Text, Quantity, JSON, Dynamics, URL, Composite, Pointer, HTML, AArrayValue, Expression
-from ..model import Tag, DomainModel
-from ..variables import Variable
+from pygeppetto.model import DomainModel, Tag
+from pygeppetto.model.variables import Variable
+from pygeppetto.model.values import ArrayValue, Pointer, Quantity, Argument, Text, VisualValue, JSON, VisualGroup, Point, Expression, AArrayValue, Composite, Image, URL, HTML, Dynamics
 
 from . import types
 from .. import model

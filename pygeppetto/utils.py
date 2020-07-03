@@ -92,7 +92,7 @@ def import_submodules(package, recursive=True):
     return results
 
 
-def stream_requests(url, params, method="GET", chunk_size=8192):
+def stream_requests(url, params, method="GET", chunk_size=8192, auth=None):
     processed_output = []
     kwargs = {"url": url, "stream": True}
 
@@ -103,6 +103,9 @@ def stream_requests(url, params, method="GET", chunk_size=8192):
     elif method == "GET":
         method = requests.get
         kwargs["params"] = params
+
+    if auth:
+        kwargs["auth"] = auth
 
     with method(**kwargs) as result:
         for chunk in result.iter_lines(chunk_size=chunk_size, delimiter=b'\n'):

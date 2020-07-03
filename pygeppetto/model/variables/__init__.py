@@ -3,9 +3,9 @@ from .variables import getEClassifier, eClassifiers
 from .variables import name, nsURI, nsPrefix, eClass
 from .variables import Variable, TypeToValueMap
 
-from ..values import Point, Value
-from ..types import Type
-from ..model import Tag
+from pygeppetto.model import Tag
+from pygeppetto.model.values import Value, Point
+from pygeppetto.model.types import Type
 
 from . import variables
 from .. import model

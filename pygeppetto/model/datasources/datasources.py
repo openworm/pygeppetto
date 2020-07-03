@@ -144,6 +144,7 @@ class DataSource(Node):
     dependenciesLibrary = EReference(ordered=True, unique=True, containment=False, upper=-1)
     targetLibrary = EReference(ordered=True, unique=True, containment=False)
     fetchVariableQuery = EReference(ordered=True, unique=True, containment=True)
+    auth = EAttribute(eType=EString, derived=False, changeable=True)
 
     def __init__(self, dataSourceService=None, libraryConfigurations=None, url=None, queries=None, dependenciesLibrary=None, targetLibrary=None, fetchVariableQuery=None, **kwargs):
 

@@ -3,9 +3,9 @@ from .instances import getEClassifier, eClassifiers
 from .instances import name, nsURI, nsPrefix, eClass
 from .instances import Instance, SimpleInstance, SimpleConnectionInstance
 
-from ..values import VisualValue, Point, Value
-from ..types import Type
-from ..model import Tag
+from pygeppetto.model.values import Value, Point, VisualValue
+from pygeppetto.model.types import Type
+from pygeppetto.model import Tag
 
 from . import instances
 from .. import model

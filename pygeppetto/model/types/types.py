@@ -2,7 +2,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import ISynchable, Node
+from pygeppetto.model import Node, ISynchable
+from pyecore.type import Int, String, Boolean
 
 
 name = 'types'
@@ -18,7 +19,7 @@ getEClassifier = partial(Ecore.getEClassifier, searchspace=eClassifiers)
 @abstract
 class Type(Node):
 
-    abstract = EAttribute(eType=EBoolean, derived=False, changeable=True)
+    abstract = EAttribute(eType=Boolean, derived=False, changeable=True)
     superType = EReference(ordered=True, unique=True, containment=False, upper=-1)
     visualType = EReference(ordered=True, unique=True, containment=False)
     referencedVariables = EReference(ordered=True, unique=True, containment=False, upper=-1)
@@ -66,10 +67,10 @@ class VisualType(Type):
 
 class ImportType(Type):
 
-    url = EAttribute(eType=EString, derived=False, changeable=True)
-    referenceURL = EAttribute(eType=EString, derived=False, changeable=True)
-    modelInterpreterId = EAttribute(eType=EString, derived=False, changeable=True)
-    autoresolve = EAttribute(eType=EBoolean, derived=False, changeable=True, default_value=True)
+    url = EAttribute(eType=String, derived=False, changeable=True)
+    referenceURL = EAttribute(eType=String, derived=False, changeable=True)
+    modelInterpreterId = EAttribute(eType=String, derived=False, changeable=True)
+    autoresolve = EAttribute(eType=Boolean, derived=False, changeable=True, default_value=True)
 
     def __init__(self, url=None, referenceURL=None, modelInterpreterId=None, autoresolve=None, **kwargs):
 
@@ -250,7 +251,7 @@ class PointType(Type):
 
 class ArrayType(Type):
 
-    size = EAttribute(eType=EInt, derived=False, changeable=True)
+    size = EAttribute(eType=Int, derived=False, changeable=True)
     arrayType = EReference(ordered=True, unique=True, containment=False)
     defaultValue = EReference(ordered=True, unique=True, containment=True)
 

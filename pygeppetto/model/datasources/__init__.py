@@ -3,8 +3,8 @@ from .datasources import getEClassifier, eClassifiers
 from .datasources import name, nsURI, nsPrefix, eClass
 from .datasources import DataSource, DataSourceLibraryConfiguration, Query, ProcessQuery, SimpleQuery, CompoundQuery, CompoundRefQuery, QueryResults, RunnableQuery, AQueryResult, QueryResult, SerializableQueryResult, QueryMatchingCriteria, BooleanOperator
 
-from ..types import Type
-from ..model import StringToStringMap, Tag, GeppettoLibrary
+from pygeppetto.model import GeppettoLibrary, Tag, StringToStringMap
+from pygeppetto.model.types import Type
 
 from . import datasources
 from .. import model

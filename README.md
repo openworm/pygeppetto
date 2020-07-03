@@ -122,8 +122,12 @@ rset = ResourceSet()
 mm_root = rset.get_resource('pygeppetto/ecore/geppettoModel.ecore').contents[0]
 
 # We generate the code using the EcoreGenerator
-EcoreGenerator(auto_register_package=True).generate(mm_root, outfolder='model')
+EcoreGenerator(auto_register_package=True).generate(mm_root, outfolder='pygeppetto')
 ```
+
+Then do the following fix replacements: 
+* `from model` -> `from pygeppetto.model`
+* `from type`  -> `from pyecore.type`
 
 #### Generate the code with Eclipse
 The `ecore2pyecore.mtl` script can be directly used in Eclipse as a 

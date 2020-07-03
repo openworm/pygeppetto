@@ -3,9 +3,9 @@ from .values import getEClassifier, eClassifiers
 from .values import name, nsURI, nsPrefix, eClass
 from .values import Value, Composite, StringToValueMap, Quantity, PhysicalQuantity, Unit, TimeSeries, MDTimeSeries, MetadataValue, Text, URL, HTML, Pointer, PointerElement, Point, Dynamics, FunctionPlot, Function, Argument, Expression, VisualValue, Collada, OBJ, Sphere, Cylinder, Particles, SkeletonAnimation, SkeletonTransformation, VisualGroupElement, VisualGroup, Connection, Connectivity, ArrayElement, ArrayValue, Image, ImageFormat, ImportValue, Metadata, JSON, GenericArray, StringArray, IntArray, DoubleArray, AArrayValue
 
-from ..types import Type
-from ..variables import Variable
-from ..model import Tag
+from pygeppetto.model import Tag
+from pygeppetto.model.variables import Variable
+from pygeppetto.model.types import Type
 
 from . import values
 from .. import model

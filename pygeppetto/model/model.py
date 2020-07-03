@@ -2,6 +2,7 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
+from pyecore.type import String, Boolean, Long
 
 
 name = 'model'
@@ -17,8 +18,8 @@ FileFormat = EEnum('FileFormat', literals=['ZIP', 'HDF5'])
 
 class GeppettoModel(EObject, metaclass=MetaEClass):
     """The root of every Geppetto model. This is the configuration of the Geppetto Model, to not be confused with the model Instantiation."""
-    id = EAttribute(eType=EString, derived=False, changeable=True)
-    name = EAttribute(eType=EString, derived=False, changeable=True)
+    id = EAttribute(eType=String, derived=False, changeable=True)
+    name = EAttribute(eType=String, derived=False, changeable=True)
     variables = EReference(ordered=True, unique=True, containment=True, upper=-1)
     worlds = EReference(ordered=True, unique=True, containment=True, upper=-1)
     libraries = EReference(ordered=True, unique=True, containment=True, upper=-1)
@@ -73,8 +74,8 @@ class LibraryManager(EObject, metaclass=MetaEClass):
 
 class ExperimentState(EObject, metaclass=MetaEClass):
 
-    experimentId = EAttribute(eType=ELong, derived=False, changeable=True)
-    projectId = EAttribute(eType=ELong, derived=False, changeable=True)
+    experimentId = EAttribute(eType=Long, derived=False, changeable=True)
+    projectId = EAttribute(eType=Long, derived=False, changeable=True)
     recordedVariables = EReference(ordered=True, unique=True, containment=True, upper=-1)
     setParameters = EReference(ordered=True, unique=True, containment=True, upper=-1)
 
@@ -135,7 +136,7 @@ class DomainModel(EObject, metaclass=MetaEClass):
 
 class ModelFormat(EObject, metaclass=MetaEClass):
 
-    modelFormat = EAttribute(eType=EString, derived=False, changeable=True)
+    modelFormat = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, modelFormat=None, **kwargs):
         if kwargs:
@@ -149,8 +150,8 @@ class ModelFormat(EObject, metaclass=MetaEClass):
 
 class StringToStringMap(EObject, metaclass=MetaEClass):
 
-    key = EAttribute(eType=EString, derived=False, changeable=True)
-    value = EAttribute(eType=EString, derived=False, changeable=True)
+    key = EAttribute(eType=String, derived=False, changeable=True)
+    value = EAttribute(eType=String, derived=False, changeable=True)
 
     def __init__(self, key=None, value=None, **kwargs):
         if kwargs:
@@ -168,7 +169,7 @@ class StringToStringMap(EObject, metaclass=MetaEClass):
 @abstract
 class ISynchable(EObject, metaclass=MetaEClass):
 
-    synched = EAttribute(eType=EBoolean, derived=False, changeable=True)
+    synched = EAttribute(eType=Boolean, derived=False, changeable=True)
 
     def __init__(self, synched=None, **kwargs):
         if kwargs:
@@ -183,8 +184,8 @@ class ISynchable(EObject, metaclass=MetaEClass):
 @abstract
 class Node(ISynchable):
 
-    id = EAttribute(eType=EString, derived=False, changeable=True)
-    name = EAttribute(eType=EString, derived=False, changeable=True)
+    id = EAttribute(eType=String, derived=False, changeable=True)
+    name = EAttribute(eType=String, derived=False, changeable=True)
     tags = EReference(ordered=True, unique=True, containment=False, upper=-1)
 
     def __init__(self, id=None, name=None, tags=None, **kwargs):
@@ -207,7 +208,7 @@ class Node(ISynchable):
 
 class Tag(ISynchable):
 
-    name = EAttribute(eType=EString, derived=False, changeable=True)
+    name = EAttribute(eType=String, derived=False, changeable=True)
     tags = EReference(ordered=True, unique=True, containment=True, upper=-1)
 
     def __init__(self, tags=None, name=None, **kwargs):

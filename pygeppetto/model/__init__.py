@@ -3,17 +3,17 @@ from .model import getEClassifier, eClassifiers
 from .model import name, nsURI, nsPrefix, eClass
 from .model import GeppettoModel, Node, GeppettoLibrary, LibraryManager, ExperimentState, VariableValue, Tag, DomainModel, ModelFormat, ExternalDomainModel, FileFormat, StringToStringMap, ISynchable, World
 
-from .instances import Instance
-from .variables import Variable
-from .datasources import DataSource, Query
-from .types import Type
-from .values import Value, Pointer
+from pygeppetto.model.values import Value, Pointer
+from pygeppetto.model.types import Type
+from pygeppetto.model.datasources import DataSource, Query
+from pygeppetto.model.instances import Instance
+from pygeppetto.model.variables import Variable
 
-from .types import PointType, QuantityType, CompositeType, ConnectionType, ArgumentType, URLType, PointerType, TextType, DynamicsType, SimpleArrayType, ImageType, JSONType, Type, VisualType, StateVariableType, HTMLType, CompositeVisualType, ParameterType, ArrayType, ExpressionType
-from .values import VisualValue, ArrayElement, Unit, VisualGroupElement, Pointer, AArrayValue, FunctionPlot, Expression, Argument, GenericArray, VisualGroup, Point, PhysicalQuantity, PointerElement, JSON, HTML, SkeletonTransformation, Image, Function, Text, Cylinder, URL, TimeSeries, StringToValueMap, Value, ArrayValue, Metadata, Particles, SkeletonAnimation, Connection, Composite, MDTimeSeries, Quantity, Dynamics
+from .types import TextType, DynamicsType, Type, SimpleArrayType, JSONType, ImageType, VisualType, StateVariableType, ConnectionType, PointerType, HTMLType, ParameterType, ArrayType, CompositeVisualType, ExpressionType, CompositeType, PointType, QuantityType, ArgumentType, URLType
+from .values import Function, VisualGroup, Unit, SkeletonTransformation, Dynamics, Pointer, Cylinder, GenericArray, AArrayValue, FunctionPlot, HTML, JSON, PointerElement, Point, Image, Particles, SkeletonAnimation, Value, VisualValue, Text, StringToValueMap, Composite, Connection, URL, ArrayValue, PhysicalQuantity, Expression, Quantity, Argument, VisualGroupElement, Metadata, MDTimeSeries, TimeSeries, ArrayElement
 from .variables import Variable, TypeToValueMap
-from .datasources import CompoundQuery, AQueryResult, QueryResults, Query, ProcessQuery, CompoundRefQuery, DataSource, DataSourceLibraryConfiguration, QueryMatchingCriteria
-from .instances import SimpleConnectionInstance, Instance, SimpleInstance
+from .datasources import QueryMatchingCriteria, Query, DataSourceLibraryConfiguration, CompoundQuery, ProcessQuery, QueryResults, CompoundRefQuery, AQueryResult, DataSource
+from .instances import Instance, SimpleConnectionInstance, SimpleInstance
 from . import model
 from . import types
 

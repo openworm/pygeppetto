@@ -2,7 +2,8 @@
 from functools import partial
 import pyecore.ecore as Ecore
 from pyecore.ecore import *
-from ..model import Node, ISynchable
+from pygeppetto.model import Node, ISynchable
+from pyecore.type import Boolean
 
 
 name = 'variables'
@@ -35,7 +36,7 @@ class TypeToValueMap(EObject, metaclass=MetaEClass):
 
 class Variable(Node):
 
-    static = EAttribute(eType=EBoolean, derived=False, changeable=True)
+    static = EAttribute(eType=Boolean, derived=False, changeable=True)
     anonymousTypes = EReference(ordered=True, unique=True, containment=True, upper=-1)
     types = EReference(ordered=True, unique=True, containment=False, upper=-1)
     initialValues = EReference(ordered=True, unique=True, containment=True, upper=-1)
